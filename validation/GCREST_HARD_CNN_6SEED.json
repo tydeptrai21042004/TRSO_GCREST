@@ -1,0 +1,62 @@
+[
+  {
+    "suite": "hard",
+    "architecture": "cnn",
+    "seed": 0,
+    "fixed_accuracy": 89.25,
+    "fixed_adapter_parameters": 27,
+    "gcrest_accuracy": 90.125,
+    "gcrest_adapter_parameters": 22,
+    "gcrest_selected_tensors": 3
+  },
+  {
+    "suite": "hard",
+    "architecture": "cnn",
+    "seed": 1,
+    "fixed_accuracy": 91.125,
+    "fixed_adapter_parameters": 27,
+    "gcrest_accuracy": 91.375,
+    "gcrest_adapter_parameters": 27,
+    "gcrest_selected_tensors": 3
+  },
+  {
+    "suite": "hard",
+    "architecture": "cnn",
+    "seed": 2,
+    "fixed_accuracy": 89.5,
+    "fixed_adapter_parameters": 27,
+    "gcrest_accuracy": 89.5,
+    "gcrest_adapter_parameters": 27,
+    "gcrest_selected_tensors": 3
+  },
+  {
+    "suite": "hard",
+    "architecture": "cnn",
+    "seed": 3,
+    "fixed_accuracy": 99.0,
+    "fixed_adapter_parameters": 27,
+    "gcrest_accuracy": 98.875,
+    "gcrest_adapter_parameters": 27,
+    "gcrest_selected_tensors": 3
+  },
+  {
+    "suite": "hard",
+    "architecture": "cnn",
+    "seed": 4,
+    "fixed_accuracy": 93.75,
+    "fixed_adapter_parameters": 27,
+    "gcrest_accuracy": 93.75,
+    "gcrest_adapter_parameters": 27,
+    "gcrest_selected_tensors": 3
+  },
+  {
+    "suite": "hard",
+    "architecture": "cnn",
+    "seed": 5,
+    "fixed_accuracy": 93.625,
+    "fixed_adapter_parameters": 27,
+    "gcrest_accuracy": 93.5,
+    "gcrest_adapter_parameters": 27,
+    "gcrest_selected_tensors": 3
+  }
+]

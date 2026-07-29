@@ -1,0 +1,94 @@
+{
+  "release": "TRSO_Parameter_Free_V10_ReferenceControls_46Runs_6Sessions_ARC_NoResidual",
+  "strict_method_ids": [
+    "prompt",
+    "conv",
+    "ssf",
+    "adaptformer",
+    "repadapter",
+    "arc",
+    "piggyback",
+    "vpt_shallow",
+    "vpt_deep",
+    "convpass"
+  ],
+  "strict_method_count": 10,
+  "strict_set_matches_registry": true,
+  "reference_controls": {
+    "methods": [
+      "full",
+      "linear"
+    ],
+    "category": "reference_control",
+    "full": {
+      "trainability": "all model parameters",
+      "learning_rate": 0.0001,
+      "smoke_trainable_params": 11177538
+    },
+    "linear": {
+      "trainability": "task head only; frozen pretrained backbone",
+      "learning_rate": 0.001,
+      "smoke_trainable_params": 1026
+    },
+    "one_epoch_cpu_fair_suite_smoke": true,
+    "separate_from_strict_baselines": true
+  },
+  "arc": {
+    "category": "paper_baseline",
+    "reference": "Dong et al., Efficient Adaptation of Large Vision Transformer via Adapter Re-Composing (NeurIPS 2023)",
+    "certified_scope": "plain timm/torchvision ViT, single-label classification",
+    "adapter_dim": 50,
+    "dropout": 0.1,
+    "shared_projection_banks": [
+      "attention",
+      "ffn"
+    ],
+    "symmetric_up_projection": true,
+    "exact_eval_merge": true,
+    "preflight": {
+      "output_shape": [
+        2,
+        5
+      ],
+      "gradient_ok": true
+    },
+    "merge_updates": 4,
+    "merge_max_abs_error": 0.0
+  },
+  "protocol": {
+    "category_runs": {
+      "paper_baseline": 12,
+      "reference_control": 20,
+      "proposal": 10
+    },
+    "main_runs": 42,
+    "ablation_runs": 4,
+    "total_runs": 46,
+    "sessions": 6,
+    "session_total_runs": {
+      "1": 6,
+      "2": 10,
+      "3": 12,
+      "4": 6,
+      "5": 6,
+      "6": 6
+    },
+    "name": "minimal_paper_46_runs_v5_arc_reference_controls_six_sessions"
+  },
+  "excluded_from_kaggle": [
+    "fact_tt",
+    "fact_tk",
+    "vqt",
+    "spt_lora",
+    "spt_adapter",
+    "lora",
+    "bitfit",
+    "sidetune",
+    "norm",
+    "bias",
+    "last_block",
+    "convpass_attn"
+  ],
+  "tests_passed": 150,
+  "preflight_all_ok": true
+}

@@ -1,0 +1,76 @@
+{
+  "proposal_core": {
+    "path": "models/tuning_modules/mdl_tangent_core.py",
+    "sha256_before": "d4d7af28492b40fd7b0b3687670ae34ab32d034f7a66f4f51a008a95c805a7e9",
+    "sha256_after": "d4d7af28492b40fd7b0b3687670ae34ab32d034f7a66f4f51a008a95c805a7e9",
+    "unchanged": true
+  },
+  "tasks": [
+    "single_label",
+    "multilabel",
+    "regression",
+    "semantic_segmentation",
+    "depth_estimation",
+    "object_detection"
+  ],
+  "implemented_new_generic_baselines": [
+    "norm",
+    "bias",
+    "last_block"
+  ],
+  "structured_datasets": [
+    "voc2012_segmentation",
+    "oxford_pet_segmentation",
+    "sbd_segmentation",
+    "cityscapes_segmentation",
+    "segmentation_folder",
+    "depth_folder",
+    "voc_detection",
+    "coco_detection",
+    "fake_segmentation",
+    "fake_depth",
+    "fake_detection"
+  ],
+  "smoke_tests": {
+    "classification_linear": {
+      "task_type": "single_label",
+      "backbone": "resnet18",
+      "method": "linear",
+      "primary_metrics": {
+        "acc1": 0.0
+      },
+      "training_time_sec": 0.0795748233795166,
+      "total_wall_time_sec": 0.24008576100004575
+    },
+    "segmentation_trso": {
+      "task_type": "semantic_segmentation",
+      "backbone": "lraspp_mobilenet_v3_large",
+      "method": "trso",
+      "primary_metrics": {
+        "miou": 6.25
+      },
+      "training_time_sec": 0.1248931884765625,
+      "total_wall_time_sec": 0.6779058799997983
+    },
+    "depth_linear": {
+      "task_type": "depth_estimation",
+      "backbone": "lraspp_mobilenet_v3_large",
+      "method": "linear",
+      "primary_metrics": {
+        "abs_rel": 0.7297505736351013
+      },
+      "training_time_sec": 0.07039308547973633,
+      "total_wall_time_sec": 0.1914352199996756
+    },
+    "detection_linear": {
+      "task_type": "object_detection",
+      "backbone": "fasterrcnn_mobilenet_v3_large_320_fpn",
+      "method": "linear",
+      "primary_metrics": {
+        "map": 40.0
+      },
+      "training_time_sec": 1.0251784324645996,
+      "total_wall_time_sec": 2.746115834000193
+    }
+  }
+}

@@ -1,0 +1,42 @@
+[
+  {
+    "suite": "standard",
+    "architecture": "cnn",
+    "seed": 3,
+    "fixed_accuracy": 100.0,
+    "fixed_adapter_parameters": 12,
+    "gcrest_accuracy": 100.0,
+    "gcrest_adapter_parameters": 59,
+    "gcrest_selected_tensors": 3
+  },
+  {
+    "suite": "standard",
+    "architecture": "vit",
+    "seed": 3,
+    "fixed_accuracy": 99.5,
+    "fixed_adapter_parameters": 54,
+    "gcrest_accuracy": 100.0,
+    "gcrest_adapter_parameters": 145,
+    "gcrest_selected_tensors": 13
+  },
+  {
+    "suite": "standard",
+    "architecture": "cnn",
+    "seed": 4,
+    "fixed_accuracy": 100.0,
+    "fixed_adapter_parameters": 12,
+    "gcrest_accuracy": 100.0,
+    "gcrest_adapter_parameters": 59,
+    "gcrest_selected_tensors": 3
+  },
+  {
+    "suite": "standard",
+    "architecture": "vit",
+    "seed": 4,
+    "fixed_accuracy": 98.33333333333333,
+    "fixed_adapter_parameters": 54,
+    "gcrest_accuracy": 99.66666666666667,
+    "gcrest_adapter_parameters": 100,
+    "gcrest_selected_tensors": 15
+  }
+]

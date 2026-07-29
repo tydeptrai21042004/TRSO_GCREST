@@ -1,0 +1,12 @@
+[
+  {
+    "seed": 0,
+    "epochs": 30,
+    "fixed_accuracy": 98.125,
+    "gain": 0.875,
+    "fixed_adapter_parameters": 27,
+    "selected_tensors": 3,
+    "gcrest_accuracy": 99.0,
+    "gcrest_adapter_parameters": 22
+  }
+]

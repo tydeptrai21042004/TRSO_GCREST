@@ -1,0 +1,258 @@
+{
+  "method": "G-CREST-TRSO",
+  "scope": "executed deterministic controlled transfer validation; not a real DTD claim",
+  "summary": {
+    "standard_vit": {
+      "seeds": 5,
+      "fixed_mean_accuracy": 97.93333333333332,
+      "gcrest_mean_accuracy": 99.83333333333334,
+      "mean_gain_points": 1.9000000000000028,
+      "gain_bootstrap_95_ci": [
+        0.6000000000000056,
+        3.299999999999997
+      ],
+      "wins": 5,
+      "ties": 0,
+      "losses": 0,
+      "paired_t_two_sided_p": 0.0691966035617007,
+      "wilcoxon_two_sided_p": 0.0625,
+      "wilcoxon_one_sided_greater_p": 0.03125,
+      "fixed_mean_adapter_parameters": 54.0,
+      "gcrest_mean_adapter_parameters": 124.6,
+      "per_seed_gains": [
+        3.0,
+        4.333333333333329,
+        0.3333333333333428,
+        0.5,
+        1.3333333333333428
+      ]
+    },
+    "standard_cnn": {
+      "seeds": 5,
+      "fixed_mean_accuracy": 100.0,
+      "gcrest_mean_accuracy": 100.0,
+      "mean_gain_points": 0.0,
+      "gain_bootstrap_95_ci": [
+        0.0,
+        0.0
+      ],
+      "wins": 0,
+      "ties": 5,
+      "losses": 0,
+      "paired_t_two_sided_p": null,
+      "wilcoxon_two_sided_p": 1.0,
+      "wilcoxon_one_sided_greater_p": 1.0,
+      "fixed_mean_adapter_parameters": 12.0,
+      "gcrest_mean_adapter_parameters": 58.0,
+      "per_seed_gains": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "hard_cnn": {
+      "seeds": 6,
+      "fixed_mean_accuracy": 92.70833333333333,
+      "gcrest_mean_accuracy": 92.85416666666667,
+      "mean_gain_points": 0.14583333333333334,
+      "gain_bootstrap_95_ci": [
+        -0.08333333333333333,
+        0.4583333333333333
+      ],
+      "wins": 2,
+      "ties": 2,
+      "losses": 2,
+      "paired_t_two_sided_p": 0.3932964151763808,
+      "wilcoxon_two_sided_p": 0.625,
+      "wilcoxon_one_sided_greater_p": 0.3125,
+      "fixed_mean_adapter_parameters": 27.0,
+      "gcrest_mean_adapter_parameters": 26.166666666666668,
+      "per_seed_gains": [
+        0.875,
+        0.25,
+        0.0,
+        -0.125,
+        0.0,
+        -0.125
+      ]
+    }
+  },
+  "long_horizon": [
+    {
+      "seed": 0,
+      "epochs": 30,
+      "fixed_accuracy": 98.125,
+      "gain": 0.875,
+      "fixed_adapter_parameters": 27,
+      "selected_tensors": 3,
+      "gcrest_accuracy": 99.0,
+      "gcrest_adapter_parameters": 22
+    }
+  ],
+  "runs": [
+    {
+      "suite": "standard",
+      "architecture": "cnn",
+      "seed": 0,
+      "fixed_accuracy": 100.0,
+      "fixed_adapter_parameters": 12,
+      "gcrest_accuracy": 100.0,
+      "gcrest_adapter_parameters": 54,
+      "gcrest_selected_tensors": 3
+    },
+    {
+      "suite": "standard",
+      "architecture": "vit",
+      "seed": 0,
+      "fixed_accuracy": 97.0,
+      "fixed_adapter_parameters": 54,
+      "gcrest_accuracy": 100.0,
+      "gcrest_adapter_parameters": 125,
+      "gcrest_selected_tensors": 13
+    },
+    {
+      "suite": "standard",
+      "architecture": "cnn",
+      "seed": 1,
+      "fixed_accuracy": 100.0,
+      "fixed_adapter_parameters": 12,
+      "gcrest_accuracy": 100.0,
+      "gcrest_adapter_parameters": 59,
+      "gcrest_selected_tensors": 3
+    },
+    {
+      "suite": "standard",
+      "architecture": "vit",
+      "seed": 1,
+      "fixed_accuracy": 95.5,
+      "fixed_adapter_parameters": 54,
+      "gcrest_accuracy": 99.83333333333333,
+      "gcrest_adapter_parameters": 127,
+      "gcrest_selected_tensors": 15
+    },
+    {
+      "suite": "standard",
+      "architecture": "cnn",
+      "seed": 2,
+      "fixed_accuracy": 100.0,
+      "fixed_adapter_parameters": 12,
+      "gcrest_accuracy": 100.0,
+      "gcrest_adapter_parameters": 59,
+      "gcrest_selected_tensors": 3
+    },
+    {
+      "suite": "standard",
+      "architecture": "vit",
+      "seed": 2,
+      "fixed_accuracy": 99.33333333333333,
+      "fixed_adapter_parameters": 54,
+      "gcrest_accuracy": 99.66666666666667,
+      "gcrest_adapter_parameters": 126,
+      "gcrest_selected_tensors": 15
+    },
+    {
+      "suite": "standard",
+      "architecture": "cnn",
+      "seed": 3,
+      "fixed_accuracy": 100.0,
+      "fixed_adapter_parameters": 12,
+      "gcrest_accuracy": 100.0,
+      "gcrest_adapter_parameters": 59,
+      "gcrest_selected_tensors": 3
+    },
+    {
+      "suite": "standard",
+      "architecture": "vit",
+      "seed": 3,
+      "fixed_accuracy": 99.5,
+      "fixed_adapter_parameters": 54,
+      "gcrest_accuracy": 100.0,
+      "gcrest_adapter_parameters": 145,
+      "gcrest_selected_tensors": 13
+    },
+    {
+      "suite": "standard",
+      "architecture": "cnn",
+      "seed": 4,
+      "fixed_accuracy": 100.0,
+      "fixed_adapter_parameters": 12,
+      "gcrest_accuracy": 100.0,
+      "gcrest_adapter_parameters": 59,
+      "gcrest_selected_tensors": 3
+    },
+    {
+      "suite": "standard",
+      "architecture": "vit",
+      "seed": 4,
+      "fixed_accuracy": 98.33333333333333,
+      "fixed_adapter_parameters": 54,
+      "gcrest_accuracy": 99.66666666666667,
+      "gcrest_adapter_parameters": 100,
+      "gcrest_selected_tensors": 15
+    },
+    {
+      "suite": "hard",
+      "architecture": "cnn",
+      "seed": 0,
+      "fixed_accuracy": 89.25,
+      "fixed_adapter_parameters": 27,
+      "gcrest_accuracy": 90.125,
+      "gcrest_adapter_parameters": 22,
+      "gcrest_selected_tensors": 3
+    },
+    {
+      "suite": "hard",
+      "architecture": "cnn",
+      "seed": 1,
+      "fixed_accuracy": 91.125,
+      "fixed_adapter_parameters": 27,
+      "gcrest_accuracy": 91.375,
+      "gcrest_adapter_parameters": 27,
+      "gcrest_selected_tensors": 3
+    },
+    {
+      "suite": "hard",
+      "architecture": "cnn",
+      "seed": 2,
+      "fixed_accuracy": 89.5,
+      "fixed_adapter_parameters": 27,
+      "gcrest_accuracy": 89.5,
+      "gcrest_adapter_parameters": 27,
+      "gcrest_selected_tensors": 3
+    },
+    {
+      "suite": "hard",
+      "architecture": "cnn",
+      "seed": 3,
+      "fixed_accuracy": 99.0,
+      "fixed_adapter_parameters": 27,
+      "gcrest_accuracy": 98.875,
+      "gcrest_adapter_parameters": 27,
+      "gcrest_selected_tensors": 3
+    },
+    {
+      "suite": "hard",
+      "architecture": "cnn",
+      "seed": 4,
+      "fixed_accuracy": 93.75,
+      "fixed_adapter_parameters": 27,
+      "gcrest_accuracy": 93.75,
+      "gcrest_adapter_parameters": 27,
+      "gcrest_selected_tensors": 3
+    },
+    {
+      "suite": "hard",
+      "architecture": "cnn",
+      "seed": 5,
+      "fixed_accuracy": 93.625,
+      "fixed_adapter_parameters": 27,
+      "gcrest_accuracy": 93.5,
+      "gcrest_adapter_parameters": 27,
+      "gcrest_selected_tensors": 3
+    }
+  ],
+  "bootstrap_seed": 20260729,
+  "bootstrap_resamples": 200000
+}

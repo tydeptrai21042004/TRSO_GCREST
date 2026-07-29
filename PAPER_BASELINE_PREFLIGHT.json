@@ -1,0 +1,155 @@
+{
+  "strict_paper_baselines": {
+    "visual_prompt": {
+      "output_shape": [
+        2,
+        5
+      ],
+      "gradient_ok": true
+    },
+    "conv_adapter": {
+      "output_shape": [
+        2,
+        5
+      ],
+      "gradient_ok": true
+    },
+    "ssf": {
+      "output_shape": [
+        2,
+        5
+      ],
+      "gradient_ok": true
+    },
+    "adaptformer": {
+      "output_shape": [
+        2,
+        5
+      ],
+      "gradient_ok": true
+    },
+    "repadapter": {
+      "output_shape": [
+        2,
+        5
+      ],
+      "gradient_ok": true
+    },
+    "arc": {
+      "output_shape": [
+        2,
+        5
+      ],
+      "gradient_ok": true
+    },
+    "piggyback": {
+      "output_shape": [
+        2,
+        5
+      ],
+      "gradient_ok": true
+    },
+    "vpt_shallow": {
+      "output_shape": [
+        2,
+        5
+      ],
+      "gradient_ok": true
+    },
+    "vpt_deep": {
+      "output_shape": [
+        2,
+        5
+      ],
+      "gradient_ok": true
+    },
+    "convpass": {
+      "output_shape": [
+        2,
+        5
+      ],
+      "gradient_ok": true
+    }
+  },
+  "paper_internal_ablations": {
+    "convpass_attn": {
+      "output_shape": [
+        2,
+        5
+      ],
+      "gradient_ok": true
+    }
+  },
+  "qualified_reimplementation_candidates": {
+    "fact_tt": {
+      "output_shape": [
+        2,
+        5
+      ],
+      "gradient_ok": true
+    },
+    "fact_tk": {
+      "output_shape": [
+        2,
+        5
+      ],
+      "gradient_ok": true
+    },
+    "vqt": {
+      "output_shape": [
+        2,
+        5
+      ],
+      "gradient_ok": true
+    },
+    "spt_lora": {
+      "output_shape": [
+        2,
+        5
+      ],
+      "gradient_ok": true
+    },
+    "spt_adapter": {
+      "output_shape": [
+        2,
+        5
+      ],
+      "gradient_ok": true
+    }
+  },
+  "opt_in_nonpaper_controls": {
+    "lora": {
+      "output_shape": [
+        2,
+        5
+      ],
+      "gradient_ok": true
+    },
+    "bitfit": {
+      "output_shape": [
+        2,
+        5
+      ],
+      "gradient_ok": true
+    },
+    "side_tuning": {
+      "output_shape": [
+        2,
+        5
+      ],
+      "gradient_ok": true
+    }
+  },
+  "metadata": {
+    "repadapter_merged_updates": 4,
+    "repadapter_merge_max_abs_error": 0.0,
+    "arc_merged_updates": 4,
+    "arc_merge_max_abs_error": 0.0,
+    "fact_tt_merged_updates": 8,
+    "fact_tk_merged_updates": 8,
+    "spt_lora_merged_updates": 1,
+    "spt_adapter_merged_updates": 1
+  },
+  "all_ok": true,
+  "failures": []
+}
