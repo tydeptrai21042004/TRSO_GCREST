@@ -1,0 +1,19 @@
+name,session,category,dataset,task,backbones,methods,expected_runs,batch_size,dataset_args
+dtd_resnet50_reference_controls,1,reference_control,dtd,auto,resnet50@torchvision,"full,linear",2,16,"{""dtd_partition"": 1}"
+dtd_resnet50_literature_baselines,1,paper_baseline,dtd,auto,resnet50@torchvision,"prompt,conv,piggyback",3,16,"{""dtd_partition"": 1}"
+dtd_resnet50_trso_proposal,1,proposal,dtd,auto,resnet50@torchvision,trso,1,16,"{""dtd_partition"": 1}"
+dtd_vit_b16_reference_controls,2,reference_control,dtd,auto,vit_b_16@torchvision,"full,linear",2,8,"{""dtd_partition"": 1}"
+dtd_vit_b16_literature_baselines,2,paper_baseline,dtd,auto,vit_b_16@torchvision,"ssf,adaptformer,repadapter,arc,vpt_shallow,vpt_deep,convpass",7,8,"{""dtd_partition"": 1}"
+dtd_vit_b16_trso_proposal,2,proposal,dtd,auto,vit_b_16@torchvision,trso,1,8,"{""dtd_partition"": 1}"
+dtd_small_reference_controls,3,reference_control,dtd,auto,"resnet18@torchvision,swin_t@torchvision","full,linear",4,32,"{""dtd_partition"": 1}"
+dtd_resnet18_literature_baseline,3,paper_baseline,dtd,auto,resnet18@torchvision,prompt,1,32,"{""dtd_partition"": 1}"
+dtd_swin_t_literature_baseline,3,paper_baseline,dtd,auto,swin_t@torchvision,ssf,1,32,"{""dtd_partition"": 1}"
+dtd_small_trso_proposal,3,proposal,dtd,auto,"resnet18@torchvision,swin_t@torchvision",trso,2,32,"{""dtd_partition"": 1}"
+flowers102_small_reference_controls,4,reference_control,flowers102,auto,"resnet18@torchvision,swin_t@torchvision","full,linear",4,32,{}
+flowers102_small_trso_proposal,4,proposal,flowers102,auto,"resnet18@torchvision,swin_t@torchvision",trso,2,32,{}
+oxford_pets_small_reference_controls,5,reference_control,oxfordiiitpet,auto,"resnet18@torchvision,swin_t@torchvision","full,linear",4,32,{}
+oxford_pets_small_trso_proposal,5,proposal,oxfordiiitpet,auto,"resnet18@torchvision,swin_t@torchvision",trso,2,32,{}
+voc2007_reference_controls,6,reference_control,voc2007,multilabel,mobilenet_v3_small@torchvision,"full,linear",2,32,{}
+voc2007_trso_proposal,6,proposal,voc2007,multilabel,mobilenet_v3_small@torchvision,trso,1,32,{}
+oxford_pet_segmentation_reference_controls,6,reference_control,oxford_pet_segmentation,semantic_segmentation,lraspp_mobilenet_v3_large@torchvision,"full,linear",2,8,"{""segmentation_ignore_index"": 255, ""segmentation_num_classes"": 3}"
+oxford_pet_segmentation_trso_proposal,6,proposal,oxford_pet_segmentation,semantic_segmentation,lraspp_mobilenet_v3_large@torchvision,trso,1,8,"{""segmentation_ignore_index"": 255, ""segmentation_num_classes"": 3}"

@@ -1,0 +1,400 @@
+{
+  "protocol": "minimal_paper_46_runs_v5_arc_reference_controls_six_sessions",
+  "seed": 0,
+  "split_seed": 0,
+  "epochs": 30,
+  "warmup_epochs": 3,
+  "input_size": 224,
+  "optimizer": "adamw",
+  "scheduler": "cosine",
+  "augmentation": "strong",
+  "category_runs": {
+    "paper_baseline": 12,
+    "reference_control": 20,
+    "proposal": 10
+  },
+  "main_runs": 42,
+  "additional_trso_ablations": 4,
+  "total_runs": 46,
+  "session_main_runs": {
+    "1": 6,
+    "2": 10,
+    "3": 8,
+    "4": 6,
+    "5": 6,
+    "6": 6
+  },
+  "session_total_runs": {
+    "1": 6,
+    "2": 10,
+    "3": 12,
+    "4": 6,
+    "5": 6,
+    "6": 6
+  },
+  "stages": [
+    {
+      "name": "dtd_resnet50_reference_controls",
+      "session": 1,
+      "category": "reference_control",
+      "dataset": "dtd",
+      "task": "auto",
+      "backbones": "resnet50@torchvision",
+      "methods": "full,linear",
+      "expected_runs": 2,
+      "batch_size": 16,
+      "dataset_args": {
+        "dtd_partition": 1
+      }
+    },
+    {
+      "name": "dtd_resnet50_literature_baselines",
+      "session": 1,
+      "category": "paper_baseline",
+      "dataset": "dtd",
+      "task": "auto",
+      "backbones": "resnet50@torchvision",
+      "methods": "prompt,conv,piggyback",
+      "expected_runs": 3,
+      "batch_size": 16,
+      "dataset_args": {
+        "dtd_partition": 1
+      }
+    },
+    {
+      "name": "dtd_resnet50_trso_proposal",
+      "session": 1,
+      "category": "proposal",
+      "dataset": "dtd",
+      "task": "auto",
+      "backbones": "resnet50@torchvision",
+      "methods": "trso",
+      "expected_runs": 1,
+      "batch_size": 16,
+      "dataset_args": {
+        "dtd_partition": 1
+      }
+    },
+    {
+      "name": "dtd_vit_b16_reference_controls",
+      "session": 2,
+      "category": "reference_control",
+      "dataset": "dtd",
+      "task": "auto",
+      "backbones": "vit_b_16@torchvision",
+      "methods": "full,linear",
+      "expected_runs": 2,
+      "batch_size": 8,
+      "dataset_args": {
+        "dtd_partition": 1
+      }
+    },
+    {
+      "name": "dtd_vit_b16_literature_baselines",
+      "session": 2,
+      "category": "paper_baseline",
+      "dataset": "dtd",
+      "task": "auto",
+      "backbones": "vit_b_16@torchvision",
+      "methods": "ssf,adaptformer,repadapter,arc,vpt_shallow,vpt_deep,convpass",
+      "expected_runs": 7,
+      "batch_size": 8,
+      "dataset_args": {
+        "dtd_partition": 1
+      }
+    },
+    {
+      "name": "dtd_vit_b16_trso_proposal",
+      "session": 2,
+      "category": "proposal",
+      "dataset": "dtd",
+      "task": "auto",
+      "backbones": "vit_b_16@torchvision",
+      "methods": "trso",
+      "expected_runs": 1,
+      "batch_size": 8,
+      "dataset_args": {
+        "dtd_partition": 1
+      }
+    },
+    {
+      "name": "dtd_small_reference_controls",
+      "session": 3,
+      "category": "reference_control",
+      "dataset": "dtd",
+      "task": "auto",
+      "backbones": "resnet18@torchvision,swin_t@torchvision",
+      "methods": "full,linear",
+      "expected_runs": 4,
+      "batch_size": 32,
+      "dataset_args": {
+        "dtd_partition": 1
+      }
+    },
+    {
+      "name": "dtd_resnet18_literature_baseline",
+      "session": 3,
+      "category": "paper_baseline",
+      "dataset": "dtd",
+      "task": "auto",
+      "backbones": "resnet18@torchvision",
+      "methods": "prompt",
+      "expected_runs": 1,
+      "batch_size": 32,
+      "dataset_args": {
+        "dtd_partition": 1
+      }
+    },
+    {
+      "name": "dtd_swin_t_literature_baseline",
+      "session": 3,
+      "category": "paper_baseline",
+      "dataset": "dtd",
+      "task": "auto",
+      "backbones": "swin_t@torchvision",
+      "methods": "ssf",
+      "expected_runs": 1,
+      "batch_size": 32,
+      "dataset_args": {
+        "dtd_partition": 1
+      }
+    },
+    {
+      "name": "dtd_small_trso_proposal",
+      "session": 3,
+      "category": "proposal",
+      "dataset": "dtd",
+      "task": "auto",
+      "backbones": "resnet18@torchvision,swin_t@torchvision",
+      "methods": "trso",
+      "expected_runs": 2,
+      "batch_size": 32,
+      "dataset_args": {
+        "dtd_partition": 1
+      }
+    },
+    {
+      "name": "flowers102_small_reference_controls",
+      "session": 4,
+      "category": "reference_control",
+      "dataset": "flowers102",
+      "task": "auto",
+      "backbones": "resnet18@torchvision,swin_t@torchvision",
+      "methods": "full,linear",
+      "expected_runs": 4,
+      "batch_size": 32,
+      "dataset_args": {}
+    },
+    {
+      "name": "flowers102_small_trso_proposal",
+      "session": 4,
+      "category": "proposal",
+      "dataset": "flowers102",
+      "task": "auto",
+      "backbones": "resnet18@torchvision,swin_t@torchvision",
+      "methods": "trso",
+      "expected_runs": 2,
+      "batch_size": 32,
+      "dataset_args": {}
+    },
+    {
+      "name": "oxford_pets_small_reference_controls",
+      "session": 5,
+      "category": "reference_control",
+      "dataset": "oxfordiiitpet",
+      "task": "auto",
+      "backbones": "resnet18@torchvision,swin_t@torchvision",
+      "methods": "full,linear",
+      "expected_runs": 4,
+      "batch_size": 32,
+      "dataset_args": {}
+    },
+    {
+      "name": "oxford_pets_small_trso_proposal",
+      "session": 5,
+      "category": "proposal",
+      "dataset": "oxfordiiitpet",
+      "task": "auto",
+      "backbones": "resnet18@torchvision,swin_t@torchvision",
+      "methods": "trso",
+      "expected_runs": 2,
+      "batch_size": 32,
+      "dataset_args": {}
+    },
+    {
+      "name": "voc2007_reference_controls",
+      "session": 6,
+      "category": "reference_control",
+      "dataset": "voc2007",
+      "task": "multilabel",
+      "backbones": "mobilenet_v3_small@torchvision",
+      "methods": "full,linear",
+      "expected_runs": 2,
+      "batch_size": 32,
+      "dataset_args": {}
+    },
+    {
+      "name": "voc2007_trso_proposal",
+      "session": 6,
+      "category": "proposal",
+      "dataset": "voc2007",
+      "task": "multilabel",
+      "backbones": "mobilenet_v3_small@torchvision",
+      "methods": "trso",
+      "expected_runs": 1,
+      "batch_size": 32,
+      "dataset_args": {}
+    },
+    {
+      "name": "oxford_pet_segmentation_reference_controls",
+      "session": 6,
+      "category": "reference_control",
+      "dataset": "oxford_pet_segmentation",
+      "task": "semantic_segmentation",
+      "backbones": "lraspp_mobilenet_v3_large@torchvision",
+      "methods": "full,linear",
+      "expected_runs": 2,
+      "batch_size": 8,
+      "dataset_args": {
+        "segmentation_num_classes": 3,
+        "segmentation_ignore_index": 255
+      }
+    },
+    {
+      "name": "oxford_pet_segmentation_trso_proposal",
+      "session": 6,
+      "category": "proposal",
+      "dataset": "oxford_pet_segmentation",
+      "task": "semantic_segmentation",
+      "backbones": "lraspp_mobilenet_v3_large@torchvision",
+      "methods": "trso",
+      "expected_runs": 1,
+      "batch_size": 8,
+      "dataset_args": {
+        "segmentation_num_classes": 3,
+        "segmentation_ignore_index": 255
+      }
+    }
+  ],
+  "reference_control_policy": {
+    "methods": [
+      "full",
+      "linear"
+    ],
+    "reporting_group": "reference_control",
+    "full_fine_tuning": "All backbone and task-head parameters are trainable.",
+    "linear_probing": "The pretrained backbone is frozen; only the downstream task head is trainable.",
+    "learning_rates": {
+      "full": 0.0001,
+      "linear": 0.001
+    },
+    "shared_head_rule": "Within each session, the exact best linear-probe checkpoint initializes compatible PEFT and TRSO runs."
+  },
+  "proposal_ablation_suite": {
+    "session": 3,
+    "category": "proposal_ablation",
+    "method": "trso",
+    "linear_head_reused_from": "dtd_small_reference_controls/resnet18/linear",
+    "trained_full_proposal_checkpoint_reused": false,
+    "ablations": [
+      "diagonal_only",
+      "no_sampling_variance",
+      "no_crossfit",
+      "head_only"
+    ],
+    "separate_output_root": "trso_proposal_ablation"
+  },
+  "excluded_from_strict_baselines": {
+    "reference_controls": [
+      "full",
+      "linear"
+    ],
+    "paper_internal_ablation": [
+      "convpass_attn"
+    ],
+    "qualified_reimplementation_candidates": [
+      "fact_tt",
+      "fact_tk",
+      "vqt",
+      "spt_lora",
+      "spt_adapter"
+    ],
+    "transferred_controls": [
+      "lora",
+      "bitfit",
+      "sidetune"
+    ],
+    "engineering_controls": [
+      "norm",
+      "bias",
+      "last_block"
+    ],
+    "proposal": [
+      "trso"
+    ]
+  },
+  "six_session_execution": [
+    {
+      "session": 1,
+      "training_runs": 6,
+      "stage_names": [
+        "dtd_resnet50_reference_controls",
+        "dtd_resnet50_literature_baselines",
+        "dtd_resnet50_trso_proposal"
+      ],
+      "includes_trso_ablations": false
+    },
+    {
+      "session": 2,
+      "training_runs": 10,
+      "stage_names": [
+        "dtd_vit_b16_reference_controls",
+        "dtd_vit_b16_literature_baselines",
+        "dtd_vit_b16_trso_proposal"
+      ],
+      "includes_trso_ablations": false
+    },
+    {
+      "session": 3,
+      "training_runs": 12,
+      "stage_names": [
+        "dtd_small_reference_controls",
+        "dtd_resnet18_literature_baseline",
+        "dtd_swin_t_literature_baseline",
+        "dtd_small_trso_proposal"
+      ],
+      "includes_trso_ablations": true
+    },
+    {
+      "session": 4,
+      "training_runs": 6,
+      "stage_names": [
+        "flowers102_small_reference_controls",
+        "flowers102_small_trso_proposal"
+      ],
+      "includes_trso_ablations": false
+    },
+    {
+      "session": 5,
+      "training_runs": 6,
+      "stage_names": [
+        "oxford_pets_small_reference_controls",
+        "oxford_pets_small_trso_proposal"
+      ],
+      "includes_trso_ablations": false
+    },
+    {
+      "session": 6,
+      "training_runs": 6,
+      "stage_names": [
+        "voc2007_reference_controls",
+        "voc2007_trso_proposal",
+        "oxford_pet_segmentation_reference_controls",
+        "oxford_pet_segmentation_trso_proposal"
+      ],
+      "includes_trso_ablations": false
+    }
+  ],
+  "residual_adapter_removed": true,
+  "single_seed_limitation": "Report fixed-seed results only; do not claim statistical significance."
+}
