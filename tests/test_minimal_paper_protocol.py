@@ -69,7 +69,7 @@ def test_kaggle_has_six_session_runners_and_merge_utility():
         assert '"--linear_lr", 1e-3' in text
         assert '"--external_head_manifests"' in text
         assert "git", "clone" in text
-        assert "https://github.com/tydeptrai21042004/trso_adapter.git" in text
+        assert "https://github.com/tydeptrai21042004/TRSO_GCREST.git" in text
         assert 'GITHUB_REF = os.environ.get("TRSO_GITHUB_REF", "main")' in text
         assert "CLONED_GITHUB_COMMIT = clone_release()" in text
         assert '"proposal_version": "global_cross_fitted_reproducibility_entropy_spectral_tangent_core"' in text

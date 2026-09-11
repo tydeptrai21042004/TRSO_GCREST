@@ -1,0 +1,118 @@
+{
+  "R1-C3": {
+    "logical_groups": 32,
+    "training_runs": 60,
+    "studies": [
+      "batch_sensitivity",
+      "calibration"
+    ],
+    "settings": [
+      "DTD / ResNet-18",
+      "Flowers-102 / ViT-B16"
+    ]
+  },
+  "R1-C5": {
+    "logical_groups": 14,
+    "training_runs": 42,
+    "studies": [
+      "lora_rank_sweep"
+    ],
+    "settings": [
+      "DTD / ViT-B16",
+      "Flowers-102 / ViT-B16"
+    ]
+  },
+  "R2-C1": {
+    "logical_groups": 24,
+    "training_runs": 36,
+    "studies": [
+      "calibration"
+    ],
+    "settings": [
+      "DTD / ResNet-18",
+      "Flowers-102 / ViT-B16"
+    ]
+  },
+  "R2-C2": {
+    "logical_groups": 12,
+    "training_runs": 36,
+    "studies": [
+      "reliability"
+    ],
+    "settings": [
+      "DTD / ResNet-18",
+      "DTD / ResNet-50",
+      "Flowers-102 / ViT-B16"
+    ]
+  },
+  "R2-C3": {
+    "logical_groups": 28,
+    "training_runs": 84,
+    "studies": [
+      "lora_rank_sweep",
+      "mode_rules",
+      "r_scale"
+    ],
+    "settings": [
+      "DTD / ResNet-18",
+      "DTD / ViT-B16",
+      "Flowers-102 / ViT-B16"
+    ]
+  },
+  "R2-C5": {
+    "logical_groups": 32,
+    "training_runs": 60,
+    "studies": [
+      "batch_sensitivity",
+      "calibration"
+    ],
+    "settings": [
+      "DTD / ResNet-18",
+      "Flowers-102 / ViT-B16"
+    ]
+  },
+  "R3-C1": {
+    "logical_groups": 8,
+    "training_runs": 24,
+    "studies": [
+      "mode_rules"
+    ],
+    "settings": [
+      "DTD / ResNet-18",
+      "Flowers-102 / ViT-B16"
+    ]
+  },
+  "R3-C2": {
+    "logical_groups": 8,
+    "training_runs": 24,
+    "studies": [
+      "mode_rules"
+    ],
+    "settings": [
+      "DTD / ResNet-18",
+      "Flowers-102 / ViT-B16"
+    ]
+  },
+  "R3-C3": {
+    "logical_groups": 8,
+    "training_runs": 24,
+    "studies": [
+      "mode_rules"
+    ],
+    "settings": [
+      "DTD / ResNet-18",
+      "Flowers-102 / ViT-B16"
+    ]
+  },
+  "R3-C4": {
+    "logical_groups": 14,
+    "training_runs": 42,
+    "studies": [
+      "lora_rank_sweep"
+    ],
+    "settings": [
+      "DTD / ViT-B16",
+      "Flowers-102 / ViT-B16"
+    ]
+  }
+}

@@ -59,7 +59,8 @@ def test_onecell_wrappers_exist_for_every_session():
     for sid, path in enumerate(wrappers, 1):
         text = path.read_text(encoding="utf-8")
         assert f"SESSION_ID = {sid}" in text
-        assert "TRSO_PROJECT_ZIP" in text
+        assert "https://github.com/tydeptrai21042004/TRSO_GCREST.git" in text
+        assert "TRSO_GITHUB_COMMIT" in text
         assert "session_runner.py" in text
 
 

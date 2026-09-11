@@ -1,3 +1,12 @@
+# Kaggle execution workflows
+
+For the reviewer revision, use two public GitHub-clone workflows:
+
+- `reviewer_matrix/`: 68 principal experiment groups × seeds 0/1/2 = **204 main-table runs** across 18 sessions.
+- `reviewer_sensitivity/`: reviewer-requested reliability, calibration, mode-rule, R-scale and matched-budget controls = **180 runs** across 14 sessions.
+
+Both workflows clone `https://github.com/tydeptrai21042004/TRSO_GCREST.git` by default, support `TRSO_GITHUB_COMMIT` pinning, write source provenance, and enforce resumable runtime guards. The older `TRSO_Revision_Session_18-21` files are retained only for backward compatibility; do not use them for the final reviewer run because they bundle too many runs into one session.
+
 # Active Kaggle protocol — reviewer-ready 204-run matrix
 
 The active Kaggle cells are now under **`kaggle/reviewer_matrix/`**. They implement the complete requested matrix (68 dataset/backbone/method experiment groups × seeds 0/1/2 = **204 training runs**) and split it into **18 time-balanced sessions**. Each session is ordered fastest → slowest, records per-run ETA and actual time, stops safely before **11h50m**, and always produces a ZIP containing all completed runs.
@@ -27,7 +36,7 @@ The corrected comparison contains **46 training runs** and is split into six ind
 Every training session clones the tested G-CREST implementation directly from:
 
 ```text
-https://github.com/tydeptrai21042004/trso_adapter.git
+https://github.com/tydeptrai21042004/TRSO_GCREST.git
 ```
 
 Kaggle requirements: enable **Internet** and a **GPU accelerator**. No repository ZIP or Kaggle Dataset upload is required. The default ref is `main`; optionally set `TRSO_GITHUB_REF` or `TRSO_GITHUB_COMMIT` in the notebook environment to pin a branch, tag, or exact commit. Each result archive records the resolved Git commit in `run_summary.json`.

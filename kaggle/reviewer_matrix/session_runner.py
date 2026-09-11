@@ -28,6 +28,8 @@ ROOT = HERE.parents[1]
 if str(HERE) not in sys.path:
     sys.path.insert(0, str(HERE))
 
+PUBLIC_REPO = "https://github.com/tydeptrai21042004/TRSO_GCREST.git"
+
 from matrix_protocol import (  # noqa: E402
     EPOCHS,
     INPUT_SIZE,
@@ -58,6 +60,13 @@ def utc_now() -> str:
 def git_commit(repo: Path) -> str:
     try:
         return subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=repo, text=True).strip()
+    except Exception:
+        return "unknown"
+
+
+def git_remote(repo: Path) -> str:
+    try:
+        return subprocess.check_output(["git", "remote", "get-url", "origin"], cwd=repo, text=True).strip()
     except Exception:
         return "unknown"
 
@@ -563,17 +572,29 @@ def main() -> int:
 
     gpu_name, gpu_factor = detect_gpu()
     commit = git_commit(repo)
+    remote = git_remote(repo)
     state_path = output / "session_state.json"
     state = load_state(state_path, session_id=session_id, commit=commit, gpu_name=gpu_name)
     state["git_commit"] = commit
+    state["git_remote"] = remote
     state["gpu_name"] = gpu_name
     state["initial_gpu_runtime_factor_vs_t4"] = gpu_factor
 
     protocol = session_payload(session_id)
     protocol["resolved_git_commit"] = commit
+    protocol["resolved_git_remote"] = remote
+    protocol["expected_public_repo"] = PUBLIC_REPO
     protocol["resolved_gpu_name"] = gpu_name
     protocol["resolved_gpu_runtime_factor_vs_t4"] = gpu_factor
     (output / "session_protocol.json").write_text(json.dumps(protocol, indent=2), encoding="utf-8")
+    (output / "source_provenance.json").write_text(json.dumps({
+        "repository_expected": PUBLIC_REPO,
+        "repository_resolved": remote,
+        "git_commit": commit,
+        "git_ref_requested": os.environ.get("TRSO_GITHUB_REF", "main"),
+        "git_commit_requested": os.environ.get("TRSO_GITHUB_COMMIT", ""),
+        "generated_at_utc": utc_now(),
+    }, indent=2), encoding="utf-8")
 
     print_plan(session_id, gpu_name, gpu_factor)
     save_state(state, state_path)

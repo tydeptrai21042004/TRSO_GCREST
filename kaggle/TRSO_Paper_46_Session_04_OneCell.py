@@ -17,7 +17,7 @@ WORK = Path("/kaggle/working")
 REPO = WORK / "TRSO_Paper46"
 GITHUB_REPO = os.environ.get(
     "TRSO_GITHUB_REPO",
-    "https://github.com/tydeptrai21042004/trso_adapter.git",
+    "https://github.com/tydeptrai21042004/TRSO_GCREST.git",
 ).strip()
 GITHUB_REF = os.environ.get("TRSO_GITHUB_REF", "main").strip() or "main"
 GITHUB_COMMIT_PIN = os.environ.get("TRSO_GITHUB_COMMIT", "").strip()

@@ -1,612 +1,83 @@
 {
-  "base_archive": "TRSO_GCREST-main(20260911-155851).zip",
-  "comparison": "SHA-256 file-content comparison; timestamps/metadata ignored",
-  "added_files": 52,
-  "modified_files": 31,
-  "removed_files": 0,
-  "included_project_files": 83,
-  "removed_paths": [],
-  "verification": {
-    "test_suite": "184 passed",
-    "experiment_groups": 68,
-    "seeds_per_experiment": [
-      0,
-      1,
-      2
-    ],
-    "total_seed_runs": 204,
-    "kaggle_sessions": 18,
-    "session_zip_refresh": "after every completed three-seed experiment group and at session exit",
-    "metrics_export": [
-      "all_reported_metrics.json",
-      "all_final_metrics.csv",
-      "all_epoch_metrics.csv",
-      "metrics_inventory.csv",
-      "seed_completeness.csv",
-      "metrics_coverage.json"
-    ]
+  "base_archive": "TRSO_GCREST-main(20260911-163408).zip",
+  "summary": {
+    "changed": 47,
+    "added": 23,
+    "deleted": 0
   },
-  "files": [
-    {
-      "path": "BASELINE_FAIRNESS_CHANGELOG_20260911.md",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "ee1698b1bf4830f10dbf29fbd9ffcd7f821df618cbe0f2f1857822791930c661",
-      "bytes": 4794
-    },
-    {
-      "path": "BASELINE_SOURCE_AUDIT.md",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "e9caf535795d53f093931098798fcddeb3df61b5912852941626e6af841d7a5b",
-      "bytes": 1082
-    },
-    {
-      "path": "FINAL_REVIEWER_REVISION_CODE_REPORT.md",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "1f43d74d53716c0aa95d917d89b0783a4dddcdfdcf34f37742dd411fc7eedc36",
-      "bytes": 4403
-    },
-    {
-      "path": "KAGGLE_REVIEWER_MATRIX_UPDATE.md",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "c10777d74dd446344d292f2eecc62c97bf47bbe3d9e0beb8b8217ddb7b8a69e8",
-      "bytes": 1205
-    },
-    {
-      "path": "baseline_recipes.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "c0e31ac662ed6e5091449563de764385f9b9f2cba6a469b13bb4a65c74eed2cb",
-      "bytes": 15388
-    },
-    {
-      "path": "experiments/revision_full_protocol.csv",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "58e890f21083ead2aca0cb571d22dc01e6421944c6fa3181656dede79e8cc1f0",
-      "bytes": 1528
-    },
-    {
-      "path": "experiments/revision_full_protocol.json",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "d2231ff73ec1493a5aa6ba074ba7c59a65e48dc5d49d12d2ce86c841660ef07f",
-      "bytes": 4573
-    },
-    {
-      "path": "kaggle/TRSO_Revision_Session_15_OneCell.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "229222a0178c22e7ee2168b14d76a571d1d2f77a42933ac2f74ba75182cc5d8a",
-      "bytes": 460
-    },
-    {
-      "path": "kaggle/TRSO_Revision_Session_16_OneCell.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "1ad0da28e79a89e7ae6a460bb5e4d4dca9df955adfa14771c60b30d97209d3fd",
-      "bytes": 460
-    },
-    {
-      "path": "kaggle/TRSO_Revision_Session_17_OneCell.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "5b7e3729198edfa21ee3f0960d35eb0c14c23fec358a1b946fa29d03bd0fb93c",
-      "bytes": 460
-    },
-    {
-      "path": "kaggle/TRSO_Revision_Session_18_OneCell.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "6557d478ec8ba196d0b50df807920bb0911842f8502db6200de7e54fcd705a3e",
-      "bytes": 460
-    },
-    {
-      "path": "kaggle/TRSO_Revision_Session_19_OneCell.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "e9354f88b279f50771c1baeb40a2467fe2be16bfa7e684ff83b9f7c3b0be621b",
-      "bytes": 460
-    },
-    {
-      "path": "kaggle/TRSO_Revision_Session_20_OneCell.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "31a82273f99c13e40a9256425aced82a054bd4278e97679b17e0474ee0a88466",
-      "bytes": 460
-    },
-    {
-      "path": "kaggle/TRSO_Revision_Session_21_OneCell.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "151eb1f010e0f60bc7fc80d378f5067040ae3c90585d18f8456bdfdb94cbf835",
-      "bytes": 460
-    },
-    {
-      "path": "kaggle/reviewer_matrix/README.md",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "016463ddf505ac6caf41959ca8876425aea44089658dae0955465584098a5b7e",
-      "bytes": 9532
-    },
-    {
-      "path": "kaggle/reviewer_matrix/TRSO_Reviewer_Matrix_Merge_Results.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "85b0ebdcedfad5e8183b0527468107ad526d61ed7763615f0be4afafdbc21c42",
-      "bytes": 8141
-    },
-    {
-      "path": "kaggle/reviewer_matrix/TRSO_Reviewer_Matrix_Session_01_OneCell.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "adde9e6ed96457c62ec5db8efa76ca513475c99a47486e9f4e0ff151697b859d",
-      "bytes": 4086
-    },
-    {
-      "path": "kaggle/reviewer_matrix/TRSO_Reviewer_Matrix_Session_02_OneCell.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "44e027591adab302cd7944d2ccb72a21e2005161d11c1f876d6bfa01d4ed71e8",
-      "bytes": 4086
-    },
-    {
-      "path": "kaggle/reviewer_matrix/TRSO_Reviewer_Matrix_Session_03_OneCell.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "a1de85e98aa3f26f30646b04a0f872eb8fda4a664c6a43d665fd5bca8f880bee",
-      "bytes": 4086
-    },
-    {
-      "path": "kaggle/reviewer_matrix/TRSO_Reviewer_Matrix_Session_04_OneCell.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "528e24364e57f46da532f9caa9d82a1e692a26bcd02fd9cceb063b309be2faa0",
-      "bytes": 4086
-    },
-    {
-      "path": "kaggle/reviewer_matrix/TRSO_Reviewer_Matrix_Session_05_OneCell.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "f606feb4aba2f801ce37e7f4033930bbf62af263908b4b9f2634b3e5fca8c7b0",
-      "bytes": 4086
-    },
-    {
-      "path": "kaggle/reviewer_matrix/TRSO_Reviewer_Matrix_Session_06_OneCell.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "441fecb0b23d39948d30cb559056e7903b4b80a79b188157f08d60a7851caca2",
-      "bytes": 4086
-    },
-    {
-      "path": "kaggle/reviewer_matrix/TRSO_Reviewer_Matrix_Session_07_OneCell.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "fc986c211549e6ddc75c7286351d8370e46f4aa84f538880386a2b10f3a729de",
-      "bytes": 4086
-    },
-    {
-      "path": "kaggle/reviewer_matrix/TRSO_Reviewer_Matrix_Session_08_OneCell.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "a33fc82caeb555e774480690ef7a8ce5920e2a3162cc58f6610fd6d467a72450",
-      "bytes": 4086
-    },
-    {
-      "path": "kaggle/reviewer_matrix/TRSO_Reviewer_Matrix_Session_09_OneCell.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "757bd6838e66e8846025ecb13fd9a00ebf372891e348f79823c243f2c35d7e2d",
-      "bytes": 4086
-    },
-    {
-      "path": "kaggle/reviewer_matrix/TRSO_Reviewer_Matrix_Session_10_OneCell.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "77bcb4dfb531e1f9fff98106a157e70c21dfb9010053c8ded5e3d1d8b8702cac",
-      "bytes": 4087
-    },
-    {
-      "path": "kaggle/reviewer_matrix/TRSO_Reviewer_Matrix_Session_11_OneCell.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "c75ebc1661ef46a0f2354798bd9d90c78e3d3fbc3ca4f844d2100eff0efbc44f",
-      "bytes": 4087
-    },
-    {
-      "path": "kaggle/reviewer_matrix/TRSO_Reviewer_Matrix_Session_12_OneCell.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "96e4e5d012f0142b281501ba6bbbe04cbecec3e7a046d498e65ef1f6de241f91",
-      "bytes": 4087
-    },
-    {
-      "path": "kaggle/reviewer_matrix/TRSO_Reviewer_Matrix_Session_13_OneCell.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "6b2604f49728c9c5b359bb15b683263deb98b51deeff772aab4dfc8fa4560ae4",
-      "bytes": 4087
-    },
-    {
-      "path": "kaggle/reviewer_matrix/TRSO_Reviewer_Matrix_Session_14_OneCell.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "57cb2e435ba9dacbbff459810a6857c0d0723ad63353c2fe5ef27947c69709fb",
-      "bytes": 4087
-    },
-    {
-      "path": "kaggle/reviewer_matrix/TRSO_Reviewer_Matrix_Session_15_OneCell.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "d59d7799895270693f2685f2454eaa9a6fb133a879f2be918b41cf0c56cc8380",
-      "bytes": 4087
-    },
-    {
-      "path": "kaggle/reviewer_matrix/TRSO_Reviewer_Matrix_Session_16_OneCell.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "40c87c5bf8c0f8a94cb5605bdd24a93e1416f1ddc9c9fefb3f0dc4e20acb0e0b",
-      "bytes": 4087
-    },
-    {
-      "path": "kaggle/reviewer_matrix/TRSO_Reviewer_Matrix_Session_17_OneCell.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "ac4a8ae680a741d4bc47c8341fc156ae281874bb879bda1e4b37573dd5bb56b9",
-      "bytes": 4087
-    },
-    {
-      "path": "kaggle/reviewer_matrix/TRSO_Reviewer_Matrix_Session_18_OneCell.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "e66c8cd497c8b3937a64b0015a67cd312fac99af0216832079449318a149762d",
-      "bytes": 4087
-    },
-    {
-      "path": "kaggle/reviewer_matrix/VALIDATION_REPORT.json",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "3474a235b7b76b7715bdca279cd6cb8182b8551dd58e386844e7a05329dd3fcb",
-      "bytes": 1567
-    },
-    {
-      "path": "kaggle/reviewer_matrix/VALIDATION_REPORT.md",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "6e28c352656ec453cf01e4a1f85f8786d7b946cbcbdbd6d51d4aaf0728ae2650",
-      "bytes": 1234
-    },
-    {
-      "path": "kaggle/reviewer_matrix/matrix_protocol.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "cbf8c72de57bcb60d02c1c4f0b4fa1f645d24c86db9df602cb41dffe49f7f803",
-      "bytes": 13245
-    },
-    {
-      "path": "kaggle/reviewer_matrix/reviewer_matrix_plan.csv",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "25f1acde2f20ae4c01529f2845cc84648c9eabd37104807fc8f1a934e525843b",
-      "bytes": 6410
-    },
-    {
-      "path": "kaggle/reviewer_matrix/reviewer_matrix_plan.json",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "e9edab152478e4bd7e10f26297b0c96be222fd5e4bbdab186a15074bb6752a04",
-      "bytes": 60013
-    },
-    {
-      "path": "kaggle/reviewer_matrix/session_runner.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "2605522a22b624541a3f99be1b956a91fef138261191911fcb8bca3eea08567f",
-      "bytes": 29886
-    },
-    {
-      "path": "models/tuning_modules/ml_decoder.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "9cc24ba440f335f073c3854ddbcbd4f1edee3bcd12b20b1c703b6108c4f29793",
-      "bytes": 7461
-    },
-    {
-      "path": "models/tuning_modules/segadapter.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "6720f315cc8b4f60a1beb36e1d258845d98920023843cb58a04a549c132f23c6",
-      "bytes": 8210
-    },
-    {
-      "path": "tests/test_kaggle_reviewer_matrix.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "5cf0b7fd04b727b2179869c0f4c71c728ba0b080ad932c81f87cb0fcc5d97415",
-      "bytes": 5979
-    },
-    {
-      "path": "tests/test_ml_decoder_revision_baseline.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "5efff61cf819dc5866f7d5cf6a486ff79a5fde57a771200d515b2437793a38d3",
-      "bytes": 1503
-    },
-    {
-      "path": "tests/test_paper_fair_pair_protocol.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "61be2723cc5ba755e489ec1f4ac97d29b59408eef6b2ce31f575cc8ae06c9d18",
-      "bytes": 6925
-    },
-    {
-      "path": "tests/test_reviewer_revision_protocol_fixes.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "7e5cc86a06923de26686d942b14a2c6e0c5c73cb6e4d85ee80ad7c960de56d7a",
-      "bytes": 1878
-    },
-    {
-      "path": "tests/test_revision_full_protocol.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "2877a824f1f7914ff99bdac671d6337bc6c429e5c4005b5683f3a56d505b0715",
-      "bytes": 3935
-    },
-    {
-      "path": "tests/test_segadapter_revision_baseline.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "1a6f25e921e957b6c3a660f66bd7ff4219ae1f12d16e72cc2d7d6d24a2588288",
-      "bytes": 1686
-    },
-    {
-      "path": "tools/revision_full_protocol.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "5f78ba8b6f909f64b18ddb92e20955124ee8d66141c35a7eccee5903b1af60b0",
-      "bytes": 7276
-    },
-    {
-      "path": "tools/run_paper_fair_pairs.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "19c143a6f525c016fa9a2aa963369d47debd18adfd0ea0fc9fcf83870ae0504b",
-      "bytes": 18809
-    },
-    {
-      "path": "tools/select_paper_pair_trials.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "4498bab830da2e9b9c8379d92ff4aafe3002016244d844234b3cd1b0cd7195d3",
-      "bytes": 6503
-    },
-    {
-      "path": "tools/verify_paper_pairs.py",
-      "status": "added",
-      "old_sha256": null,
-      "new_sha256": "55cc2208ceb4d7859efa893711f0643388f32fb4011b1aaf124c5c25143f32f9",
-      "bytes": 4459
-    },
-    {
-      "path": "BASELINE_AND_ABLATION_SEPARATION.md",
-      "status": "modified",
-      "old_sha256": "818603aaa698c7e82bd886c12a18098f2bc05196f11239e3150de2e334cb6033",
-      "new_sha256": "204df1be4f33cf4123ef5e5770567522f153b567d37b27e26527b68f310091fe",
-      "bytes": 4514
-    },
-    {
-      "path": "BASELINE_EXPANSION_GUIDE.md",
-      "status": "modified",
-      "old_sha256": "c0b09d73dc03bb48fd311664013d171ea8ff10550a137b0c98d87ce433b5edf1",
-      "new_sha256": "b28d8732fc18d71a190cc0498495d364f23c70f0bbcfd5d447b2382ced5e541f",
-      "bytes": 2560
-    },
-    {
-      "path": "BASELINE_FIDELITY.md",
-      "status": "modified",
-      "old_sha256": "129589c4ec92e82c2ebbd1a4c923820289f154e0c54736803c9287316983fbfd",
-      "new_sha256": "dec5215a9f73de37c29967eea3d200feee8666bc9339978a2642c210bde6fb19",
-      "bytes": 2817
-    },
-    {
-      "path": "CHECKSUMS.sha256",
-      "status": "modified",
-      "old_sha256": "7cae0e46633d79a5bb12fbf65ed69396fd88000b6e8f0ebcaee951d652b8520b",
-      "new_sha256": "03e594c0fc1bf57d9dbecdec43d43e5cce09fa23a3386b2d145ae19d431e2617",
-      "bytes": 23681
-    },
-    {
-      "path": "MINIMAL_PAPER_46_RUN_PROTOCOL.md",
-      "status": "modified",
-      "old_sha256": "7b2630c2f639b2813748d906421b24a88b91e783a58d5215e0d64c1f133f65fb",
-      "new_sha256": "a09ed601d5c05c4f3abd756d0e218369d0255a06753f1bfde3be07e4d7fb197c",
-      "bytes": 2004
-    },
-    {
-      "path": "ORIGINAL_PAPER_BASELINE_AUDIT.md",
-      "status": "modified",
-      "old_sha256": "62e7beee292514917355d5b6e18d4b9add84484ccfe56ceff46c9b60840269f8",
-      "new_sha256": "c46a7f79cf13fbda4b09d6d9e179712913d2e580714cb0a916647123a58aa139",
-      "bytes": 1645
-    },
-    {
-      "path": "PAPER_BASELINE_REPRODUCTION.md",
-      "status": "modified",
-      "old_sha256": "8fdcdf3e448b86a31fe9fc93eebd473c3e08033cb2aa44176bdfbd2925ba3eaa",
-      "new_sha256": "cbf174a379539d68d12adbaa801cd73a9a7105372f4ec1f0d993d6599e2e65a7",
-      "bytes": 4255
-    },
-    {
-      "path": "PAPER_BASELINE_VALIDATION.md",
-      "status": "modified",
-      "old_sha256": "b90f8b9312f43cb017a074a165d81eb3c88fbb750d3840421caa863ecd5508c1",
-      "new_sha256": "34e6d028fbe7b5f4aea557fd70156ec554ad9a120e72172909bccdb36af7bcbf",
-      "bytes": 983
-    },
-    {
-      "path": "README.md",
-      "status": "modified",
-      "old_sha256": "1c339476a86ab9a3f51b17dcb0bc2be11d2072c14cf2ea73436a38ed7330ce8e",
-      "new_sha256": "e3cf205b825338ea9533c93eacdaafafde3a4e945c49098f1a07ef96274da5fd",
-      "bytes": 6902
-    },
-    {
-      "path": "REMOVED_NON_PAPER_METHODS.md",
-      "status": "modified",
-      "old_sha256": "725c27c895643bb578ce834ff4a02f186054bbe5722b7d2b0d28492838413d69",
-      "new_sha256": "f8e1b724adca30f76612a63a9bf214ee233605487967966a3c919ad7ca941259",
-      "bytes": 777
-    },
-    {
-      "path": "REVIEWER_REVISION_GUIDE.md",
-      "status": "modified",
-      "old_sha256": "6807f60030a39ed1f5736174f554f9ddb940f28eebfbc51a1c9d99fedd46a049",
-      "new_sha256": "6898ebe812afe835af67e34366b97016b81b136082fbc38d31f66709bafb55be",
-      "bytes": 9400
-    },
-    {
-      "path": "SOURCE_MANIFEST.json",
-      "status": "modified",
-      "old_sha256": "4edfa3b86ced6ab63d55148f17606f2f503b2a98c8ef5c8a8db7ad9281dcac1f",
-      "new_sha256": "c2f78b563354e9ed93d933d883647d86956224d3dc46cbb06f8d5b2134e1a5fb",
-      "bytes": 37292
-    },
-    {
-      "path": "SOURCE_MANIFEST.txt",
-      "status": "modified",
-      "old_sha256": "57616f69b48cdfd9dd7cb0a93e4abb8c96b96f823c52499a63446e613bb6aa6a",
-      "new_sha256": "10cad6c2599b3697a0cd2b01416f87d793eb25701bcd39931f32745d35e2292f",
-      "bytes": 8171
-    },
-    {
-      "path": "SUPPORT_MATRIX.md",
-      "status": "modified",
-      "old_sha256": "dbbcf20baf1f7dffc3984912131eb8d521bbbdaef97b5b7eadaf136b0ce30f00",
-      "new_sha256": "eee0878c379dc8201e610860f2f379189b3a9a5f87addf76880cf41504760cca",
-      "bytes": 1887
-    },
-    {
-      "path": "engine.py",
-      "status": "modified",
-      "old_sha256": "ae12376c46e6d68ec28a25ee8118647a2304cab3458a6c4eb5d36455b22ec2e8",
-      "new_sha256": "64af5c3b99190d06ba5e912aac75913b0780df8573d8958d8a87aec20cae041a",
-      "bytes": 43323
-    },
-    {
-      "path": "experiments/README.md",
-      "status": "modified",
-      "old_sha256": "c1607a12e087c2939b7d5282cd2d4ac2d2d11c8636517b6ace76c99193c9427e",
-      "new_sha256": "3f0239d47d88a1a091d708c1350bef0b7bac635e03f8a661ecf9e7c1c0e7f7e1",
-      "bytes": 1144
-    },
-    {
-      "path": "kaggle/README.md",
-      "status": "modified",
-      "old_sha256": "5a45b2899c3b48378981c8620092663cdf28392c214935db61434c9aeda16d71",
-      "new_sha256": "2a789e9151f719ea733f1c8ae480aba51381ab9298c1f16aa762c62020ac33a5",
-      "bytes": 4669
-    },
-    {
-      "path": "kaggle/revision_session_runner.py",
-      "status": "modified",
-      "old_sha256": "4f9c4a97025952730102cd2ad9e9422625e336655e7ed5a716184d4d2f25eb36",
-      "new_sha256": "221ae8781a490319d5801526b2bcc6e01ca8e99fc6ce04c6fb99ede82fc9ffff",
-      "bytes": 1719
-    },
-    {
-      "path": "main.py",
-      "status": "modified",
-      "old_sha256": "69c79b4b072fb480eea57ca12f10bf6d3ae3801d3ba91e858b564c14d73c53f9",
-      "new_sha256": "d983b38212a9c3c70791b481b6ef2162ab1c77c093eebd17a60b77de354da506",
-      "bytes": 135067
-    },
-    {
-      "path": "models/model_support.py",
-      "status": "modified",
-      "old_sha256": "b8f5189fe6d2cadff82148d2d3c2a6c2fe5e581ad9a8e30e0624a40f55964db7",
-      "new_sha256": "42e0442cc5a1b906edec0a4a74e7cdab7fc73124455c567fa51c8ecd8733eb38",
-      "bytes": 28618
-    },
-    {
-      "path": "models/structured_models.py",
-      "status": "modified",
-      "old_sha256": "644742eced5323d89c089bcee3089807a4d64ed475d78c28dff6bc302f52a2b1",
-      "new_sha256": "2a27fc6bf0bd08b0f64f77a73eede12d3524908a732fb51f2f373778f9fbc718",
-      "bytes": 8657
-    },
-    {
-      "path": "models/tuning_modules/__init__.py",
-      "status": "modified",
-      "old_sha256": "eca9cb96360dc994cd9ca5aaaeba195e31221826ae8bee3da2e0bc1074e098e0",
-      "new_sha256": "cdcb2752d053a1de137faeb6349578b589cca8b793f7cad7e429555d7c9242e7",
-      "bytes": 6924
-    },
-    {
-      "path": "tests/test_arc_baseline.py",
-      "status": "modified",
-      "old_sha256": "e20ff3c5d3d1d819e1f1956985fc691b290e92ba648e65e239b4be0a72eb8abd",
-      "new_sha256": "6176eccd560c9dbc0672febc67ecf4eb8b14c07244e23c58c3734997890425e8",
-      "bytes": 4537
-    },
-    {
-      "path": "tests/test_extended_revision_protocol.py",
-      "status": "modified",
-      "old_sha256": "90666aaf306eaad4f6695d8a601620cccbec3a51c6397ace57f644e322524249",
-      "new_sha256": "c07ce31575480e41a51ea16966bd21e1933ba51428e5f73ab0a884e46f69995b",
-      "bytes": 1067
-    },
-    {
-      "path": "tests/test_original_paper_scope_contract.py",
-      "status": "modified",
-      "old_sha256": "e9133a75610a22bb0ec603de7ca8d6dd7475d8ab458f78062938eccd969bd42c",
-      "new_sha256": "023272ded298e10d533c8ae4fff1b3b5c98024d4f08f4f3412f7acf1879e64d8",
-      "bytes": 4599
-    },
-    {
-      "path": "tests/test_universal_fair_framework.py",
-      "status": "modified",
-      "old_sha256": "ba40695c00515c25ad91455e675eced6897a47b5bcfae2e9fd186133e020ce50",
-      "new_sha256": "82f80fe5bfa66bd8ae2d54d86631b2b359cab57d6dca50640a61437742bb4d03",
-      "bytes": 8381
-    },
-    {
-      "path": "tools/aggregate_revision_results.py",
-      "status": "modified",
-      "old_sha256": "6a29de86635c54d4dd6018924117a801578ac18f13617762da36d508d009e469",
-      "new_sha256": "5530e4788d31b838bd34d8a6243acd6a193843d92719875c4a611f943556330f",
-      "bytes": 17389
-    },
-    {
-      "path": "tools/extended_paper_protocol.py",
-      "status": "modified",
-      "old_sha256": "8e925935ece36ddfd9a641ef277a0f88242779528d0e95c85dd7a8724b1ea865",
-      "new_sha256": "786d1ad3696e499e3007d6750241764b92976a0041d29f0981fbde46d114a6ec",
-      "bytes": 6437
-    },
-    {
-      "path": "tools/run_fair_suite.py",
-      "status": "modified",
-      "old_sha256": "d8f22a8ff098ffc8b934ab200f5e45ea55cb3e916f16b1b1d493cbf469c3ed63",
-      "new_sha256": "4cc493e67258ebb0cc22f9c5e2e62e9a755e939fc2acd715c0824c0ceaae7406",
-      "bytes": 25984
-    },
-    {
-      "path": "tools/run_reviewer_revision.py",
-      "status": "modified",
-      "old_sha256": "c284495441791ca454cf7a85948f33ebcc9cfe05d18e25c61445ba1a8ee35533",
-      "new_sha256": "2a896316bd27815875a72956191b7fefd3a7a4d2154f50c0ba94ad475d052f3c",
-      "bytes": 11355
-    },
-    {
-      "path": "tools/verify_fairness.py",
-      "status": "modified",
-      "old_sha256": "0884c58747e3c8400ffee249e10bbe6d0359dcdfe783530e10f1939a876e58e6",
-      "new_sha256": "6b563fb29b86de791f326eb771fb49bac25b7b7f3131a0f31c3aab8b6656ee8f",
-      "bytes": 5860
-    }
-  ]
+  "changed_files": [
+    "FINAL_TEST_REPORT.md",
+    "README.md",
+    "kaggle/README.md",
+    "kaggle/TRSO_Paper_46_Session_01_OneCell.py",
+    "kaggle/TRSO_Paper_46_Session_02_OneCell.py",
+    "kaggle/TRSO_Paper_46_Session_03_OneCell.py",
+    "kaggle/TRSO_Paper_46_Session_04_OneCell.py",
+    "kaggle/TRSO_Paper_46_Session_05_OneCell.py",
+    "kaggle/TRSO_Paper_46_Session_06_OneCell.py",
+    "kaggle/TRSO_Revision_Session_07_OneCell.py",
+    "kaggle/TRSO_Revision_Session_08_OneCell.py",
+    "kaggle/TRSO_Revision_Session_09_OneCell.py",
+    "kaggle/TRSO_Revision_Session_10_OneCell.py",
+    "kaggle/TRSO_Revision_Session_11_OneCell.py",
+    "kaggle/TRSO_Revision_Session_12_OneCell.py",
+    "kaggle/TRSO_Revision_Session_13_OneCell.py",
+    "kaggle/TRSO_Revision_Session_14_OneCell.py",
+    "kaggle/TRSO_Revision_Session_15_OneCell.py",
+    "kaggle/TRSO_Revision_Session_16_OneCell.py",
+    "kaggle/TRSO_Revision_Session_17_OneCell.py",
+    "kaggle/TRSO_Revision_Session_18_OneCell.py",
+    "kaggle/TRSO_Revision_Session_19_OneCell.py",
+    "kaggle/TRSO_Revision_Session_20_OneCell.py",
+    "kaggle/TRSO_Revision_Session_21_OneCell.py",
+    "kaggle/reviewer_matrix/README.md",
+    "kaggle/reviewer_matrix/TRSO_Reviewer_Matrix_Session_01_OneCell.py",
+    "kaggle/reviewer_matrix/TRSO_Reviewer_Matrix_Session_02_OneCell.py",
+    "kaggle/reviewer_matrix/TRSO_Reviewer_Matrix_Session_03_OneCell.py",
+    "kaggle/reviewer_matrix/TRSO_Reviewer_Matrix_Session_04_OneCell.py",
+    "kaggle/reviewer_matrix/TRSO_Reviewer_Matrix_Session_05_OneCell.py",
+    "kaggle/reviewer_matrix/TRSO_Reviewer_Matrix_Session_06_OneCell.py",
+    "kaggle/reviewer_matrix/TRSO_Reviewer_Matrix_Session_07_OneCell.py",
+    "kaggle/reviewer_matrix/TRSO_Reviewer_Matrix_Session_08_OneCell.py",
+    "kaggle/reviewer_matrix/TRSO_Reviewer_Matrix_Session_09_OneCell.py",
+    "kaggle/reviewer_matrix/TRSO_Reviewer_Matrix_Session_10_OneCell.py",
+    "kaggle/reviewer_matrix/TRSO_Reviewer_Matrix_Session_11_OneCell.py",
+    "kaggle/reviewer_matrix/TRSO_Reviewer_Matrix_Session_12_OneCell.py",
+    "kaggle/reviewer_matrix/TRSO_Reviewer_Matrix_Session_13_OneCell.py",
+    "kaggle/reviewer_matrix/TRSO_Reviewer_Matrix_Session_14_OneCell.py",
+    "kaggle/reviewer_matrix/TRSO_Reviewer_Matrix_Session_15_OneCell.py",
+    "kaggle/reviewer_matrix/TRSO_Reviewer_Matrix_Session_16_OneCell.py",
+    "kaggle/reviewer_matrix/TRSO_Reviewer_Matrix_Session_17_OneCell.py",
+    "kaggle/reviewer_matrix/TRSO_Reviewer_Matrix_Session_18_OneCell.py",
+    "kaggle/reviewer_matrix/session_runner.py",
+    "kaggle/revision_session_runner.py",
+    "tests/test_kaggle_reviewer_matrix.py",
+    "tests/test_minimal_paper_protocol.py"
+  ],
+  "added_files": [
+    "REVIEWER_KAGGLE_CORRECTION_REPORT.md",
+    "kaggle/reviewer_sensitivity/README.md",
+    "kaggle/reviewer_sensitivity/TRSO_Reviewer_Sensitivity_Merge_Results.py",
+    "kaggle/reviewer_sensitivity/TRSO_Reviewer_Sensitivity_Session_01_OneCell.py",
+    "kaggle/reviewer_sensitivity/TRSO_Reviewer_Sensitivity_Session_02_OneCell.py",
+    "kaggle/reviewer_sensitivity/TRSO_Reviewer_Sensitivity_Session_03_OneCell.py",
+    "kaggle/reviewer_sensitivity/TRSO_Reviewer_Sensitivity_Session_04_OneCell.py",
+    "kaggle/reviewer_sensitivity/TRSO_Reviewer_Sensitivity_Session_05_OneCell.py",
+    "kaggle/reviewer_sensitivity/TRSO_Reviewer_Sensitivity_Session_06_OneCell.py",
+    "kaggle/reviewer_sensitivity/TRSO_Reviewer_Sensitivity_Session_07_OneCell.py",
+    "kaggle/reviewer_sensitivity/TRSO_Reviewer_Sensitivity_Session_08_OneCell.py",
+    "kaggle/reviewer_sensitivity/TRSO_Reviewer_Sensitivity_Session_09_OneCell.py",
+    "kaggle/reviewer_sensitivity/TRSO_Reviewer_Sensitivity_Session_10_OneCell.py",
+    "kaggle/reviewer_sensitivity/TRSO_Reviewer_Sensitivity_Session_11_OneCell.py",
+    "kaggle/reviewer_sensitivity/TRSO_Reviewer_Sensitivity_Session_12_OneCell.py",
+    "kaggle/reviewer_sensitivity/TRSO_Reviewer_Sensitivity_Session_13_OneCell.py",
+    "kaggle/reviewer_sensitivity/TRSO_Reviewer_Sensitivity_Session_14_OneCell.py",
+    "kaggle/reviewer_sensitivity/reviewer_coverage.json",
+    "kaggle/reviewer_sensitivity/reviewer_sensitivity_plan.csv",
+    "kaggle/reviewer_sensitivity/reviewer_sensitivity_plan.json",
+    "kaggle/reviewer_sensitivity/sensitivity_protocol.py",
+    "kaggle/reviewer_sensitivity/sensitivity_session_runner.py",
+    "tests/test_kaggle_reviewer_sensitivity.py"
+  ],
+  "deleted_files": []
 }

@@ -68,7 +68,7 @@ The analysis-only variants are `diagonal_only`, `no_sampling_variance`, `no_cros
 
 The frozen submitted-manuscript protocol contains 46 training runs split into sessions of 6, 10, 12, 6, 6 and 6 runs. It is retained for reproduction, but it is **not** the active reviewer-ready fairness protocol. Every historical session:
 
-- clones `https://github.com/tydeptrai21042004/trso_adapter.git` from `main`;
+- clones `https://github.com/tydeptrai21042004/TRSO_GCREST.git` from `main`;
 - verifies the G-CREST release contract;
 - uses seed 0, 30 epochs and shared strong augmentation;
 - separates strict baselines, reference controls, proposal rows and proposal ablations;
@@ -110,3 +110,7 @@ Repository tests and controlled diagnostics establish implementation correctness
 ## Major-revision reviewer experiments
 
 See [`REVIEWER_REVISION_GUIDE.md`](REVIEWER_REVISION_GUIDE.md) for multi-seed, allocation-stability, calibration-sensitivity, D0/D1-rule, R-scaling, and matched-budget LoRA experiments. The proposal defaults are unchanged; all new controls are ablation/evaluation switches.
+
+## Reviewer revision Kaggle workflow
+
+The final reviewer protocol is split into two runtime-safe workflows: `kaggle/reviewer_matrix` (204 main-table runs) and `kaggle/reviewer_sensitivity` (180 reviewer-requested sensitivity/ablation runs). Both clone the public `TRSO_GCREST` repository and can pin an immutable commit with `TRSO_GITHUB_COMMIT`. Use the generated plan/coverage files in each directory when preparing the point-by-point response.

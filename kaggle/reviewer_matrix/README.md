@@ -1,4 +1,8 @@
-# Active Kaggle reviewer matrix (204 training runs)
+# Main reviewer Kaggle matrix (204 runs)
+
+This directory is the **main-table** 68-group × 3-seed matrix. Reviewer-requested ablations and sensitivity studies are intentionally separated into [`../reviewer_sensitivity/`](../reviewer_sensitivity/), which adds 72 logical groups / 180 runs in 14 runtime-safe sessions.
+
+All public one-cell scripts clone `https://github.com/tydeptrai21042004/TRSO_GCREST.git` by default. For archival runs set `TRSO_GITHUB_COMMIT` to the exact release SHA.
 
 This is the active Kaggle execution plan for the reviewer-ready main comparison. It contains **68 dataset/backbone/method experiments × seeds 0,1,2 = 204 independent training runs**. The outer protocol is controlled and fair: same split, 30 epochs, fresh task heads, AdamW/cosine policy, and source-audited method-internal defaults from `baseline_recipes.py`.
 

@@ -7,7 +7,7 @@ from pathlib import Path
 def run_revision_session(session_id: int):
     work = Path('/kaggle/working') if Path('/kaggle/working').exists() else Path.cwd()
     repo = work / 'TRSO_Revision'
-    url = os.environ.get('TRSO_GITHUB_REPO', 'https://github.com/tydeptrai21042004/trso_adapter.git')
+    url = os.environ.get('TRSO_GITHUB_REPO', 'https://github.com/tydeptrai21042004/TRSO_GCREST.git')
     ref = os.environ.get('TRSO_GITHUB_REF', 'main')
     if repo.exists(): shutil.rmtree(repo)
     subprocess.run(['git','clone','--depth','1','--branch',ref,url,str(repo)], check=True)
