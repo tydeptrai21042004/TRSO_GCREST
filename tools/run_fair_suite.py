@@ -43,6 +43,8 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from datasets.build import available_datasets
+from datasets.download import parse_download_mode
+from datasets.registry import get_dataset_spec
 from task_registry import (
     TASK_DEPTH_ESTIMATION, TASK_MULTILABEL, TASK_OBJECT_DETECTION,
     TASK_REGRESSION, TASK_SEMANTIC_SEGMENTATION, TASK_SINGLE_LABEL,
@@ -71,6 +73,7 @@ SINGLE_LABEL_DATASETS = {
     "fgvc_aircraft", "sun397", "gtsrb", "fer2013", "pcam", "country211",
     "rendered_sst2", "places365", "inaturalist", "imagefolder", "cub200",
     "nabirds", "stanford_dogs", "vtab", "fewshot",
+    "pathmnist", "dermamnist", "bloodmnist", "pneumoniamnist", "organamnist", "tissuemnist",
 }
 
 SEGMENTATION_DATASETS = {
@@ -106,7 +109,7 @@ def parser() -> argparse.ArgumentParser:
     p.add_argument("--dataset", default="dtd", choices=available_datasets())
     p.add_argument("--task", default="auto", choices=task_choices(include_auto=True))
     p.add_argument("--data_path", default="./data")
-    p.add_argument("--download", type=str2bool, default=False)
+    p.add_argument("--download", type=parse_download_mode, default="no")
     p.add_argument("--weights", default="DEFAULT", help="Pretrained weight identifier; use 'none' for offline smoke tests.")
     p.add_argument("--pretrained", type=str2bool, default=None)
     p.add_argument("--dataset_args_json", default="{}", help="Extra dataset CLI arguments as a JSON object.")

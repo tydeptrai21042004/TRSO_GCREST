@@ -22,6 +22,11 @@ from torch.utils.data import Dataset, Subset
 from torchvision import datasets
 from torchvision.datasets import CocoDetection
 
+from .download import should_download
+from .preprocessing import resolve_normalization
+from .registry import available_dataset_names, get_dataset_spec
+from .medmnist import build_medmnist
+
 from task_registry import (
     TASK_DEPTH_ESTIMATION, TASK_MULTILABEL, TASK_OBJECT_DETECTION,
     TASK_REGRESSION, TASK_SEMANTIC_SEGMENTATION, TASK_SINGLE_LABEL,
@@ -57,7 +62,7 @@ def _interpolation(args):
 def _img_transforms(args, is_train: bool):
     size = int(getattr(args, "input_size", 224))
     train_aug = str(getattr(args, "train_aug", "standard")).lower()
-    use_norm = _get_bool(args, "imagenet_norm", _get_bool(args, "imagenet_default_mean_and_std", True))
+    normalization = resolve_normalization(args)
     interpolation = _interpolation(args)
     crop_ratio = float(getattr(args, "crop_ratio", 0.875) or 0.875)
 
@@ -87,8 +92,8 @@ def _img_transforms(args, is_train: bool):
         T.ToTensor(),
         T.Lambda(lambda x: x.expand(3, -1, -1) if x.shape[0] == 1 else x[:3]),
     ])
-    if use_norm:
-        tfms.append(T.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)))
+    if normalization is not None:
+        tfms.append(T.Normalize(mean=normalization[0], std=normalization[1]))
     if is_train and float(getattr(args, "reprob", 0.0) or 0.0) > 0:
         tfms.append(T.RandomErasing(p=float(args.reprob), value="random"))
     return T.Compose(tfms)
@@ -209,14 +214,23 @@ def _detection(args, dataset: Dataset, output_dim: int):
     return dataset, output_dim
 
 
+def _download_enabled(args) -> bool:
+    """Resolve legacy bool/yes/no/auto download semantics for the active dataset."""
+    try:
+        policy = get_dataset_spec(getattr(args, "dataset", "")).download_policy
+    except Exception:
+        policy = "manual"
+    return should_download(getattr(args, "download", False), policy)
+
+
 # ---------------------------------------------------------------------------
 # Standard torchvision datasets
 # ---------------------------------------------------------------------------
 def _build_train_test_dataset(cls, args, split: str, classes: int, **kwargs):
     if split in ("train", "val"):
-        base = cls(root=args.data_path, train=True, download=bool(getattr(args, "download", False)), transform=_img_transforms(args, split == "train"), **kwargs)
+        base = cls(root=args.data_path, train=True, download=_download_enabled(args), transform=_img_transforms(args, split == "train"), **kwargs)
         return _single_label(args, _train_val_subset(base, split, getattr(args, "split_seed", getattr(args, "seed", 42))), classes)
-    base = cls(root=args.data_path, train=False, download=bool(getattr(args, "download", False)), transform=_img_transforms(args, False), **kwargs)
+    base = cls(root=args.data_path, train=False, download=_download_enabled(args), transform=_img_transforms(args, False), **kwargs)
     return _single_label(args, base, classes)
 
 
@@ -235,14 +249,14 @@ def _build_emnist(args, split):
 def _build_qmnist(args, split):
     transform = _img_transforms(args, split == "train")
     if split in ("train", "val"):
-        base = datasets.QMNIST(root=args.data_path, what="train", download=bool(getattr(args, "download", False)), transform=transform)
+        base = datasets.QMNIST(root=args.data_path, what="train", download=_download_enabled(args), transform=transform)
         return _single_label(args, _train_val_subset(base, split, getattr(args, "split_seed", getattr(args, "seed", 42))), 10)
-    return _single_label(args, datasets.QMNIST(root=args.data_path, what="test", download=bool(getattr(args, "download", False)), transform=transform), 10)
+    return _single_label(args, datasets.QMNIST(root=args.data_path, what="test", download=_download_enabled(args), transform=transform), 10)
 
 
 def _build_svhn(args, split):
     tv_split = "train" if split in ("train", "val") else "test"
-    base = datasets.SVHN(root=args.data_path, split=tv_split, download=bool(getattr(args, "download", False)), transform=_img_transforms(args, split == "train"))
+    base = datasets.SVHN(root=args.data_path, split=tv_split, download=_download_enabled(args), transform=_img_transforms(args, split == "train"))
     if split in ("train", "val"):
         base = _train_val_subset(base, split, getattr(args, "split_seed", getattr(args, "seed", 42)))
     return _single_label(args, base, 10)
@@ -250,7 +264,7 @@ def _build_svhn(args, split):
 
 def _official_train_test(cls, args, split, classes, train_name="train", test_name="test", split_kw="split", **kwargs):
     name = train_name if split in ("train", "val") else test_name
-    base = cls(root=args.data_path, download=bool(getattr(args, "download", False)), transform=_img_transforms(args, split == "train"), **{split_kw: name}, **kwargs)
+    base = cls(root=args.data_path, download=_download_enabled(args), transform=_img_transforms(args, split == "train"), **{split_kw: name}, **kwargs)
     if split in ("train", "val"):
         base = _train_val_subset(base, split, getattr(args, "split_seed", getattr(args, "seed", 42)))
     return _single_label(args, base, classes)
@@ -264,31 +278,31 @@ def _build_gtsrb(args, split): return _official_train_test(datasets.GTSRB, args,
 
 def _build_pets(args, split):
     name = "trainval" if split in ("train", "val") else "test"
-    base = datasets.OxfordIIITPet(root=args.data_path, split=name, download=bool(getattr(args, "download", False)), transform=_img_transforms(args, split == "train"))
+    base = datasets.OxfordIIITPet(root=args.data_path, split=name, download=_download_enabled(args), transform=_img_transforms(args, split == "train"))
     if split in ("train", "val"):
         base = _train_val_subset(base, split, getattr(args, "split_seed", getattr(args, "seed", 42)))
     return _single_label(args, base, 37)
 
 
 def _build_flowers102(args, split):
-    return _single_label(args, datasets.Flowers102(root=args.data_path, split=split, download=bool(getattr(args, "download", False)), transform=_img_transforms(args, split == "train")), 102)
+    return _single_label(args, datasets.Flowers102(root=args.data_path, split=split, download=_download_enabled(args), transform=_img_transforms(args, split == "train")), 102)
 
 
 def _build_dtd(args, split):
     partition = int(getattr(args, "dtd_partition", 1))
-    return _single_label(args, datasets.DTD(root=args.data_path, split=split, partition=partition, download=bool(getattr(args, "download", False)), transform=_img_transforms(args, split == "train")), 47)
+    return _single_label(args, datasets.DTD(root=args.data_path, split=split, partition=partition, download=_download_enabled(args), transform=_img_transforms(args, split == "train")), 47)
 
 
 def _build_fgvc_aircraft(args, split):
     name = "trainval" if split in ("train", "val") else "test"
-    base = datasets.FGVCAircraft(root=args.data_path, split=name, download=bool(getattr(args, "download", False)), transform=_img_transforms(args, split == "train"))
+    base = datasets.FGVCAircraft(root=args.data_path, split=name, download=_download_enabled(args), transform=_img_transforms(args, split == "train"))
     if split in ("train", "val"):
         base = _train_val_subset(base, split, getattr(args, "split_seed", getattr(args, "seed", 42)))
     return _single_label(args, base, 100)
 
 
 def _three_way_no_official_split(cls, args, split, classes, **kwargs):
-    base = cls(root=args.data_path, download=bool(getattr(args, "download", False)), transform=_img_transforms(args, split == "train"), **kwargs)
+    base = cls(root=args.data_path, download=_download_enabled(args), transform=_img_transforms(args, split == "train"), **kwargs)
     subset = _partition_dataset(base, split, getattr(args, "split_seed", getattr(args, "seed", 42)), ratios=(0.1, 0.1, 0.8))
     return _single_label(args, subset, classes)
 
@@ -313,18 +327,18 @@ def _build_fer2013(args, split):
 
 
 def _build_pcam(args, split):
-    return _single_label(args, datasets.PCAM(root=args.data_path, split=split, download=bool(getattr(args, "download", False)), transform=_img_transforms(args, split == "train")), 2)
+    return _single_label(args, datasets.PCAM(root=args.data_path, split=split, download=_download_enabled(args), transform=_img_transforms(args, split == "train")), 2)
 
 
 def _build_country211(args, split):
     name = {"train": "train", "val": "valid", "test": "test"}[split]
-    base = datasets.Country211(root=args.data_path, split=name, download=bool(getattr(args, "download", False)), transform=_img_transforms(args, split == "train"))
+    base = datasets.Country211(root=args.data_path, split=name, download=_download_enabled(args), transform=_img_transforms(args, split == "train"))
     return _single_label(args, base, 211)
 
 
 def _build_rendered_sst2(args, split):
     name = {"train": "train", "val": "val", "test": "test"}[split]
-    base = datasets.RenderedSST2(root=args.data_path, split=name, download=bool(getattr(args, "download", False)), transform=_img_transforms(args, split == "train"))
+    base = datasets.RenderedSST2(root=args.data_path, split=name, download=_download_enabled(args), transform=_img_transforms(args, split == "train"))
     return _single_label(args, base, 2)
 
 
@@ -332,20 +346,20 @@ def _build_places365(args, split):
     # Places365 exposes train-standard and val. Use train-standard for train/val
     # and reserve the official validation images as the final test set.
     if split in ("train", "val"):
-        base = datasets.Places365(root=args.data_path, split="train-standard", small=bool(getattr(args, "places_small", True)), download=bool(getattr(args, "download", False)), transform=_img_transforms(args, split == "train"))
+        base = datasets.Places365(root=args.data_path, split="train-standard", small=bool(getattr(args, "places_small", True)), download=_download_enabled(args), transform=_img_transforms(args, split == "train"))
         base = _train_val_subset(base, split, getattr(args, "split_seed", getattr(args, "seed", 42)), val_ratio=0.05)
     else:
-        base = datasets.Places365(root=args.data_path, split="val", small=bool(getattr(args, "places_small", True)), download=bool(getattr(args, "download", False)), transform=_img_transforms(args, False))
+        base = datasets.Places365(root=args.data_path, split="val", small=bool(getattr(args, "places_small", True)), download=_download_enabled(args), transform=_img_transforms(args, False))
     return _single_label(args, base, 365)
 
 
 def _build_inaturalist(args, split):
     target_type = str(getattr(args, "inat_target_type", "full"))
     if split in ("train", "val"):
-        base = datasets.INaturalist(root=args.data_path, version="2021_train", target_type=target_type, download=bool(getattr(args, "download", False)), transform=_img_transforms(args, split == "train"))
+        base = datasets.INaturalist(root=args.data_path, version="2021_train", target_type=target_type, download=_download_enabled(args), transform=_img_transforms(args, split == "train"))
         base = _train_val_subset(base, split, getattr(args, "split_seed", getattr(args, "seed", 42)), val_ratio=0.05)
     else:
-        base = datasets.INaturalist(root=args.data_path, version="2021_valid", target_type=target_type, download=bool(getattr(args, "download", False)), transform=_img_transforms(args, False))
+        base = datasets.INaturalist(root=args.data_path, version="2021_valid", target_type=target_type, download=_download_enabled(args), transform=_img_transforms(args, False))
     source = base.dataset if isinstance(base, Subset) else base
     if target_type == "full":
         output_dim = len(getattr(source, "all_categories", []))
@@ -786,7 +800,7 @@ class VOCMultiLabel(Dataset):
 
 def _build_voc2007(args, split):
     image_set = {"train": "train", "val": "val", "test": "test"}[split]
-    base = datasets.VOCDetection(root=args.data_path, year="2007", image_set=image_set, download=bool(getattr(args, "download", False)), transform=_img_transforms(args, split == "train"))
+    base = datasets.VOCDetection(root=args.data_path, year="2007", image_set=image_set, download=_download_enabled(args), transform=_img_transforms(args, split == "train"))
     return _multilabel(args, VOCMultiLabel(base), 20)
 
 
@@ -826,12 +840,14 @@ class CelebALandmarks(Dataset):
 
 def _landmark_regression_transform(args):
     size = int(getattr(args, "input_size", 224))
-    mean, std = _normalization(args)
-    return T.Compose([
+    normalization = resolve_normalization(args)
+    transforms = [
         T.Resize((size, size), interpolation=_interpolation(args)),
         T.ToTensor(),
-        T.Normalize(mean=mean, std=std),
-    ])
+    ]
+    if normalization is not None:
+        transforms.append(T.Normalize(mean=normalization[0], std=normalization[1]))
+    return T.Compose(transforms)
 
 
 def _build_celeba(args, split):
@@ -842,7 +858,7 @@ def _build_celeba(args, split):
             root=args.data_path,
             split=name,
             target_type="landmarks",
-            download=bool(getattr(args, "download", False)),
+            download=_download_enabled(args),
             transform=None,
         )
         return _regression(args, CelebALandmarks(base, _landmark_regression_transform(args)), 10)
@@ -850,7 +866,7 @@ def _build_celeba(args, split):
         root=args.data_path,
         split=name,
         target_type="attr",
-        download=bool(getattr(args, "download", False)),
+        download=_download_enabled(args),
         transform=_img_transforms(args, split == "train"),
     )
     return _multilabel(args, CelebAAttributes(base), 40)
@@ -867,7 +883,7 @@ def _build_voc2012_segmentation(args, split):
     from .structured import PairedDenseTransform, VOCSegmentationThreeWay
     transform = PairedDenseTransform(args, train=split == "train", target_kind="segmentation")
     dataset = VOCSegmentationThreeWay(
-        args.data_path, split, bool(getattr(args, "download", False)), transform,
+        args.data_path, split, _download_enabled(args), transform,
         _structured_seed(args), float(getattr(args, "val_ratio", 0.1)), year="2012",
     )
     return _segmentation(args, dataset, 21)
@@ -877,7 +893,7 @@ def _build_oxford_pet_segmentation(args, split):
     from .structured import OxfordPetSegmentation, PairedDenseTransform
     transform = PairedDenseTransform(args, train=split == "train", target_kind="segmentation")
     dataset = OxfordPetSegmentation(
-        args.data_path, split, bool(getattr(args, "download", False)), transform,
+        args.data_path, split, _download_enabled(args), transform,
         _structured_seed(args), float(getattr(args, "val_ratio", 0.1)),
     )
     return _segmentation(args, dataset, 3)
@@ -887,7 +903,7 @@ def _build_sbd_segmentation(args, split):
     from .structured import PairedDenseTransform, SBDThreeWay
     transform = PairedDenseTransform(args, train=split == "train", target_kind="segmentation")
     dataset = SBDThreeWay(
-        args.data_path, split, bool(getattr(args, "download", False)), transform,
+        args.data_path, split, _download_enabled(args), transform,
         _structured_seed(args), float(getattr(args, "val_ratio", 0.1)),
     )
     return _segmentation(args, dataset, 21)
@@ -947,7 +963,7 @@ def _build_voc_detection(args, split):
     from .structured import VOCObjectDetection
     year = str(getattr(args, "voc_year", "2007"))
     image_set = {"train": "train", "val": "val", "test": "test" if year == "2007" else "val"}[split]
-    dataset = VOCObjectDetection(args.data_path, image_set, year, bool(getattr(args, "download", False)), train=split == "train")
+    dataset = VOCObjectDetection(args.data_path, image_set, year, _download_enabled(args), train=split == "train")
     return _detection(args, dataset, 21)
 
 
@@ -1017,6 +1033,18 @@ def _build_fake(args, split):
     return _single_label(args, dataset, output_dim)
 
 
+
+def _build_medmnist_route(args, split):
+    dataset, classes = build_medmnist(
+        getattr(args, "dataset", "pathmnist"),
+        args.data_path,
+        split,
+        download=_download_enabled(args),
+        transform=_img_transforms(args, split == "train"),
+    )
+    return _single_label(args, dataset, classes)
+
+
 _BUILDERS = {
     ("fake", "fakedata", "synthetic"): _build_fake,
     ("csv", "csv_dataset"): _build_csv,
@@ -1066,11 +1094,20 @@ _BUILDERS = {
     ("voc_detection", "voc2007_detection", "voc2012_detection"): _build_voc_detection,
     ("coco_detection", "coco2017_detection"): _build_coco_detection,
     ("fake_detection",): _build_fake_detection,
+    ("pathmnist",): _build_medmnist_route,
+    ("dermamnist",): _build_medmnist_route,
+    ("bloodmnist",): _build_medmnist_route,
+    ("pneumoniamnist",): _build_medmnist_route,
+    ("organamnist", "organamnist_axial"): _build_medmnist_route,
+    ("tissuemnist",): _build_medmnist_route,
 }
 
 
 def available_datasets() -> List[str]:
-    return sorted({aliases[0] for aliases in _BUILDERS})
+    # Registry is the documentation/metadata source of truth. Keep a defensive
+    # intersection so a descriptive entry can never advertise an unimplemented route.
+    implemented = {aliases[0] for aliases in _BUILDERS}
+    return sorted(name for name in available_dataset_names() if name in implemented)
 
 
 def _resolve_builder(name: str) -> Callable:

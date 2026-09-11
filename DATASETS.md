@@ -8,14 +8,26 @@ resolves the dataset task, records split sizes in `dataset_protocol.json`, and
 creates an explicit method/backbone/task compatibility report. For `csv`, pass
 `--task` explicitly. See `UNIVERSAL_FAIR_FRAMEWORK.md`.
 
-The active router exposes **37 canonical dataset entries** and three task
-types. Run:
+The active router exposes **54 canonical dataset entries** across classification, multilabel/regression, segmentation, depth, and detection tasks. Dataset metadata is centralized in `datasets/registry.py`. Run:
 
 ```bash
 python main.py --list_backbones
 ```
 
 The command prints both available backbones and active dataset names.
+
+
+## Automatic download policy
+
+`--download` accepts `auto`, `yes`/`True`, or `no`/`False`. `auto` downloads only registry entries marked `safe_auto`; large datasets require explicit `yes`, while manual/authenticated datasets are never silently downloaded.
+
+## Automatic preprocessing
+
+`--preprocess auto` resolves checkpoint-compatible normalization metadata when available and records the resolved profile in `dataset_protocol.json` and `run_manifest.json`. All methods compared on one backbone therefore use the same preprocessing contract.
+
+## Optional MedMNIST routes
+
+Install `medmnist>=3.0` (included in `requirements-optional.txt`) to enable `pathmnist`, `dermamnist`, `bloodmnist`, `pneumoniamnist`, `organamnist`, and `tissuemnist`. The integration requests 224x224 variants when the installed MedMNIST version supports them.
 
 ## Single-label classification
 

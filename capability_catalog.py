@@ -4,6 +4,7 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass
 
 from task_registry import TASK_SPECS
+from datasets.registry import registry_as_dicts
 from models.model_support import (
     ENGINEERING_CONTROL_METHODS, PAPER_BASELINE_METHODS,
     REFERENCE_CONTROL_METHODS, TRANSFERRED_CONTROL_METHODS,
@@ -93,6 +94,7 @@ def as_dict() -> dict:
     return {
         "tasks": {name: asdict(spec) for name, spec in TASK_SPECS.items()},
         "open_datasets": [asdict(row) for row in OPEN_DATASETS],
+        "dataset_registry": registry_as_dicts(),
         "backbones": BACKBONE_CAPABILITIES,
         "implemented_baselines": IMPLEMENTED_BASELINES,
         "strict_paper_baselines": IMPLEMENTED_PAPER_BASELINES,

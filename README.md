@@ -1,29 +1,40 @@
-# G-CREST-TRSO: Budget-Free Global Evidence Allocation for Vision PEFT
+# Reliability-Weighted Spectral Allocation with Full Spectral Cores for Parameter-Efficient Visual Fine-Tuning
 
-This repository contains one active proposal, strict literature baselines, separate reference controls, and a 46-run/six-session Kaggle protocol.
+Official research implementation accompanying the manuscript:
+
+**Reliability-Weighted Spectral Allocation with Full Spectral Cores for Parameter-Efficient Visual Fine-Tuning**  
+Ba Ty Dang, Kim Huong Tran, Thi Uyen Nguyen  
+**Manuscript submitted to _Pattern Analysis and Applications_.**
+
+The internal implementation/CLI name remains **G-CREST-TRSO / `trso`** for backward compatibility with existing checkpoints, scripts, and the canonical 46-run protocol. Public documentation follows the manuscript terminology: the method uses **two deterministic calibration partitions for partition-consistency weighting**; their agreement is not statistical cross-fitting or repeated-run reproducibility.
 
 ## Active proposal
 
-**G-CREST-TRSO** stands for **Global Cross-Fitted Reproducibility-Entropy Spectral Tangent Core**.
-
-For every eligible CNN or Transformer weight, the method collects odd/even calibration gradients. All layer-mode evidence values are normalized together, not independently layer by layer. Their global geometric information dimension
+For every eligible CNN or Transformer weight, the method forms pooled calibration-gradient spectral modes and weights them by consistency between two deterministic calibration partitions. A single model-wide evidence distribution determines
 
 \[
-R=\left\lceil\sqrt{D_0D_1}\right\rceil
+R=\left\lceil\sqrt{D_0D_1}\right\rceil,
 \]
 
-defines one automatic model-wide mode budget. The globally strongest modes determine both which tensors are adapted and each tensor's rank. Every allocated tensor learns a full tangent core \(K_\ell\) in \(U_{\ell,S_\ell}K_\ell V_{\ell,S_\ell}^\top\).
+then allocates the globally strongest modes to tensors. Each participating tensor learns a full spectral core in \(U_{\ell,S_\ell}K_\ell V_{\ell,S_\ell}^\top\). The default proposal is intentionally unchanged from the manuscript.
 
 The full proposal has:
 
-- no manual rank or global parameter budget;
-- no layer list or evidence threshold;
-- no CNN/Transformer-specific path;
-- no loss/readiness gate or rescue mode;
-- no Linear-checkpoint fallback;
-- exact merge and zero extra deployed parameters.
+- no user-specified global rank budget, evidence threshold, or layer list;
+- the same allocation rule for evaluated convolutional and Transformer tensors;
+- full spectral cores rather than diagonal-only scaling;
+- exact algebraic merging, leaving **no active method-specific inference branch** after merging;
+- a complete merged backbone checkpoint per downstream task.
 
-The task head follows one fixed policy and remains fully trainable. See `METHOD_GCREST_TRSO.md` and `GCREST_NOVELTY_AND_EVIDENCE_AUDIT.md`.
+See `METHOD_GCREST_TRSO.md` and the manuscript for the formal definition.
+
+## Dataset and revision extension
+
+The repository now exposes **54 canonical dataset routes** through a registry-backed interface. `--download auto` downloads only routes marked safe for unattended acquisition; `--download yes` explicitly permits large automatic routes, while manual/terms-sensitive datasets remain manual. Legacy `--download True/False` commands are still accepted.
+
+Preprocessing is centralized and can resolve normalization/interpolation metadata from the pretrained checkpoint (`--preprocess auto`) while keeping all methods on the same backbone preprocessing contract. Optional MedMNIST routes include `pathmnist`, `dermamnist`, `bloodmnist`, `pneumoniamnist`, `organamnist`, and `tissuemnist`.
+
+Canonical Kaggle Sessions **01-06 remain unchanged**. Sessions **07-14** are additional revision experiments for multi-seed robustness, reliability/allocation ablations, calibration sensitivity, and cross-domain generalization.
 
 ## Controlled evidence
 

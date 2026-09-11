@@ -43,3 +43,21 @@ After downloading the six session ZIPs, add them to one Kaggle notebook and run 
 Fixed settings are seed `0`, split seed `0`, 30 epochs, 3 warm-up epochs, AdamW, cosine scheduling, shared strong augmentation, and input size 224. ViT-B/16 uses batch size 8 to keep full fine-tuning safe on common Kaggle GPUs.
 
 The Kaggle protocol still excludes FacT-TT, FacT-TK, VQT, SPT-LoRA, SPT-Adapter, LoRA, BitFit, Side-Tuning, Norm-only, Bias-only, Last-block, and ConvPass-Attn.
+
+
+## Revision Sessions 07-14
+
+Sessions 01-06 above are the frozen submitted-manuscript reproduction. The following files are additional reviewer/revision evidence and do not alter the canonical 46-run protocol:
+
+| Session | Purpose |
+|---:|---|
+| 07 | DTD / ResNet-50 / 3-seed Full + Linear + TRSO |
+| 08 | Flowers-102 / ViT-B/16 / 3-seed Full + Linear + RepAdapter + TRSO |
+| 09 | DTD / ResNet-18 reliability and full-core ablation |
+| 10 | DTD / ResNet-18 automatic mode-count rule ablation |
+| 11 | DTD / ResNet-18 calibration + loader-batch sensitivity |
+| 12 | EuroSAT cross-domain generalization |
+| 13 | PCAM medical-domain generalization |
+| 14 | FGVC-Aircraft fine-grained generalization |
+
+The shared definitions live in `tools/extended_paper_protocol.py`; each `TRSO_Revision_Session_XX_OneCell.py` produces its own result ZIP.

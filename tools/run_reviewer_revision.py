@@ -18,8 +18,14 @@ import argparse
 import json
 from pathlib import Path
 from typing import Any
+import sys
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 from tools.experiment_grid import build_specs, execute_specs, parse_csv_values, write_manifest
+from datasets.download import parse_download_mode
 
 
 def str2bool(value):
@@ -37,11 +43,11 @@ def get_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(description="Plan or execute reviewer-requested revision experiments.")
     p.add_argument("--study", required=True, choices=[
         "multiseed", "reliability", "mode_rules", "r_scale",
-        "calibration", "lora_rank_sweep",
+        "calibration", "batch_sensitivity", "lora_rank_sweep",
     ])
     p.add_argument("--dataset", required=True)
     p.add_argument("--data_path", default="./data")
-    p.add_argument("--download", type=str2bool, default=False)
+    p.add_argument("--download", type=parse_download_mode, default="no")
     p.add_argument("--dataset_args_json", default="{}")
     p.add_argument("--task", default="auto")
     p.add_argument("--backbone", required=True)
@@ -51,6 +57,7 @@ def get_parser() -> argparse.ArgumentParser:
     p.add_argument("--seeds", default="0,1,2")
     p.add_argument("--partition_seeds", default="0,1,2")
     p.add_argument("--calibration_fractions", default="0.25,0.5,1.0")
+    p.add_argument("--batch_sizes", default="8,16,32,64", help="Batch sizes for calibration/batching sensitivity; proposal definition is unchanged.")
     p.add_argument("--mode_rules", default="shannon,harmonic,geometric,arithmetic")
     p.add_argument("--r_scales", default="0.5,1.0,2.0")
     p.add_argument("--lora_ranks", default="1,2,4,8,16,32,64")
@@ -199,6 +206,17 @@ def build_revision_specs(args: argparse.Namespace):
                         "trso_partition_seed": partition_seed,
                         "seed": seeds[0],
                     }))
+        elif study == "batch_sensitivity":
+            # Evaluation-only diagnostic: the submitted proposal is unchanged.
+            # We vary loader batching while holding the optimization seed and
+            # dataset split fixed, exposing any batching dependence explicitly.
+            for batch_size in parse_csv_values(args.batch_sizes, int):
+                variants.append((f"batch_{batch_size}", {
+                    "batch_size": batch_size,
+                    "seed": seeds[0],
+                    "trso_partition_mode": "alternating",
+                    "trso_partition_seed": 0,
+                }))
         else:
             raise ValueError(study)
 

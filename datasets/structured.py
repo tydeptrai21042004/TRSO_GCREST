@@ -19,16 +19,12 @@ from torchvision.datasets import CocoDetection
 from torchvision.transforms import InterpolationMode
 from torchvision.transforms import functional as F
 
+from .preprocessing import resolve_normalization
+
 
 _IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".tif", ".tiff", ".webp"}
 _DEPTH_EXTENSIONS = _IMAGE_EXTENSIONS | {".npy", ".npz", ".pt", ".pth"}
 
-
-def _normalization(args):
-    use_norm = bool(getattr(args, "imagenet_norm", getattr(args, "imagenet_default_mean_and_std", True)))
-    if not use_norm:
-        return None
-    return (0.485, 0.456, 0.406), (0.229, 0.224, 0.225)
 
 
 class PairedDenseTransform:
@@ -45,7 +41,7 @@ class PairedDenseTransform:
         self.augmentation = str(getattr(args, "dense_train_aug", "scale_crop_flip")).lower()
         self.hflip_probability = float(getattr(args, "dense_hflip_prob", 0.5))
         self.ignore_index = int(getattr(args, "segmentation_ignore_index", 255))
-        self.normalization = _normalization(args)
+        self.normalization = resolve_normalization(args)
 
     def _to_target_tensor(self, target):
         if isinstance(target, torch.Tensor):

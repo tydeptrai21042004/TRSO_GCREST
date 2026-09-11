@@ -43,7 +43,7 @@ try:
 except Exception:
     from compat.timm_compat import Mixup, LabelSmoothingCrossEntropy, SoftTargetCrossEntropy, ModelEma
 
-from datasets import build_dataset
+from datasets import build_dataset, current_preprocessing_profile, get_dataset_spec, parse_download_mode
 try:
     from datasets.build import available_datasets, build_dataset_split
 except Exception:  # backward fallback
@@ -325,7 +325,8 @@ def get_args_parser():
     parser.add_argument("--is_tuning", default=False, type=str2bool)
     parser.add_argument("--dataset", default="dtd", type=str)
     parser.add_argument("--task", default="auto", choices=task_choices(include_auto=True))
-    parser.add_argument("--download", type=str2bool, default=False)
+    parser.add_argument("--download", type=parse_download_mode, default="no", help="Dataset download policy: auto, yes/true, or no/false. Legacy booleans remain accepted.")
+    parser.add_argument("--preprocess", default="auto", choices=["auto", "repository"], help="Resolve normalization/interpolation from pretrained metadata when available.")
     parser.add_argument("--allow_val_as_test", type=str2bool, default=False)
     parser.add_argument("--val_ratio", default=0.1, type=float)
     parser.add_argument("--dtd_partition", default=1, type=int)
@@ -524,6 +525,58 @@ def resolve_input_size_before_dataset(args) -> int:
     args.input_size = 224
     print(f"[Warn] Could not infer native input size for {backbone!r}; using 224.")
     return 224
+
+
+def resolve_preprocessing_before_dataset(args) -> dict:
+    """Resolve preprocessing metadata without changing the submitted-paper defaults silently.
+
+    Explicit repository mode preserves the historical ImageNet normalization. In
+    auto mode, pretrained checkpoint metadata is used when it can be read safely.
+    The resolved values are stored on ``args`` and written to the run manifest.
+    """
+    resolve_input_size_before_dataset(args)
+    args.preprocess_source = "repository_default"
+    args.preprocess_mean = None
+    args.preprocess_std = None
+    if str(getattr(args, "preprocess", "auto")).lower() != "auto":
+        return current_preprocessing_profile(args).to_dict()
+
+    source = str(getattr(args, "model_source", "auto") or "auto").lower()
+    backbone = str(getattr(args, "backbone", ""))
+    if source in {"auto", "torchvision"}:
+        try:
+            weights, _ = _resolve_weights_multiapi(backbone, getattr(args, "weights", "DEFAULT"))
+            if weights is not None and weights != "legacy_pretrained":
+                transform = weights.transforms()
+                mean = getattr(transform, "mean", None)
+                std = getattr(transform, "std", None)
+                if mean is not None and std is not None:
+                    args.preprocess_mean = tuple(float(x) for x in mean)
+                    args.preprocess_std = tuple(float(x) for x in std)
+                    args.preprocess_source = "torchvision_weights"
+                    return current_preprocessing_profile(args).to_dict()
+        except Exception:
+            pass
+    if source in {"auto", "timm"}:
+        try:
+            import timm
+            cfg = timm.models.get_pretrained_cfg(backbone)
+            if cfg is not None:
+                mean = getattr(cfg, "mean", None)
+                std = getattr(cfg, "std", None)
+                if mean is not None and std is not None:
+                    args.preprocess_mean = tuple(float(x) for x in mean)
+                    args.preprocess_std = tuple(float(x) for x in std)
+                    interpolation = getattr(cfg, "interpolation", None)
+                    if interpolation:
+                        args.train_interpolation = str(interpolation)
+                    crop_pct = getattr(cfg, "crop_pct", None)
+                    if crop_pct:
+                        args.crop_ratio = float(crop_pct)
+                    args.preprocess_source = "timm_pretrained_cfg"
+        except Exception:
+            pass
+    return current_preprocessing_profile(args).to_dict()
 
 
 def _resolve_weights_multiapi(backbone: str, weights_str: str):
@@ -1751,8 +1804,8 @@ def main(args):
     else:
         cudnn.benchmark = device.type == "cuda"
 
-    # Resolve automatic spatial size before dataset transforms are constructed.
-    resolve_input_size_before_dataset(args)
+    # Resolve automatic spatial size and checkpoint-consistent preprocessing before datasets exist.
+    preprocessing_profile = resolve_preprocessing_before_dataset(args)
 
     clip_preprocess = None
     clip_visual = None
@@ -1796,8 +1849,13 @@ def main(args):
 
     if args.output_dir and utils.is_main_process():
         Path(args.output_dir).mkdir(parents=True, exist_ok=True)
+        try:
+            dataset_spec = get_dataset_spec(args.dataset).to_dict()
+        except Exception:
+            dataset_spec = {"name": str(args.dataset), "source": "unknown", "download_policy": "unknown"}
         dataset_protocol = {
             "dataset": args.dataset,
+            "dataset_spec": dataset_spec,
             "task_type": args.task_type,
             "output_dim": int(args.nb_classes),
             "split_seed": int(args.split_seed),
@@ -1805,9 +1863,23 @@ def main(args):
             "validation_samples": 0 if dataset_val is None else len(dataset_val),
             "test_samples": 0 if dataset_test is None else len(dataset_test),
             "allow_val_as_test": bool(args.allow_val_as_test),
+            "download_mode": str(args.download),
+            "preprocessing": preprocessing_profile,
             "input_size": int(args.input_size),
         }
         save_json_on_master(dataset_protocol, os.path.join(args.output_dir, "dataset_protocol.json"))
+        save_json_on_master({
+            "dataset": args.dataset,
+            "task_type": args.task_type,
+            "backbone": args.backbone,
+            "model_source": args.model_source,
+            "weights": args.weights,
+            "seed": int(args.seed),
+            "split_seed": int(args.split_seed),
+            "tuning_method": args.tuning_method,
+            "preprocessing": preprocessing_profile,
+            "dataset_spec": dataset_spec,
+        }, os.path.join(args.output_dir, "run_manifest.json"))
 
     if args.clip_model and clip_preprocess is not None:
         for ds in (dataset_train, dataset_val, dataset_test):
