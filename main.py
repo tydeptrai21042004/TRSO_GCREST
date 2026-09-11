@@ -23,6 +23,7 @@ import re
 import time
 import random
 import sys
+import platform
 from pathlib import Path
 from typing import Dict, Iterable, Optional, Tuple
 
@@ -158,8 +159,32 @@ def get_args_parser():
     parser.add_argument(
         "--trso_ablation", type=str, default="full",
         choices=["full", "diagonal_only", "no_sampling_variance", "no_crossfit", "head_only"],
-        help="Fixed G-CREST structural ablation for analysis only; full is the proposal used in benchmark comparisons.",
+        help="Fixed structural ablation for analysis only; full is the proposal used in benchmark comparisons.",
     )
+    # Reviewer-requested sensitivity controls. Defaults exactly reproduce the
+    # proposed method; non-default values are ablations and must be reported as such.
+    parser.add_argument("--trso_mode_count_rule", default="geometric",
+                        choices=["geometric", "shannon", "arithmetic", "harmonic"],
+                        help="Global R rule; geometric is the paper proposal, others are reviewer ablations.")
+    parser.add_argument("--trso_r_scale", type=float, default=1.0,
+                        help="Scale the automatic R before top-R selection; 1.0 is the proposal.")
+    parser.add_argument("--trso_fixed_r", type=int, default=0,
+                        help="If >0, override automatic R for sensitivity analysis only.")
+    parser.add_argument("--trso_calibration_fraction", type=float, default=1.0,
+                        help="Fraction of calibration batches to use (reviewer sensitivity study).")
+    parser.add_argument("--trso_calibration_max_batches", type=int, default=0,
+                        help="Optional hard cap on calibration batches; 0 means no extra cap.")
+    parser.add_argument("--trso_partition_mode", default="alternating",
+                        choices=["alternating", "seeded_random"],
+                        help="Deterministic calibration partition construction.")
+    parser.add_argument("--trso_partition_seed", type=int, default=0,
+                        help="Seed used only by seeded_random calibration partitions.")
+    parser.add_argument("--trso_svd_oversampling", type=int, default=0,
+                        help="Randomized-SVD oversampling; 0 keeps the deterministic automatic rule.")
+    parser.add_argument("--trso_svd_power_iterations", type=int, default=2,
+                        help="Randomized-SVD power iterations (reported for reproducibility).")
+    parser.add_argument("--trso_svd_seed", type=int, default=0,
+                        help="Base seed for deterministic randomized-SVD sketches.")
 
 
     # SSF / LoRA / BitFit
@@ -1363,6 +1388,16 @@ def calibrate_trso_model(model: nn.Module, data_loader, device: torch.device, ar
         is_head=_is_head_param,
         batch_to_device=_move_training_batch,
         ablation=getattr(args, "trso_ablation", "full"),
+        mode_count_rule=getattr(args, "trso_mode_count_rule", "geometric"),
+        r_scale=getattr(args, "trso_r_scale", 1.0),
+        fixed_r=getattr(args, "trso_fixed_r", 0),
+        calibration_fraction=getattr(args, "trso_calibration_fraction", 1.0),
+        calibration_max_batches=getattr(args, "trso_calibration_max_batches", 0),
+        partition_mode=getattr(args, "trso_partition_mode", "alternating"),
+        partition_seed=getattr(args, "trso_partition_seed", 0),
+        svd_oversampling=getattr(args, "trso_svd_oversampling", 0),
+        svd_power_iterations=getattr(args, "trso_svd_power_iterations", 2),
+        svd_seed=getattr(args, "trso_svd_seed", 0),
     )
     _freeze_batchnorm(model)
     model.train(was_training)
@@ -1373,7 +1408,9 @@ def calibrate_trso_model(model: nn.Module, data_loader, device: torch.device, ar
         f"adapter_parameters={report.adapter_parameters}; "
         f"head_parameters={report.head_trainable_parameters}; "
         f"basis_values={report.frozen_basis_values}; "
-        f"dense_rescue={report.dense_rescue_activated}"
+        f"D0={report.global_numerical_support}; D1={report.global_shannon_effective_modes:.2f}; "
+        f"R={report.global_selected_modes}; rule={report.mode_count_rule}; "
+        f"rank[min/med/max]={report.rank_min}/{report.rank_median:g}/{report.rank_max}"
     )
     if report.fallback_reason:
         print(f"[G-CREST-TRSO] fallback: {report.fallback_reason}")
@@ -1858,6 +1895,28 @@ def main(args):
     if args.output_dir:
         Path(args.output_dir).mkdir(parents=True, exist_ok=True)
         save_json_on_master(vars(args), os.path.join(args.output_dir, "args.json"))
+        environment = {
+            "python": platform.python_version(),
+            "platform": platform.platform(),
+            "torch": torch.__version__,
+            "cuda_runtime": torch.version.cuda,
+            "cudnn": torch.backends.cudnn.version() if torch.backends.cudnn.is_available() else None,
+            "device_requested": str(device),
+            "cuda_available": bool(torch.cuda.is_available()),
+            "gpu_name": torch.cuda.get_device_name(device) if device.type == "cuda" and torch.cuda.is_available() else None,
+            "gpu_capability": list(torch.cuda.get_device_capability(device)) if device.type == "cuda" and torch.cuda.is_available() else None,
+        }
+        try:
+            import torchvision
+            environment["torchvision"] = torchvision.__version__
+        except Exception:
+            environment["torchvision"] = None
+        try:
+            import timm
+            environment["timm"] = getattr(timm, "__version__", None)
+        except Exception:
+            environment["timm"] = None
+        save_json_on_master(environment, os.path.join(args.output_dir, "environment.json"))
         protocol = {
             "fair_protocol": bool(args.fair_protocol),
             "optimizer": args.optimizer,
@@ -2083,6 +2142,18 @@ def main(args):
                 "mdl_frozen_basis_megabytes_fp32": float(mdl_basis * 4 / 1024**2),
                 "mdl_deployed_extra_parameters": 0,
                 "mdl_deployed_total_params": int(n_total - mdl_adapter),
+                "mdl_global_selected_modes": int(mdl_report.get("global_selected_modes", 0) or 0),
+                "mdl_global_shannon_effective_modes": float(mdl_report.get("global_shannon_effective_modes", 0.0) or 0.0),
+                "mdl_global_numerical_support": int(mdl_report.get("global_numerical_support", 0) or 0),
+                "mdl_candidate_modes": int(mdl_report.get("candidate_modes", 0) or 0),
+                "mdl_rank_min": int(mdl_report.get("rank_min", 0) or 0),
+                "mdl_rank_median": float(mdl_report.get("rank_median", 0.0) or 0.0),
+                "mdl_rank_max": int(mdl_report.get("rank_max", 0) or 0),
+                "mdl_mode_count_rule": mdl_report.get("mode_count_rule", "geometric"),
+                "mdl_r_scale": float(mdl_report.get("r_scale", 1.0) or 1.0),
+                "mdl_calibration_fraction": float(mdl_report.get("calibration_fraction", 1.0) or 1.0),
+                "mdl_partition_mode": mdl_report.get("partition_mode", "alternating"),
+                "mdl_partition_seed": int(mdl_report.get("partition_seed", 0) or 0),
             })
     if args.output_dir:
         save_json_on_master(parameter_summary, os.path.join(args.output_dir, "parameter_summary.json"))

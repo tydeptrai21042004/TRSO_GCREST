@@ -6,6 +6,8 @@ import argparse
 import glob
 import json
 import os
+import math
+from itertools import combinations
 from typing import Any, Dict
 
 import pandas as pd
@@ -82,6 +84,28 @@ def summarize_mdl_tangent_calibration(payload: Dict[str, Any]) -> Dict[str, Any]
             ) / len(selected)
             if selected else None
         ),
+        # Reviewer-facing allocation diagnostics.
+        "D0": payload.get("global_numerical_support"),
+        "D1": payload.get("global_shannon_effective_modes"),
+        "R": payload.get("global_selected_modes"),
+        "candidate_modes": payload.get("candidate_modes"),
+        "mode_count_rule": payload.get("mode_count_rule"),
+        "mode_count_rule_value": payload.get("global_mode_count_rule_value"),
+        "r_scale": payload.get("r_scale"),
+        "fixed_r": payload.get("fixed_r"),
+        "rank_min": payload.get("rank_min"),
+        "rank_median": payload.get("rank_median"),
+        "rank_max": payload.get("rank_max"),
+        "calibration_fraction": payload.get("calibration_fraction"),
+        "calibration_max_batches": payload.get("calibration_max_batches"),
+        "partition_mode": payload.get("partition_mode"),
+        "partition_seed": payload.get("partition_seed"),
+        "svd_oversampling": payload.get("svd_oversampling"),
+        "svd_power_iterations": payload.get("svd_power_iterations"),
+        "layer_ranks_json": json.dumps(payload.get("layer_ranks", {}), sort_keys=True),
+        "participating_tensor_names_json": json.dumps(payload.get("participating_tensor_names", [])),
+        "candidate_modes_by_tensor_json": json.dumps(payload.get("candidate_modes_by_tensor", {}), sort_keys=True),
+        "calibration_fold_counts_json": json.dumps(payload.get("calibration_fold_counts", [])),
     }
 
 
@@ -95,6 +119,65 @@ def _numeric_columns(df: pd.DataFrame, excluded: set[str]) -> list[str]:
             df[column] = converted
             columns.append(column)
     return columns
+
+
+def _mean_std_ci95(values: pd.Series) -> tuple[float | None, float | None, float | None, int]:
+    numeric = pd.to_numeric(values, errors="coerce").dropna()
+    n = int(numeric.shape[0])
+    if n == 0:
+        return None, None, None, 0
+    mean = float(numeric.mean())
+    std = float(numeric.std(ddof=1)) if n > 1 else 0.0
+    ci95 = float(1.96 * std / math.sqrt(n)) if n > 1 else 0.0
+    return mean, std, ci95, n
+
+
+def _allocation_stability(group: pd.DataFrame) -> dict[str, Any]:
+    result: dict[str, Any] = {}
+    for column in ("mdl_R", "mdl_D0", "mdl_D1", "mdl_selected_tensors", "mdl_adapter_parameters",
+                   "mdl_rank_min", "mdl_rank_median", "mdl_rank_max"):
+        if column in group.columns:
+            mean, std, ci95, n = _mean_std_ci95(group[column])
+            result[f"{column}_mean"] = mean
+            result[f"{column}_std"] = std
+            result[f"{column}_ci95"] = ci95
+            result[f"{column}_n"] = n
+
+    sets = []
+    if "mdl_participating_tensor_names_json" in group.columns:
+        for raw in group["mdl_participating_tensor_names_json"].dropna():
+            try:
+                sets.append(set(json.loads(raw)))
+            except Exception:
+                pass
+    jaccards = []
+    for first, second in combinations(sets, 2):
+        union = first | second
+        jaccards.append(len(first & second) / len(union) if union else 1.0)
+    if jaccards:
+        result["selected_tensor_jaccard_mean"] = float(sum(jaccards) / len(jaccards))
+        result["selected_tensor_jaccard_min"] = float(min(jaccards))
+        result["selected_tensor_jaccard_pairs"] = len(jaccards)
+
+    rank_maps = []
+    if "mdl_layer_ranks_json" in group.columns:
+        for raw in group["mdl_layer_ranks_json"].dropna():
+            try:
+                rank_maps.append({str(k): int(v) for k, v in json.loads(raw).items()})
+            except Exception:
+                pass
+    if rank_maps:
+        names = sorted(set().union(*(set(m) for m in rank_maps)))
+        per_tensor_std = []
+        for name in names:
+            vals = [m.get(name, 0) for m in rank_maps]
+            if len(vals) > 1:
+                series = pd.Series(vals, dtype=float)
+                per_tensor_std.append(float(series.std(ddof=1)))
+        if per_tensor_std:
+            result["layer_rank_std_mean"] = float(sum(per_tensor_std) / len(per_tensor_std))
+            result["layer_rank_std_max"] = float(max(per_tensor_std))
+    return result
 
 
 def main() -> None:
@@ -182,6 +265,27 @@ def main() -> None:
     summary.to_csv(mean_std_path, index=False)
     print(f"Saved mean/std summary: {mean_std_path}")
 
+    # Reviewer-facing confidence intervals and allocation stability.
+    ci_rows = []
+    stability_rows = []
+    for keys, group in df.groupby(group_columns, dropna=False):
+        if not isinstance(keys, tuple):
+            keys = (keys,)
+        base = dict(zip(group_columns, keys))
+        for metric in metric_columns:
+            mean, std, ci95, n = _mean_std_ci95(group[metric])
+            if n:
+                ci_rows.append({**base, "metric": metric, "mean": mean, "std": std, "ci95_half_width": ci95, "n": n})
+        if any(column.startswith("mdl_") for column in group.columns):
+            stability_rows.append({**base, **_allocation_stability(group)})
+    ci_path = os.path.splitext(output_path)[0] + "_ci95.csv"
+    pd.DataFrame(ci_rows).to_csv(ci_path, index=False)
+    print(f"Saved 95% CI table: {ci_path}")
+    if stability_rows:
+        stability_path = os.path.splitext(output_path)[0] + "_allocation_stability.csv"
+        pd.DataFrame(stability_rows).to_csv(stability_path, index=False)
+        print(f"Saved allocation stability: {stability_path}")
+
     # Compact paper-facing table. Non-scalar diagnostics remain in the raw CSV
     # and per-run JSON, while this table emphasizes accuracy, robustness,
     # calibration, efficiency, and convergence.
@@ -218,7 +322,9 @@ def main() -> None:
         "mdl_transient_reference_values", "mdl_transient_projection_state_values",
         "mdl_diagonal_tensors", "mdl_dense_tensors",
         "mdl_mean_selected_rank", "mdl_mean_core_parameters",
-        "mdl_mean_captured_fraction",
+        "mdl_mean_captured_fraction", "mdl_D0", "mdl_D1", "mdl_R",
+        "mdl_candidate_modes", "mdl_rank_min", "mdl_rank_median", "mdl_rank_max",
+        "mdl_calibration_fraction", "mdl_partition_seed", "mdl_r_scale",
         "eff_flops_g", "eff_latency_ms_per_image", "eff_fps",
         "eff_peak_inference_memory_mb", "conv_best_val_acc1",
         "conv_best_val_map", "conv_best_val_mae", "conv_best_val_rmse",

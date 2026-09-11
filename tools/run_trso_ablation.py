@@ -59,6 +59,16 @@ def get_parser() -> argparse.ArgumentParser:
     parser.add_argument("--profile_efficiency", type=str2bool, default=True)
     parser.add_argument("--final_test", type=str2bool, default=True)
     parser.add_argument("--allow_val_as_test", type=str2bool, default=False)
+    parser.add_argument("--mode_count_rule", default="geometric", choices=["geometric", "shannon", "arithmetic", "harmonic"])
+    parser.add_argument("--r_scale", type=float, default=1.0)
+    parser.add_argument("--fixed_r", type=int, default=0)
+    parser.add_argument("--calibration_fraction", type=float, default=1.0)
+    parser.add_argument("--calibration_max_batches", type=int, default=0)
+    parser.add_argument("--partition_mode", default="alternating", choices=["alternating", "seeded_random"])
+    parser.add_argument("--partition_seed", type=int, default=0)
+    parser.add_argument("--svd_oversampling", type=int, default=0)
+    parser.add_argument("--svd_power_iterations", type=int, default=2)
+    parser.add_argument("--svd_seed", type=int, default=0)
     return parser
 
 
@@ -129,6 +139,16 @@ def build_ablation_specs(args: argparse.Namespace):
         "profile_efficiency": args.profile_efficiency,
         "final_test": args.final_test,
         "allow_val_as_test": args.allow_val_as_test,
+        "trso_mode_count_rule": getattr(args, "mode_count_rule", "geometric"),
+        "trso_r_scale": getattr(args, "r_scale", 1.0),
+        "trso_fixed_r": getattr(args, "fixed_r", 0),
+        "trso_calibration_fraction": getattr(args, "calibration_fraction", 1.0),
+        "trso_calibration_max_batches": getattr(args, "calibration_max_batches", 0),
+        "trso_partition_mode": getattr(args, "partition_mode", "alternating"),
+        "trso_partition_seed": getattr(args, "partition_seed", 0),
+        "trso_svd_oversampling": getattr(args, "svd_oversampling", 0),
+        "trso_svd_power_iterations": getattr(args, "svd_power_iterations", 2),
+        "trso_svd_seed": getattr(args, "svd_seed", 0),
     }
     common.update(dataset_args)
     return build_specs(

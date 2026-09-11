@@ -33,6 +33,7 @@ RELEASE_CONTENTS.md
 REMOVAL_MANIFEST.md
 REMOVED_NON_PAPER_METHODS.md
 REPADAPTER_BASELINE_CHANGE_REPORT.md
+REVIEWER_REVISION_GUIDE.md
 SUPPORT_MATRIX.md
 TRSO_ABLATION_AND_PIPELINE_AUDIT.md
 TRSO_Baselines_Reference_Controls_and_Ablations.docx
@@ -133,6 +134,7 @@ tests/test_new_baselines_and_fair_protocol.py
 tests/test_original_paper_scope_contract.py
 tests/test_reference_controls.py
 tests/test_release_contract.py
+tests/test_reviewer_revision_tools.py
 tests/test_structured_task_support.py
 tests/test_training_regressions.py
 tests/test_transformer_paper_baselines.py
@@ -144,10 +146,12 @@ tools/aggregate_revision_results.py
 tools/clean_release.py
 tools/experiment_grid.py
 tools/list_capabilities.py
+tools/matched_budget_report.py
 tools/minimal_paper_protocol.py
 tools/preflight_paper_baselines.py
 tools/profile_efficiency.py
 tools/run_fair_suite.py
+tools/run_reviewer_revision.py
 tools/run_trso_ablation.py
 tools/validate_gcrest_controlled.py
 tools/validate_gcrest_long_horizon.py

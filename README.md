@@ -74,3 +74,7 @@ python -m tools.clean_release --check --manifest --zip ../TRSO_GCREST_release.zi
 ```
 
 Repository tests and controlled diagnostics establish implementation correctness. A new real DTD ResNet-50 Session 1 run is required before claiming real-dataset superiority.
+
+## Major-revision reviewer experiments
+
+See [`REVIEWER_REVISION_GUIDE.md`](REVIEWER_REVISION_GUIDE.md) for multi-seed, allocation-stability, calibration-sensitivity, D0/D1-rule, R-scaling, and matched-budget LoRA experiments. The proposal defaults are unchanged; all new controls are ablation/evaluation switches.
