@@ -38,6 +38,7 @@ class MDLTangentRecord:
     stable_diagonal_coordinates: int = 0
     stable_cross_coordinates: int = 0
     heldout_predictive_gain: float = 0.0
+    candidate_modes: int = 0
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -64,6 +65,25 @@ class MDLTangentReport:
     chance_reference_loss: float | None = None
     dense_rescue_activated: bool = False
     zero_added_parameter: bool = False
+    # Reviewer-facing allocation diagnostics. These are experiment metadata,
+    # not additional trainable hyperparameters of the default proposal.
+    global_selected_modes: int = 0
+    global_shannon_effective_modes: float = 0.0
+    global_numerical_support: int = 0
+    global_rule_value: float = 0.0
+    mode_count_rule: str = "geometric"
+    r_scale: float = 1.0
+    fixed_r: int = 0
+    candidate_modes: int = 0
+    rank_min: int = 0
+    rank_median: float = 0.0
+    rank_max: int = 0
+    calibration_fraction: float = 1.0
+    calibration_max_batches: int = 0
+    partition_mode: str = "alternating"
+    partition_seed: int = 0
+    svd_oversampling: int = 0
+    svd_power_iterations: int = 2
 
     def to_dict(self) -> dict:
         payload = asdict(self)
@@ -272,20 +292,36 @@ def _unpack_batch(batch, device: torch.device | str):
     return inputs, targets
 
 
-def _truncated_svd(matrix: Tensor, rank: int) -> tuple[Tensor, Tensor, Tensor]:
+def _truncated_svd(
+    matrix: Tensor,
+    rank: int,
+    *,
+    oversampling: int = 0,
+    power_iterations: int = 2,
+    seed: int | None = None,
+) -> tuple[Tensor, Tensor, Tensor]:
+    """Deterministic compact/truncated SVD with reviewer-visible controls.
+
+    ``oversampling=0`` preserves the original automatic oversampling rule.  The
+    exact-SVD path is retained for small matrices.  These controls exist so the
+    randomized-SVD approximation can be reported and sensitivity-tested without
+    changing the default proposal.
+    """
     rows, columns = matrix.shape
     resolved = max(1, min(int(rank), rows, columns))
     matrix = matrix.float()
     if min(rows, columns) <= 128 or matrix.numel() <= 262_144 or resolved == min(rows, columns):
         left, singular, right_h = torch.linalg.svd(matrix, full_matrices=False)
         return left[:, :resolved], singular[:resolved], right_h[:resolved]
-    oversampling = max(4, int(math.ceil(math.log2(max(2, min(rows, columns))))))
-    sketch = min(min(rows, columns), resolved + oversampling)
+    automatic = max(4, int(math.ceil(math.log2(max(2, min(rows, columns))))))
+    resolved_oversampling = automatic if int(oversampling) <= 0 else int(oversampling)
+    sketch = min(min(rows, columns), resolved + max(0, resolved_oversampling))
     generator = torch.Generator(device=matrix.device)
-    generator.manual_seed(rows * 1009 + columns * 9176 + resolved * 53)
+    resolved_seed = rows * 1009 + columns * 9176 + resolved * 53 if seed is None else int(seed)
+    generator.manual_seed(resolved_seed)
     omega = torch.randn(columns, sketch, generator=generator, device=matrix.device, dtype=matrix.dtype)
     projected = matrix @ omega
-    for _ in range(2):
+    for _ in range(max(0, int(power_iterations))):
         projected = matrix @ (matrix.transpose(0, 1) @ projected)
     q, _ = torch.linalg.qr(projected, mode="reduced")
     compressed = q.transpose(0, 1) @ matrix
@@ -339,7 +375,10 @@ def _synchronize_statistics(
     )
 
 
-def _collect_statistics(model, candidates, data_loader, loss_fn, *, device, logits_fn, batch_to_device):
+def _collect_statistics(
+    model, candidates, data_loader, loss_fn, *, device, logits_fn, batch_to_device,
+    max_batches: int = 0, partition_mode: str = "alternating", partition_seed: int = 0,
+):
     original_requires_grad = {id(parameter): parameter.requires_grad for parameter in model.parameters()}
     for parameter in model.parameters():
         parameter.requires_grad_(False)
@@ -357,18 +396,32 @@ def _collect_statistics(model, candidates, data_loader, loss_fn, *, device, logi
                 module.running_var.detach().clone() if module.running_var is not None else None,
                 module.num_batches_tracked.detach().clone() if module.num_batches_tracked is not None else None,
             ))
-    # Disable stochastic dropout, but let BatchNorm use target-batch statistics
-    # while gradients are collected. Running buffers are restored exactly below.
+    # Calibration must use the same frozen-backbone inference graph used by
+    # adaptation/deployment.  Keep BatchNorm in eval mode (running statistics)
+    # rather than silently using calibration-batch statistics.  This avoids a
+    # reviewer-visible train/eval graph mismatch for CNN backbones.
     model.eval()
-    for module, _, _, _ in batchnorm_state:
-        module.train(True)
     batches = 0
     examples = 0
     loss_sum = 0.0
     class_count: int | None = None
     classification_compatible = True
+    mode = str(partition_mode).strip().lower()
+    if mode not in {"alternating", "seeded_random"}:
+        raise ValueError("partition_mode must be 'alternating' or 'seeded_random'")
+    total_batches = int(max_batches) if int(max_batches) > 0 else (len(data_loader) if hasattr(data_loader, "__len__") else 0)
+    fold_by_batch: list[int] | None = None
+    if mode == "seeded_random" and total_batches > 0:
+        generator = torch.Generator(device="cpu").manual_seed(int(partition_seed))
+        permutation = torch.randperm(total_batches, generator=generator).tolist()
+        fold_by_batch = [0] * total_batches
+        midpoint = (total_batches + 1) // 2
+        for position, batch_index in enumerate(permutation):
+            fold_by_batch[int(batch_index)] = 0 if position < midpoint else 1
     try:
-        for batch in data_loader:
+        for batch_index, batch in enumerate(data_loader):
+            if int(max_batches) > 0 and batch_index >= int(max_batches):
+                break
             inputs, targets = batch_to_device(batch, device)
             model.zero_grad(set_to_none=True)
             logits = logits_fn(model(inputs))
@@ -387,7 +440,13 @@ def _collect_statistics(model, candidates, data_loader, loss_fn, *, device, logi
             else:
                 classification_compatible = False
             loss.backward()
-            fold = batches & 1
+            if mode == "alternating":
+                fold = batches & 1
+            elif fold_by_batch is not None and batches < len(fold_by_batch):
+                fold = int(fold_by_batch[batches])
+            else:
+                # Deterministic fallback for loaders without a known length.
+                fold = int(((batches * 1103515245 + int(partition_seed) + 12345) >> 16) & 1)
             for candidate in candidates:
                 gradient = candidate.parameter.grad
                 if gradient is not None:
@@ -441,7 +500,10 @@ class _PreparedWeight:
     second_matrix: Tensor | None
 
 
-def _prepare_weight(candidate: _Candidate, statistic: _Statistic, *, ablation: str = "full") -> _PreparedWeight:
+def _prepare_weight(
+    candidate: _Candidate, statistic: _Statistic, *, ablation: str = "full",
+    svd_oversampling: int = 0, svd_power_iterations: int = 2, svd_seed: int = 0,
+) -> _PreparedWeight:
     """Compute fold-reproducible mode evidence without selecting a local rank."""
     pooled = statistic.mean().float()
     matrix = pooled.reshape(pooled.shape[0], -1)
@@ -464,7 +526,11 @@ def _prepare_weight(candidate: _Candidate, statistic: _Statistic, *, ablation: s
     identifiable_rank = min(
         matrix.shape[0], matrix.shape[1], max(1, min(statistic.fold_counts))
     )
-    left, singular, right_h = _truncated_svd(matrix, identifiable_rank)
+    left, singular, right_h = _truncated_svd(
+        matrix, identifiable_rank, oversampling=svd_oversampling,
+        power_iterations=svd_power_iterations,
+        seed=(int(svd_seed) + sum(ord(ch) for ch in candidate.name)) & 0x7FFFFFFF,
+    )
     right = right_h.transpose(0, 1)
     first_matrix = first.float().reshape(matrix.shape)
     second_matrix = second.float().reshape(matrix.shape)
@@ -496,12 +562,31 @@ def _prepare_weight(candidate: _Candidate, statistic: _Statistic, *, ablation: s
     )
 
 
-def _global_evidence_allocation(prepared: list[_PreparedWeight]) -> tuple[list[Tensor], int, float, float, int]:
-    """Derive one global mode budget and allocation from the evidence entropy.
+def _mode_count_value(d0: int, d1: float, rule: str) -> float:
+    """Reviewer-requested alternatives for the automatic global mode count."""
+    rule = str(rule).strip().lower()
+    if d0 <= 0:
+        return 0.0
+    d1 = max(1.0, min(float(d1), float(d0)))
+    if rule in {"geometric", "geometric_mean", "default"}:
+        return math.sqrt(float(d0) * d1)
+    if rule in {"shannon", "d1", "entropy"}:
+        return d1
+    if rule in {"arithmetic", "arithmetic_mean"}:
+        return 0.5 * (float(d0) + d1)
+    if rule in {"harmonic", "harmonic_mean"}:
+        return (2.0 * float(d0) * d1) / max(float(d0) + d1, 1e-30)
+    raise ValueError(f"Unknown mode_count_rule={rule!r}")
 
-    All candidate-layer mode evidence values form one probability distribution.
-    The geometric mean of Shannon effective support and numerical support is the total number of retained modes. The globally largest evidence coordinates receive those slots.  There is no
-    user budget, per-layer rank, layer list, or evidence threshold.
+
+def _global_evidence_allocation(
+    prepared: list[_PreparedWeight], *, mode_count_rule: str = "geometric",
+    r_scale: float = 1.0, fixed_r: int = 0,
+) -> tuple[list[Tensor], int, float, float, int, int]:
+    """Allocate globally ranked evidence modes with reviewer-facing R controls.
+
+    The paper proposal remains ``mode_count_rule='geometric', r_scale=1,
+    fixed_r=0``.  Alternative rules/scales are ablations only.
     """
     locations: list[tuple[int, int]] = []
     values: list[Tensor] = []
@@ -511,21 +596,24 @@ def _global_evidence_allocation(prepared: list[_PreparedWeight]) -> tuple[list[T
             values.append(item.evidence[mode_index].double())
     selected = [torch.empty(0, dtype=torch.long) for _ in prepared]
     if not values:
-        return selected, 0, 0.0, 0.0, 0
+        return selected, 0, 0.0, 0.0, 0, 0
     vector = torch.stack(values)
     tiny = torch.finfo(torch.float64).tiny
     total = vector.sum()
     if not torch.isfinite(total) or float(total.item()) <= 0.0:
-        return selected, 0, 0.0, 0.0, 0
+        return selected, 0, 0.0, 0.0, 0, int(vector.numel())
     probabilities = vector / total.clamp_min(tiny)
     entropy = -(probabilities * torch.log(probabilities.clamp_min(tiny))).sum()
     shannon_modes = float(torch.exp(entropy).item())
     numerical_support = int(torch.count_nonzero(vector > 0).item())
-    # The global geometric information dimension is the parameter-free midpoint
-    # between Shannon concentration and numerical support.  It avoids both the
-    # full-support extreme and an over-aggressive entropy-only allocation.
-    effective_modes = math.sqrt(max(1.0, shannon_modes) * max(1, numerical_support))
-    global_modes = max(1, min(len(locations), int(math.ceil(effective_modes))))
+    rule_value = _mode_count_value(numerical_support, shannon_modes, mode_count_rule)
+    if int(fixed_r) > 0:
+        requested_modes = int(fixed_r)
+    else:
+        if float(r_scale) <= 0:
+            raise ValueError("r_scale must be positive")
+        requested_modes = int(math.ceil(rule_value * float(r_scale)))
+    global_modes = max(1, min(numerical_support, len(locations), requested_modes))
     top = torch.topk(vector, k=global_modes, largest=True, sorted=False).indices.tolist()
     per_layer: list[list[int]] = [[] for _ in prepared]
     for flat_index in top:
@@ -536,7 +624,7 @@ def _global_evidence_allocation(prepared: list[_PreparedWeight]) -> tuple[list[T
         if indices else torch.empty(0, dtype=torch.long)
         for indices in per_layer
     ]
-    return selected, global_modes, effective_modes, shannon_modes, numerical_support
+    return selected, global_modes, rule_value, shannon_modes, numerical_support, int(vector.numel())
 
 
 def _finalize_weight(item: _PreparedWeight, selected_modes: Tensor, *, ablation: str):
@@ -547,7 +635,7 @@ def _finalize_weight(item: _PreparedWeight, selected_modes: Tensor, *, ablation:
             core_mode="global_geometric_unallocated", core_parameters=0, basis_values=0,
             total_gradient_energy=item.total, noise_energy=item.noise,
             captured_mean_energy=0.0, mdl_zero=item.zero_risk, mdl_selected=item.zero_risk,
-            diagonal_bic=None, dense_bic=None,
+            diagonal_bic=None, dense_bic=None, candidate_modes=int(item.evidence.numel()),
         )
         return record, None, None, None, None
     selected_modes = selected_modes.to(device=item.left.device)
@@ -578,7 +666,7 @@ def _finalize_weight(item: _PreparedWeight, selected_modes: Tensor, *, ablation:
         mdl_selected=selected_risk, diagonal_bic=None, dense_bic=None,
         stable_diagonal_coordinates=rank,
         stable_cross_coordinates=0 if ablation == "diagonal_only" else rank * rank - rank,
-        heldout_predictive_gain=weighted,
+        heldout_predictive_gain=weighted, candidate_modes=int(item.evidence.numel()),
     ), left_selected, right_selected, rows, columns
 
 def _attach(candidate, record, left, right, rows, columns):
@@ -602,6 +690,16 @@ def calibrate_mdl_tangent_core(
     is_head: Optional[Callable[[str], bool]] = None,
     batch_to_device: Optional[Callable[[object, torch.device | str], tuple[Tensor, Tensor]]] = None,
     ablation: str = "full",
+    mode_count_rule: str = "geometric",
+    r_scale: float = 1.0,
+    fixed_r: int = 0,
+    calibration_fraction: float = 1.0,
+    calibration_max_batches: int = 0,
+    partition_mode: str = "alternating",
+    partition_seed: int = 0,
+    svd_oversampling: int = 0,
+    svd_power_iterations: int = 2,
+    svd_seed: int = 0,
 ) -> MDLTangentReport:
     """Calibrate and attach the budget-free global tangent-core proposal."""
     if ablation not in TRSO_ABLATIONS:
@@ -614,10 +712,23 @@ def calibrate_mdl_tangent_core(
     if not candidates and not head_parameters:
         raise RuntimeError("no eligible backbone or task-head parameters were found")
 
+    fraction = float(calibration_fraction)
+    if not (0.0 < fraction <= 1.0):
+        raise ValueError("calibration_fraction must be in (0, 1]")
+    effective_max_batches = int(calibration_max_batches)
+    if hasattr(data_loader, "__len__"):
+        loader_batches = int(len(data_loader))
+        fraction_batches = max(1, int(math.ceil(loader_batches * fraction)))
+        if loader_batches >= 2:
+            fraction_batches = max(2, fraction_batches)
+        effective_max_batches = fraction_batches if effective_max_batches <= 0 else min(effective_max_batches, fraction_batches)
+
     if candidates and ablation != "head_only":
         statistics, batches, examples, calibration_mean_loss, class_count = _collect_statistics(
             model, candidates, data_loader, loss_fn, device=device,
             logits_fn=logits_fn, batch_to_device=batch_to_device,
+            max_batches=effective_max_batches, partition_mode=partition_mode,
+            partition_seed=partition_seed,
         )
     else:
         batches = len(data_loader) if hasattr(data_loader, "__len__") else 0
@@ -634,15 +745,22 @@ def calibrate_mdl_tangent_core(
     global_effective_modes = 0.0
     global_shannon_modes = 0.0
     global_numerical_support = 0
+    candidate_modes = 0
     if ablation == "head_only":
         prepared = []
         selected_by_layer = []
     else:
         prepared = [
-            _prepare_weight(candidate, statistics[candidate.name], ablation=ablation)
+            _prepare_weight(
+                candidate, statistics[candidate.name], ablation=ablation,
+                svd_oversampling=svd_oversampling, svd_power_iterations=svd_power_iterations,
+                svd_seed=svd_seed,
+            )
             for candidate in candidates
         ]
-        selected_by_layer, global_modes, global_effective_modes, global_shannon_modes, global_numerical_support = _global_evidence_allocation(prepared)
+        selected_by_layer, global_modes, global_effective_modes, global_shannon_modes, global_numerical_support, candidate_modes = _global_evidence_allocation(
+            prepared, mode_count_rule=mode_count_rule, r_scale=r_scale, fixed_r=fixed_r,
+        )
     for index, candidate in enumerate(candidates):
         if ablation == "head_only":
             record = MDLTangentRecord(
@@ -700,6 +818,23 @@ def calibrate_mdl_tangent_core(
         chance_reference_loss=chance_reference_loss,
         dense_rescue_activated=dense_rescue,
         zero_added_parameter=False,
+        global_selected_modes=int(global_modes),
+        global_shannon_effective_modes=float(global_shannon_modes),
+        global_numerical_support=int(global_numerical_support),
+        global_rule_value=float(global_effective_modes),
+        mode_count_rule=str(mode_count_rule),
+        r_scale=float(r_scale),
+        fixed_r=int(fixed_r),
+        candidate_modes=int(candidate_modes),
+        rank_min=min((record.rank for record in records if record.rank > 0), default=0),
+        rank_median=float(torch.tensor([record.rank for record in records if record.rank > 0], dtype=torch.float32).median().item()) if any(record.rank > 0 for record in records) else 0.0,
+        rank_max=max((record.rank for record in records if record.rank > 0), default=0),
+        calibration_fraction=fraction,
+        calibration_max_batches=int(effective_max_batches),
+        partition_mode=str(partition_mode),
+        partition_seed=int(partition_seed),
+        svd_oversampling=int(svd_oversampling),
+        svd_power_iterations=int(svd_power_iterations),
     )
     payload = report.to_dict()
     payload["selection_rule"] = (
@@ -711,9 +846,33 @@ def calibrate_mdl_tangent_core(
     )
     payload["head_policy_scores"] = {}
     payload["global_selected_modes"] = int(global_modes)
-    payload["global_geometric_information_dimension"] = float(global_effective_modes)
+    payload["global_geometric_information_dimension"] = float(global_effective_modes) if str(mode_count_rule).lower() == "geometric" else None
+    payload["global_mode_count_rule_value"] = float(global_effective_modes)
     payload["global_shannon_effective_modes"] = float(global_shannon_modes)
     payload["global_numerical_support"] = int(global_numerical_support)
+    payload["candidate_modes"] = int(candidate_modes)
+    payload["mode_count_rule"] = str(mode_count_rule)
+    payload["r_scale"] = float(r_scale)
+    payload["fixed_r"] = int(fixed_r)
+    payload["calibration_fraction"] = float(fraction)
+    payload["calibration_max_batches"] = int(effective_max_batches)
+    payload["partition_mode"] = str(partition_mode)
+    payload["partition_seed"] = int(partition_seed)
+    payload["svd_oversampling"] = int(svd_oversampling)
+    payload["svd_power_iterations"] = int(svd_power_iterations)
+    payload["svd_seed"] = int(svd_seed)
+    selected_ranks = [int(record.rank) for record in records if record.rank > 0]
+    payload["rank_min"] = min(selected_ranks, default=0)
+    payload["rank_median"] = float(torch.tensor(selected_ranks, dtype=torch.float32).median().item()) if selected_ranks else 0.0
+    payload["rank_max"] = max(selected_ranks, default=0)
+    payload["layer_ranks"] = {record.name: int(record.rank) for record in records if record.rank > 0}
+    payload["participating_tensor_names"] = [record.name for record in records if record.rank > 0]
+    payload["candidate_modes_by_tensor"] = {record.name: int(record.candidate_modes) for record in records}
+    if statistics:
+        first_statistic = next(iter(statistics.values()))
+        payload["calibration_fold_counts"] = [int(value) for value in first_statistic.fold_counts]
+    else:
+        payload["calibration_fold_counts"] = [0, 0]
     model._mdl_tangent_report = payload  # type: ignore[attr-defined]
     return report
 

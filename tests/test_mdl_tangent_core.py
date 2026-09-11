@@ -179,3 +179,39 @@ def test_sampling_variance_ablation_is_explicit_and_not_a_capacity_control():
     )
     assert report.ablation == "no_sampling_variance"
     assert getattr(model, "_mdl_tangent_report")["selection_rule"] == "crossfit_without_sampling_variance_ablation"
+
+
+def test_reviewer_mode_count_rules_and_diagnostics_are_exposed():
+    torch.manual_seed(7)
+    model = TinyTransferNet()
+    report = calibrate_mdl_tangent_core(
+        model, loader(), nn.CrossEntropyLoss(), device="cpu",
+        mode_count_rule="harmonic", r_scale=0.5,
+        calibration_fraction=0.5, partition_mode="seeded_random", partition_seed=11,
+        svd_power_iterations=1,
+    )
+    payload = getattr(model, "_mdl_tangent_report")
+    assert report.mode_count_rule == "harmonic"
+    assert report.r_scale == 0.5
+    assert payload["mode_count_rule"] == "harmonic"
+    assert payload["global_selected_modes"] == report.global_selected_modes
+    assert payload["global_numerical_support"] >= payload["global_selected_modes"]
+    assert payload["global_shannon_effective_modes"] >= 1.0
+    assert payload["candidate_modes"] >= payload["global_numerical_support"]
+    assert payload["partition_mode"] == "seeded_random"
+    assert payload["partition_seed"] == 11
+    assert isinstance(payload["layer_ranks"], dict)
+    assert payload["rank_min"] <= payload["rank_max"]
+
+
+def test_alternative_mode_count_rules_are_ordered_between_d1_and_d0():
+    from models.tuning_modules.mdl_tangent_core import _mode_count_value
+    d0, d1 = 100, 10.0
+    values = {
+        name: _mode_count_value(d0, d1, name)
+        for name in ("shannon", "harmonic", "geometric", "arithmetic")
+    }
+    assert values["shannon"] == d1
+    assert d1 <= values["harmonic"] <= d0
+    assert d1 <= values["geometric"] <= d0
+    assert d1 <= values["arithmetic"] <= d0
