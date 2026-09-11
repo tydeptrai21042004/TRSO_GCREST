@@ -1,3 +1,13 @@
+# Active Kaggle protocol — reviewer-ready 204-run matrix
+
+The active Kaggle cells are now under **`kaggle/reviewer_matrix/`**. They implement the complete requested matrix (68 dataset/backbone/method experiment groups × seeds 0/1/2 = **204 training runs**) and split it into **18 time-balanced sessions**. Each session is ordered fastest → slowest, records per-run ETA and actual time, stops safely before **11h50m**, and always produces a ZIP containing all completed runs.
+
+Use `kaggle/reviewer_matrix/README.md` and the files `TRSO_Reviewer_Matrix_Session_01_OneCell.py` through `TRSO_Reviewer_Matrix_Session_18_OneCell.py`. The older files below remain only for submitted-manuscript/revision history.
+
+---
+
+> **Historical protocol notice (September 2026):** this file documents the frozen submitted-manuscript/46-run reproduction. It is preserved for reproducibility, but the active reviewer-ready baseline comparison uses `tools.run_fair_suite` with fresh heads and `tools.run_paper_fair_pairs` for paper-recipe paired checks.
+
 # Kaggle six-session comparison runner
 
 The corrected comparison contains **46 training runs** and is split into six independent Kaggle sessions. Run the files in numeric order; each session is self-contained and produces its own ZIP.

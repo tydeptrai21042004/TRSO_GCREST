@@ -42,7 +42,7 @@ def _suite_args(tmp_path: Path, *, task="single_label"):
         min_lr=1e-6,
         optimizer="adamw",
         augmentation="strong",
-        peft_head_lr_scale=0.5,
+        peft_head_lr_scale=1.0,
         peft_freeze_head=False,
         ra_pretrained_checkpoint="",
         device="cpu",
@@ -203,6 +203,7 @@ def test_separate_baseline_stage_reuses_external_linear_head_without_hidden_run(
     args.backbones = "resnet50@torchvision"
     args.methods = "conv"
     args.external_head_manifests = str(manifest)
+    args.head_init_policy = "linear_probe"
     _, _, heads, comparisons, _, _ = build_suite(args)
     assert heads == []
     assert len(comparisons) == 1

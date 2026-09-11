@@ -62,12 +62,20 @@ def test_ssf_rejects_generic_cnn_family():
     assert not decision("ssf", "mobilenet_v3_large")[0]
 
 
-def test_every_strict_visual_paper_baseline_is_single_label_only():
+def test_paper_baselines_respect_their_published_task_contracts():
+    # Visual-recognition PEFT baselines are single-label; the two revision
+    # baselines intentionally cover the paper's multilabel and segmentation tasks.
+    task_specific = {"ml_decoder": "multilabel", "segadapter": "semantic_segmentation"}
     for method in PAPER_BASELINE_METHODS:
-        validate_method_task(method, "single_label")
-        for task in ("multilabel", "regression", "semantic_segmentation", "depth_estimation", "object_detection"):
+        if method in task_specific:
+            validate_method_task(method, task_specific[method])
             with pytest.raises(ValueError):
-                validate_method_task(method, task)
+                validate_method_task(method, "single_label")
+        else:
+            validate_method_task(method, "single_label")
+            for task in ("multilabel", "regression", "semantic_segmentation", "depth_estimation", "object_detection"):
+                with pytest.raises(ValueError):
+                    validate_method_task(method, task)
 
 
 @pytest.mark.parametrize(

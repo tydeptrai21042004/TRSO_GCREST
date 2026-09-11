@@ -1,0 +1,221 @@
+{
+  "protocol": "reviewer_revision_main_v1",
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "split_seed": 0,
+  "epochs": 30,
+  "warmup_epochs": 3,
+  "optimizer": "adamw",
+  "full_lr": 0.0001,
+  "linear_lr": 0.001,
+  "peft_lr": 0.001,
+  "weight_decay": 0.0001,
+  "min_lr": 1e-06,
+  "input_size": 224,
+  "expected_training_runs": 204,
+  "settings": [
+    {
+      "key": "dtd_resnet50",
+      "dataset": "dtd",
+      "task": "single_label",
+      "backbone": "resnet50@torchvision",
+      "methods": [
+        "full",
+        "linear",
+        "prompt",
+        "conv",
+        "piggyback",
+        "trso"
+      ],
+      "batch_size": 16,
+      "dataset_args": {
+        "dtd_partition": 1
+      },
+      "expected_runs": 18
+    },
+    {
+      "key": "dtd_vit_b16",
+      "dataset": "dtd",
+      "task": "single_label",
+      "backbone": "vit_b_16@torchvision",
+      "methods": [
+        "full",
+        "linear",
+        "ssf",
+        "adaptformer",
+        "repadapter",
+        "arc",
+        "vpt_shallow",
+        "vpt_deep",
+        "convpass",
+        "fact_tt",
+        "fact_tk",
+        "vqt",
+        "spt_lora",
+        "spt_adapter",
+        "trso"
+      ],
+      "batch_size": 8,
+      "dataset_args": {
+        "dtd_partition": 1
+      },
+      "expected_runs": 45
+    },
+    {
+      "key": "dtd_resnet18",
+      "dataset": "dtd",
+      "task": "single_label",
+      "backbone": "resnet18@torchvision",
+      "methods": [
+        "full",
+        "linear",
+        "prompt",
+        "trso"
+      ],
+      "batch_size": 32,
+      "dataset_args": {
+        "dtd_partition": 1
+      },
+      "expected_runs": 12
+    },
+    {
+      "key": "dtd_swin_t",
+      "dataset": "dtd",
+      "task": "single_label",
+      "backbone": "swin_t@torchvision",
+      "methods": [
+        "full",
+        "linear",
+        "ssf",
+        "trso"
+      ],
+      "batch_size": 32,
+      "dataset_args": {
+        "dtd_partition": 1
+      },
+      "expected_runs": 12
+    },
+    {
+      "key": "flowers_resnet18",
+      "dataset": "flowers102",
+      "task": "single_label",
+      "backbone": "resnet18@torchvision",
+      "methods": [
+        "full",
+        "linear",
+        "prompt",
+        "trso"
+      ],
+      "batch_size": 32,
+      "dataset_args": {},
+      "expected_runs": 12
+    },
+    {
+      "key": "flowers_vit_b16",
+      "dataset": "flowers102",
+      "task": "single_label",
+      "backbone": "vit_b_16@torchvision",
+      "methods": [
+        "full",
+        "linear",
+        "ssf",
+        "adaptformer",
+        "repadapter",
+        "arc",
+        "vpt_shallow",
+        "vpt_deep",
+        "convpass",
+        "fact_tt",
+        "fact_tk",
+        "vqt",
+        "spt_lora",
+        "spt_adapter",
+        "trso"
+      ],
+      "batch_size": 16,
+      "dataset_args": {},
+      "expected_runs": 45
+    },
+    {
+      "key": "flowers_swin_t",
+      "dataset": "flowers102",
+      "task": "single_label",
+      "backbone": "swin_t@torchvision",
+      "methods": [
+        "full",
+        "linear",
+        "ssf",
+        "trso"
+      ],
+      "batch_size": 32,
+      "dataset_args": {},
+      "expected_runs": 12
+    },
+    {
+      "key": "pet_resnet18",
+      "dataset": "oxfordiiitpet",
+      "task": "single_label",
+      "backbone": "resnet18@torchvision",
+      "methods": [
+        "full",
+        "linear",
+        "prompt",
+        "trso"
+      ],
+      "batch_size": 32,
+      "dataset_args": {},
+      "expected_runs": 12
+    },
+    {
+      "key": "pet_swin_t",
+      "dataset": "oxfordiiitpet",
+      "task": "single_label",
+      "backbone": "swin_t@torchvision",
+      "methods": [
+        "full",
+        "linear",
+        "ssf",
+        "trso"
+      ],
+      "batch_size": 32,
+      "dataset_args": {},
+      "expected_runs": 12
+    },
+    {
+      "key": "voc2007_mobilenetv3_small",
+      "dataset": "voc2007",
+      "task": "multilabel",
+      "backbone": "mobilenet_v3_small@torchvision",
+      "methods": [
+        "full",
+        "linear",
+        "ml_decoder",
+        "trso"
+      ],
+      "batch_size": 32,
+      "dataset_args": {},
+      "expected_runs": 12
+    },
+    {
+      "key": "pet_segmentation_lraspp_mobilenetv3_large",
+      "dataset": "oxford_pet_segmentation",
+      "task": "semantic_segmentation",
+      "backbone": "lraspp_mobilenet_v3_large@torchvision",
+      "methods": [
+        "full",
+        "linear",
+        "segadapter",
+        "trso"
+      ],
+      "batch_size": 8,
+      "dataset_args": {
+        "segmentation_num_classes": 3,
+        "segmentation_ignore_index": 255
+      },
+      "expected_runs": 12
+    }
+  ]
+}

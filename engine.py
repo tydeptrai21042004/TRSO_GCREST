@@ -153,8 +153,22 @@ def train_one_epoch(
                 samples, targets = mixup_fn(samples, targets)
 
             with _amp_context(device, use_amp):
-                output = _extract_output(model(samples))
+                raw_output = model(samples)
+                output = _extract_output(raw_output)
                 loss = criterion(output, targets)
+                # SegAdapter Eq. (12): main CE + lambda * coarse auxiliary CE.
+                if (
+                    task_type == TASK_SEMANTIC_SEGMENTATION
+                    and isinstance(raw_output, dict)
+                    and isinstance(raw_output.get("aux"), torch.Tensor)
+                ):
+                    aux_output = raw_output["aux"]
+                    if tuple(aux_output.shape[-2:]) != tuple(targets.shape[-2:]):
+                        aux_output = torch.nn.functional.interpolate(
+                            aux_output, size=targets.shape[-2:], mode="bilinear", align_corners=False
+                        )
+                    aux_weight = float(raw_output.get("aux_weight", 0.4))
+                    loss = loss + aux_weight * criterion(aux_output, targets)
             batch_size = int(samples.shape[0])
 
         loss_value = float(loss.item())

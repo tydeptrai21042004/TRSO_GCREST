@@ -25,6 +25,11 @@ from .convpass_transformer import ConvPassAdapter, apply_convpass, set_convpass_
 from .fact import apply_fact, set_fact_trainability, merge_fact_
 from .vqt import VisualQueryTuning, set_vqt_trainability
 from .spt import calibrate_spt, set_spt_trainability, merge_spt_
+from .ml_decoder import MLDecoder, MLDecoderClassifier, set_ml_decoder_trainability
+from .segadapter import (
+    SegAttention, SegAdapterBlock, SegAdapterStage, apply_segadapter_lraspp,
+    collect_segadapter_aux, set_segadapter_trainability,
+)
 from .piggyback import (
     BinaryMaskSTE, PiggybackConv2d, PiggybackLinear, apply_piggyback,
     set_piggyback_trainability, piggyback_storage, export_binary_masks,
@@ -88,6 +93,19 @@ def set_tuning_config(tuning_method, args):
         return {"method": method, "variant": variant, "rank": rank}
     if method == "vqt":
         return {"method": method, "query_length": getattr(args, "vqt_query_length", 1)}
+    if method == "ml_decoder":
+        return {
+            "method": method,
+            "decoder_embedding": getattr(args, "ml_decoder_embedding", 768),
+            "num_groups": getattr(args, "ml_decoder_num_groups", -1),
+        }
+    if method == "segadapter":
+        return {
+            "method": method,
+            "kernel_size": getattr(args, "segadapter_kernel_size", 5),
+            "ffn_ratio": getattr(args, "segadapter_ffn_ratio", 3.0),
+            "aux_weight": getattr(args, "segadapter_aux_weight", 0.4),
+        }
     if method in {"spt_lora", "spt_adapter"}:
         return {"method": method, "budget": getattr(args, "spt_budget", 400000), "samples": getattr(args, "spt_sensitivity_samples", 800)}
     if method == "adaptformer":

@@ -1,6 +1,6 @@
 # Baseline expansion guide
 
-> **Status note:** This is an expansion/research guide, not the active strict baseline list. FacT, VQT, SPT, paper-internal ablations, transferred controls, and engineering controls are excluded from the main literature-baseline table. See `BASELINE_AND_ABLATION_SEPARATION.md`.
+> **Status note:** This is an expansion/research guide. FacT, VQT, and SPT are now active published-method implementations in the reviewer revision; paper-internal ablations, transferred controls, and engineering controls remain separate. The canonical taxonomy and fidelity labels are in `BASELINE_AND_ABLATION_SEPARATION.md` and `baseline_recipes.py`.
 
 
 ## Baselines implemented now

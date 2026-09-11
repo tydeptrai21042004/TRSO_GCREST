@@ -200,6 +200,20 @@ METHOD_SUPPORT: Dict[str, MethodSupport] = {
         tasks=SINGLE_LABEL_TASKS,
         task_scope="Published SPT-Adapter single-label visual-recognition formulation."
     ),
+    "ml_decoder": MethodSupport(
+        frozenset({"cnn"}),
+        "ML-Decoder replaces global-pooling classification heads with fixed queries, cross-attention, and grouped classifiers.",
+        "Revision baseline is the published ML-Decoder head on MobileNetV3-Small spatial features.",
+        tasks=frozenset({"multilabel"}),
+        task_scope="Task-specific published multi-label classification baseline; the revision route is VOC2007/MobileNetV3-Small."
+    ),
+    "segadapter": MethodSupport(
+        frozenset({"cnn"}),
+        "SegAdapter augments segmentation backbone stages with HSA, FFN, scaled residual injection, and an auxiliary coarse segmentation loss.",
+        "Revision reimplementation targets torchvision LR-ASPP with MobileNetV3-Large using the published SegAdapter equations/defaults.",
+        tasks=frozenset({TASK_SEMANTIC_SEGMENTATION}),
+        task_scope="Published semantic-segmentation adapter baseline."
+    ),
 }
 
 
@@ -213,18 +227,21 @@ PROPOSAL_METHODS = frozenset({"trso"})
 PAPER_BASELINE_METHODS = frozenset({
     "prompt", "conv", "ssf", "adaptformer", "repadapter", "arc", "piggyback",
     "vpt_shallow", "vpt_deep", "convpass",
+    # Paper-derived implementations validated against the authors' public releases.
+    "fact_tt", "fact_tk", "vqt", "spt_lora", "spt_adapter",
+    # Task-specific published baselines added for the revision.
+    "ml_decoder", "segadapter",
 })
 PAPER_ABLATION_METHODS = frozenset({"convpass_attn"})
-PAPER_REIMPLEMENTATION_CANDIDATES = frozenset({
-    "fact_tt", "fact_tk", "vqt", "spt_lora", "spt_adapter",
-})
+PAPER_REIMPLEMENTATION_CANDIDATES = frozenset()
 TRANSFERRED_CONTROL_METHODS = frozenset({"lora", "bitfit", "sidetune"})
 
 # ``--methods auto`` is deliberately baseline-only. Comparison, reference,
 # proposal and ablation suites are selected explicitly by the runners.
 STRICT_AUTO_METHODS = (
     "prompt", "conv", "ssf", "adaptformer", "repadapter", "arc", "piggyback",
-    "vpt_shallow", "vpt_deep", "convpass",
+    "vpt_shallow", "vpt_deep", "convpass", "fact_tt", "fact_tk", "vqt",
+    "spt_lora", "spt_adapter", "ml_decoder", "segadapter",
 )
 BENCHMARK_COMPARISON_METHODS = (
     "full", "linear", "trso", *STRICT_AUTO_METHODS,
@@ -242,14 +259,16 @@ ORIGINAL_PAPER_REFERENCES = {
     "vpt_deep": "Jia et al., Visual Prompt Tuning (ECCV 2022)",
     "convpass": "Jie and Deng, Convolutional Bypasses Are Better Vision Transformer Adapters (2022)",
     "convpass_attn": "Jie and Deng, ConvPass attention-only paper ablation (2022)",
-    "fact_tt": "Jie and Deng, FacT (AAAI 2023; qualified reimplementation)",
-    "fact_tk": "Jie and Deng, FacT (AAAI 2023; qualified reimplementation)",
-    "vqt": "Tu et al., Visual Query Tuning (CVPR 2023; qualified reimplementation)",
-    "spt_lora": "He et al., Sensitivity-Aware Visual Parameter-Efficient Fine-Tuning (ICCV 2023; rewrite required)",
-    "spt_adapter": "He et al., Sensitivity-Aware Visual Parameter-Efficient Fine-Tuning (ICCV 2023; rewrite required)",
+    "fact_tt": "Jie and Deng, FacT: Factor-Tuning for Lightweight Adaptation on Vision Transformer (AAAI 2023)",
+    "fact_tk": "Jie and Deng, FacT: Factor-Tuning for Lightweight Adaptation on Vision Transformer (AAAI 2023)",
+    "vqt": "Tu et al., Visual Query Tuning (CVPR 2023)",
+    "spt_lora": "He et al., Sensitivity-Aware Visual Parameter-Efficient Fine-Tuning (ICCV 2023)",
+    "spt_adapter": "He et al., Sensitivity-Aware Visual Parameter-Efficient Fine-Tuning (ICCV 2023)",
     "lora": "Hu et al., LoRA (ICLR 2022; original NLP/LLM task)",
     "bitfit": "Ben-Zaken et al., BitFit (ACL 2022; original NLP task)",
     "sidetune": "Zhang et al., Side-Tuning (ECCV 2020; current wrapper is not an exact reproduction)",
+    "ml_decoder": "Ridnik et al., ML-Decoder: Scalable and Versatile Classification Head (WACV 2023)",
+    "segadapter": "Peng and Kameyama, Simple and Efficient Vision Backbone Adapter for Image Semantic Segmentation (ACML 2023)",
 }
 
 
@@ -344,6 +363,10 @@ def canonical_method(name: str) -> str:
         "spt": "spt_lora",
         "spt_lora": "spt_lora",
         "spt_adapter": "spt_adapter",
+        "mldecoder": "ml_decoder",
+        "ml_decoder": "ml_decoder",
+        "seg_adapter": "segadapter",
+        "segadapter": "segadapter",
     }
     return aliases.get(value, value)
 
@@ -486,6 +509,10 @@ def static_method_compatibility(
         disallowed_hybrid = any(token in normalized for token in ("swin", "deit", "beit", "eva", "cait", "maxvit"))
         if family != "vit" or "vit" not in normalized or disallowed_hybrid:
             return False, f"{method} strict reproduction requires a plain Vision Transformer (ViT), got {backbone_name!r}.", family
+    if method == "ml_decoder" and "mobilenet_v3_small" not in normalized:
+        return False, f"ML-Decoder revision route requires MobileNetV3-Small, got {backbone_name!r}.", family
+    if method == "segadapter" and "lraspp_mobilenet_v3_large" not in normalized:
+        return False, f"SegAdapter revision route requires LR-ASPP/MobileNetV3-Large, got {backbone_name!r}.", family
     if method == "repadapter":
         allowed = ("vit_b_16", "vit_base_patch16_224", "vit_base_patch16_224_in21k")
         if family != "vit" or not any(token in normalized for token in allowed):

@@ -57,7 +57,7 @@ def get_parser() -> argparse.ArgumentParser:
     p.add_argument("--seeds", default="0,1,2")
     p.add_argument("--partition_seeds", default="0,1,2")
     p.add_argument("--calibration_fractions", default="0.25,0.5,1.0")
-    p.add_argument("--batch_sizes", default="8,16,32,64", help="Batch sizes for calibration/batching sensitivity; proposal definition is unchanged.")
+    p.add_argument("--batch_sizes", default="8,16,32,64", help="Calibration-only batch sizes; the training batch size remains fixed.")
     p.add_argument("--mode_rules", default="shannon,harmonic,geometric,arithmetic")
     p.add_argument("--r_scales", default="0.5,1.0,2.0")
     p.add_argument("--lora_ranks", default="1,2,4,8,16,32,64")
@@ -207,16 +207,19 @@ def build_revision_specs(args: argparse.Namespace):
                         "seed": seeds[0],
                     }))
         elif study == "batch_sensitivity":
-            # Evaluation-only diagnostic: the submitted proposal is unchanged.
-            # We vary loader batching while holding the optimization seed and
-            # dataset split fixed, exposing any batching dependence explicitly.
-            for batch_size in parse_csv_values(args.batch_sizes, int):
-                variants.append((f"batch_{batch_size}", {
-                    "batch_size": batch_size,
-                    "seed": seeds[0],
-                    "trso_partition_mode": "alternating",
-                    "trso_partition_seed": 0,
-                }))
+            # Isolate calibration batching from optimization batching. Reviewer 1
+            # explicitly asks whether B/rho/R change with calibration batch size;
+            # changing the training loader at the same time would confound that test.
+            # Use all requested optimization seeds so the sensitivity table also has
+            # mean +/- SD rather than a single optimization realization.
+            for calibration_batch_size in parse_csv_values(args.batch_sizes, int):
+                for seed in seeds:
+                    variants.append((f"calib_batch_{calibration_batch_size}", {
+                        "trso_calibration_batch_size": calibration_batch_size,
+                        "seed": seed,
+                        "trso_partition_mode": "alternating",
+                        "trso_partition_seed": 0,
+                    }))
         else:
             raise ValueError(study)
 

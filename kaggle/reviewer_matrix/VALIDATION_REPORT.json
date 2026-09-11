@@ -1,0 +1,50 @@
+{
+  "date": "2026-09-11",
+  "matrix_experiment_groups": 68,
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "total_training_runs": 204,
+  "session_count": 18,
+  "session_t4_estimated_hours": {
+    "01": 7.8,
+    "02": 7.8,
+    "03": 7.5,
+    "04": 7.45,
+    "05": 7.75,
+    "06": 7.95,
+    "07": 7.8,
+    "08": 7.95,
+    "09": 7.85,
+    "10": 7.85,
+    "11": 7.6,
+    "12": 7.7,
+    "13": 7.7,
+    "14": 7.75,
+    "15": 7.8,
+    "16": 7.65,
+    "17": 7.65,
+    "18": 7.65
+  },
+  "max_session_t4_estimated_hours": 7.95,
+  "min_session_t4_estimated_hours": 7.45,
+  "hard_limit_minutes": 710,
+  "zip_reserve_minutes": 12,
+  "ordering": "fastest_to_slowest_within_each_session",
+  "fair_head_policy": "random",
+  "peft_head_lr_scale": 1.0,
+  "full_test_suite": "184 passed",
+  "matrix_dryrun": "11/11 settings generated exact requested method manifests; 68/68 experiment groups",
+  "notes": "Runtime estimates are scheduling estimates relative to an NVIDIA T4 and are not scientific performance measurements.",
+  "archive_policy": "refresh ZIP after every fully completed 3-seed experiment group and again at session exit",
+  "metrics_export": {
+    "all_reported_metrics.json": "every JSON report from every completed run",
+    "all_final_metrics.csv": "all scalar final/report metrics per seed-run",
+    "all_epoch_metrics.csv": "every per-epoch history field",
+    "metrics_inventory.csv": "artifact sizes, SHA-256, parse status",
+    "seed_completeness.csv": "explicit seed 0/1/2 status for every experiment",
+    "metrics_coverage.json": "three-seed completion proof"
+  }
+}

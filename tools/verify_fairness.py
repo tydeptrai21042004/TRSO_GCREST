@@ -1,10 +1,13 @@
 """Verify a generated fair-suite manifest or completed output tree.
 
-The verifier enforces the user's controlled-comparison rule:
-- every PEFT method and TRSO uses the same optimizer, LR, cosine scheduler,
-  warm-up, weight decay, epoch count, batch size, split seed, and augmentation;
+The verifier enforces the controlled-comparison rule:
+- every PEFT method and TRSO uses the same optimizer, LR, scheduler, warm-up,
+  weight decay, epoch count, batch size, split seed, and augmentation;
+- the main-table default is a fresh/random task head with no hidden linear-probe
+  checkpoint and head LR scale 1.0;
+- an LP warm start is allowed only when the manifest explicitly labels
+  head_init_policy=linear_probe;
 - full fine-tuning and linear probing may use different learning rates only;
-- comparisons are made within the same dataset/task/backbone group;
 - unsupported pairs must appear in the compatibility report rather than vanish.
 """
 from __future__ import annotations
@@ -21,6 +24,7 @@ COMMON_KEYS = (
     "fair_warmup_epochs", "fair_min_lr", "epochs", "batch_size", "update_freq",
     "split_seed", "input_size", "train_aug", "aa", "color_jitter", "mixup",
     "cutmix", "smoothing", "reprob", "task", "dataset", "backbone",
+    "head_init_policy", "peft_head_lr_scale",
 )
 
 
@@ -65,8 +69,17 @@ def verify_manifest(path: str | Path) -> dict[str, Any]:
                 errors.append(f"{group}/{method}: paper_hparams would override the controlled recipe")
             if parameters.get("legacy_auto_hparams", False):
                 errors.append(f"{group}/{method}: legacy_auto_hparams would override the controlled recipe")
-            if method not in PEFT_EXCEPTIONS and parameters.get("head_from") is None and method not in {"prompt"}:
-                warnings.append(f"{group}/{method}: no shared task-aware head checkpoint")
+            head_policy = str(parameters.get("head_init_policy", "random"))
+            if head_policy == "random":
+                if parameters.get("head_from"):
+                    errors.append(f"{group}/{method}: random-head protocol must not load --head_from")
+                if method not in PEFT_EXCEPTIONS and method != "prompt" and float(parameters.get("peft_head_lr_scale", 1.0)) != 1.0:
+                    errors.append(f"{group}/{method}: random-head protocol requires peft_head_lr_scale=1.0")
+            elif head_policy == "linear_probe":
+                if method not in PEFT_EXCEPTIONS and method not in {"prompt", "vqt", "ml_decoder", "segadapter"} and not parameters.get("head_from"):
+                    warnings.append(f"{group}/{method}: LP-warm-start protocol has no matching head checkpoint")
+            else:
+                errors.append(f"{group}/{method}: unknown head_init_policy={head_policy!r}")
 
         group_reports.append({
             "dataset": group[0], "task": group[1], "backbone": group[2],

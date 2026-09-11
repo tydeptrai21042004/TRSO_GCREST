@@ -11,6 +11,10 @@ from itertools import combinations
 from typing import Any, Dict
 
 import pandas as pd
+try:
+    from scipy.stats import t as student_t
+except Exception:
+    student_t = None
 
 
 def read_json(path: str) -> Dict[str, Any]:
@@ -128,7 +132,13 @@ def _mean_std_ci95(values: pd.Series) -> tuple[float | None, float | None, float
         return None, None, None, 0
     mean = float(numeric.mean())
     std = float(numeric.std(ddof=1)) if n > 1 else 0.0
-    ci95 = float(1.96 * std / math.sqrt(n)) if n > 1 else 0.0
+    if n > 1:
+        # Small-n seed studies require Student-t rather than the large-sample
+        # normal 1.96 multiplier (e.g. t_0.975,2 ~= 4.303 for three seeds).
+        critical = float(student_t.ppf(0.975, df=n - 1)) if student_t is not None else (4.302652729911275 if n == 3 else 1.96)
+        ci95 = float(critical * std / math.sqrt(n))
+    else:
+        ci95 = 0.0
     return mean, std, ci95, n
 
 

@@ -77,7 +77,17 @@ class DenseOutputModel(nn.Module):
             tensor = output
         if self.positive:
             tensor = F.softplus(tensor) + self.min_value
-        return {"out": tensor}
+        result = {"out": tensor}
+        # SegAdapter (Peng & Kameyama) uses an auxiliary coarse segmentation
+        # map during training only.  The auxiliary branch is removed/ignored at
+        # inference, matching the paper.
+        if self.training and hasattr(self.model, "_segadapter_aux_weight"):
+            from models.tuning_modules.segadapter import collect_segadapter_aux
+            aux = collect_segadapter_aux(self.model.backbone, tuple(tensor.shape[-2:]))
+            if aux is not None:
+                result["aux"] = aux
+                result["aux_weight"] = float(getattr(self.model, "_segadapter_aux_weight", 0.4))
+        return result
 
 
 def _weights_enum_default(module, model_name: str):

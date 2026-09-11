@@ -1,0 +1,2058 @@
+{
+  "protocol": "reviewer_main_controlled_fair_v3_kaggle_sessions",
+  "reference_gpu": "NVIDIA T4",
+  "session_count": 18,
+  "experiment_groups": 68,
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "total_training_runs": 204,
+  "estimated_total_minutes_t4": 8352,
+  "estimated_total_hours_t4": 139.2,
+  "sessions": [
+    {
+      "protocol": "reviewer_main_controlled_fair_v3_kaggle_sessions",
+      "session": 1,
+      "session_count": 18,
+      "reference_gpu": "NVIDIA T4",
+      "epochs": 30,
+      "warmup_epochs": 3,
+      "input_size": 224,
+      "split_seed": 0,
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "head_init_policy": "random",
+      "peft_head_lr_scale": 1.0,
+      "method_internal_defaults": "baseline_recipes.py",
+      "outer_training_protocol": {
+        "optimizer": "adamw",
+        "peft_lr": 0.001,
+        "full_lr": 0.0001,
+        "linear_lr": 0.001,
+        "weight_decay": 0.0001,
+        "min_lr": 1e-06,
+        "augmentation": "strong"
+      },
+      "hard_limit_minutes": 710,
+      "zip_reserve_minutes": 12,
+      "estimated_session_minutes_t4": 468,
+      "estimated_session_hours_t4": 7.8,
+      "experiment_groups": [
+        {
+          "order_fast_to_slow": 1,
+          "setting_key": "dtd_resnet18",
+          "setting_label": "DTD / ResNet-18",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "resnet18@torchvision",
+          "method": "linear",
+          "method_label": "Linear",
+          "batch_size": 32,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "estimated_minutes_t4_per_seed": 8,
+          "experiment_id": "dtd_resnet18__linear",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 24
+        },
+        {
+          "order_fast_to_slow": 2,
+          "setting_key": "dtd_resnet18",
+          "setting_label": "DTD / ResNet-18",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "resnet18@torchvision",
+          "method": "full",
+          "method_label": "Full",
+          "batch_size": 32,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "estimated_minutes_t4_per_seed": 28,
+          "experiment_id": "dtd_resnet18__full",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 84
+        },
+        {
+          "order_fast_to_slow": 3,
+          "setting_key": "pet_segmentation_lraspp_mobilenetv3_large",
+          "setting_label": "Pet segmentation / LR-ASPP MobileNetV3-L",
+          "dataset": "oxford_pet_segmentation",
+          "task": "semantic_segmentation",
+          "backbone": "lraspp_mobilenet_v3_large@torchvision",
+          "method": "full",
+          "method_label": "Full",
+          "batch_size": 8,
+          "dataset_args": {
+            "segmentation_num_classes": 3,
+            "segmentation_ignore_index": 255
+          },
+          "estimated_minutes_t4_per_seed": 120,
+          "experiment_id": "pet_segmentation_lraspp_mobilenetv3_large__full",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 360
+        }
+      ],
+      "expanded_seed_runs": 9
+    },
+    {
+      "protocol": "reviewer_main_controlled_fair_v3_kaggle_sessions",
+      "session": 2,
+      "session_count": 18,
+      "reference_gpu": "NVIDIA T4",
+      "epochs": 30,
+      "warmup_epochs": 3,
+      "input_size": 224,
+      "split_seed": 0,
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "head_init_policy": "random",
+      "peft_head_lr_scale": 1.0,
+      "method_internal_defaults": "baseline_recipes.py",
+      "outer_training_protocol": {
+        "optimizer": "adamw",
+        "peft_lr": 0.001,
+        "full_lr": 0.0001,
+        "linear_lr": 0.001,
+        "weight_decay": 0.0001,
+        "min_lr": 1e-06,
+        "augmentation": "strong"
+      },
+      "hard_limit_minutes": 710,
+      "zip_reserve_minutes": 12,
+      "estimated_session_minutes_t4": 468,
+      "estimated_session_hours_t4": 7.8,
+      "experiment_groups": [
+        {
+          "order_fast_to_slow": 1,
+          "setting_key": "dtd_resnet18",
+          "setting_label": "DTD / ResNet-18",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "resnet18@torchvision",
+          "method": "trso",
+          "method_label": "Proposal",
+          "batch_size": 32,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "estimated_minutes_t4_per_seed": 22,
+          "experiment_id": "dtd_resnet18__trso",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 66
+        },
+        {
+          "order_fast_to_slow": 2,
+          "setting_key": "flowers_vit_b16",
+          "setting_label": "Flowers / ViT-B16",
+          "dataset": "flowers102",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "method": "arc",
+          "method_label": "ARC",
+          "batch_size": 16,
+          "dataset_args": {},
+          "estimated_minutes_t4_per_seed": 39,
+          "experiment_id": "flowers_vit_b16__arc",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 117
+        },
+        {
+          "order_fast_to_slow": 3,
+          "setting_key": "dtd_vit_b16",
+          "setting_label": "DTD / ViT-B16",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "method": "full",
+          "method_label": "Full",
+          "batch_size": 8,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "estimated_minutes_t4_per_seed": 95,
+          "experiment_id": "dtd_vit_b16__full",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 285
+        }
+      ],
+      "expanded_seed_runs": 9
+    },
+    {
+      "protocol": "reviewer_main_controlled_fair_v3_kaggle_sessions",
+      "session": 3,
+      "session_count": 18,
+      "reference_gpu": "NVIDIA T4",
+      "epochs": 30,
+      "warmup_epochs": 3,
+      "input_size": 224,
+      "split_seed": 0,
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "head_init_policy": "random",
+      "peft_head_lr_scale": 1.0,
+      "method_internal_defaults": "baseline_recipes.py",
+      "outer_training_protocol": {
+        "optimizer": "adamw",
+        "peft_lr": 0.001,
+        "full_lr": 0.0001,
+        "linear_lr": 0.001,
+        "weight_decay": 0.0001,
+        "min_lr": 1e-06,
+        "augmentation": "strong"
+      },
+      "hard_limit_minutes": 710,
+      "zip_reserve_minutes": 12,
+      "estimated_session_minutes_t4": 450,
+      "estimated_session_hours_t4": 7.5,
+      "experiment_groups": [
+        {
+          "order_fast_to_slow": 1,
+          "setting_key": "pet_segmentation_lraspp_mobilenetv3_large",
+          "setting_label": "Pet segmentation / LR-ASPP MobileNetV3-L",
+          "dataset": "oxford_pet_segmentation",
+          "task": "semantic_segmentation",
+          "backbone": "lraspp_mobilenet_v3_large@torchvision",
+          "method": "linear",
+          "method_label": "Linear",
+          "batch_size": 8,
+          "dataset_args": {
+            "segmentation_num_classes": 3,
+            "segmentation_ignore_index": 255
+          },
+          "estimated_minutes_t4_per_seed": 25,
+          "experiment_id": "pet_segmentation_lraspp_mobilenetv3_large__linear",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 75
+        },
+        {
+          "order_fast_to_slow": 2,
+          "setting_key": "flowers_vit_b16",
+          "setting_label": "Flowers / ViT-B16",
+          "dataset": "flowers102",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "method": "vpt_deep",
+          "method_label": "VPT-Deep",
+          "batch_size": 16,
+          "dataset_args": {},
+          "estimated_minutes_t4_per_seed": 40,
+          "experiment_id": "flowers_vit_b16__vpt_deep",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 120
+        },
+        {
+          "order_fast_to_slow": 3,
+          "setting_key": "dtd_swin_t",
+          "setting_label": "DTD / Swin-T",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "swin_t@torchvision",
+          "method": "full",
+          "method_label": "Full",
+          "batch_size": 32,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "estimated_minutes_t4_per_seed": 85,
+          "experiment_id": "dtd_swin_t__full",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 255
+        }
+      ],
+      "expanded_seed_runs": 9
+    },
+    {
+      "protocol": "reviewer_main_controlled_fair_v3_kaggle_sessions",
+      "session": 4,
+      "session_count": 18,
+      "reference_gpu": "NVIDIA T4",
+      "epochs": 30,
+      "warmup_epochs": 3,
+      "input_size": 224,
+      "split_seed": 0,
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "head_init_policy": "random",
+      "peft_head_lr_scale": 1.0,
+      "method_internal_defaults": "baseline_recipes.py",
+      "outer_training_protocol": {
+        "optimizer": "adamw",
+        "peft_lr": 0.001,
+        "full_lr": 0.0001,
+        "linear_lr": 0.001,
+        "weight_decay": 0.0001,
+        "min_lr": 1e-06,
+        "augmentation": "strong"
+      },
+      "hard_limit_minutes": 710,
+      "zip_reserve_minutes": 12,
+      "estimated_session_minutes_t4": 447,
+      "estimated_session_hours_t4": 7.45,
+      "experiment_groups": [
+        {
+          "order_fast_to_slow": 1,
+          "setting_key": "pet_resnet18",
+          "setting_label": "Pet / ResNet-18",
+          "dataset": "oxfordiiitpet",
+          "task": "single_label",
+          "backbone": "resnet18@torchvision",
+          "method": "trso",
+          "method_label": "Proposal",
+          "batch_size": 32,
+          "dataset_args": {},
+          "estimated_minutes_t4_per_seed": 24,
+          "experiment_id": "pet_resnet18__trso",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 72
+        },
+        {
+          "order_fast_to_slow": 2,
+          "setting_key": "voc2007_mobilenetv3_small",
+          "setting_label": "VOC2007 / MobileNetV3-S",
+          "dataset": "voc2007",
+          "task": "multilabel",
+          "backbone": "mobilenet_v3_small@torchvision",
+          "method": "trso",
+          "method_label": "Proposal",
+          "batch_size": 32,
+          "dataset_args": {},
+          "estimated_minutes_t4_per_seed": 40,
+          "experiment_id": "voc2007_mobilenetv3_small__trso",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 120
+        },
+        {
+          "order_fast_to_slow": 3,
+          "setting_key": "pet_swin_t",
+          "setting_label": "Pet / Swin-T",
+          "dataset": "oxfordiiitpet",
+          "task": "single_label",
+          "backbone": "swin_t@torchvision",
+          "method": "full",
+          "method_label": "Full",
+          "batch_size": 32,
+          "dataset_args": {},
+          "estimated_minutes_t4_per_seed": 85,
+          "experiment_id": "pet_swin_t__full",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 255
+        }
+      ],
+      "expanded_seed_runs": 9
+    },
+    {
+      "protocol": "reviewer_main_controlled_fair_v3_kaggle_sessions",
+      "session": 5,
+      "session_count": 18,
+      "reference_gpu": "NVIDIA T4",
+      "epochs": 30,
+      "warmup_epochs": 3,
+      "input_size": 224,
+      "split_seed": 0,
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "head_init_policy": "random",
+      "peft_head_lr_scale": 1.0,
+      "method_internal_defaults": "baseline_recipes.py",
+      "outer_training_protocol": {
+        "optimizer": "adamw",
+        "peft_lr": 0.001,
+        "full_lr": 0.0001,
+        "linear_lr": 0.001,
+        "weight_decay": 0.0001,
+        "min_lr": 1e-06,
+        "augmentation": "strong"
+      },
+      "hard_limit_minutes": 710,
+      "zip_reserve_minutes": 12,
+      "estimated_session_minutes_t4": 465,
+      "estimated_session_hours_t4": 7.75,
+      "experiment_groups": [
+        {
+          "order_fast_to_slow": 1,
+          "setting_key": "flowers_resnet18",
+          "setting_label": "Flowers / ResNet-18",
+          "dataset": "flowers102",
+          "task": "single_label",
+          "backbone": "resnet18@torchvision",
+          "method": "linear",
+          "method_label": "Linear",
+          "batch_size": 32,
+          "dataset_args": {},
+          "estimated_minutes_t4_per_seed": 7,
+          "experiment_id": "flowers_resnet18__linear",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 21
+        },
+        {
+          "order_fast_to_slow": 2,
+          "setting_key": "dtd_resnet50",
+          "setting_label": "DTD / ResNet-50",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "resnet50@torchvision",
+          "method": "prompt",
+          "method_label": "Visual Prompting",
+          "batch_size": 16,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "estimated_minutes_t4_per_seed": 28,
+          "experiment_id": "dtd_resnet50__prompt",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 84
+        },
+        {
+          "order_fast_to_slow": 3,
+          "setting_key": "flowers_swin_t",
+          "setting_label": "Flowers / Swin-T",
+          "dataset": "flowers102",
+          "task": "single_label",
+          "backbone": "swin_t@torchvision",
+          "method": "trso",
+          "method_label": "Proposal",
+          "batch_size": 32,
+          "dataset_args": {},
+          "estimated_minutes_t4_per_seed": 40,
+          "experiment_id": "flowers_swin_t__trso",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 120
+        },
+        {
+          "order_fast_to_slow": 4,
+          "setting_key": "pet_segmentation_lraspp_mobilenetv3_large",
+          "setting_label": "Pet segmentation / LR-ASPP MobileNetV3-L",
+          "dataset": "oxford_pet_segmentation",
+          "task": "semantic_segmentation",
+          "backbone": "lraspp_mobilenet_v3_large@torchvision",
+          "method": "trso",
+          "method_label": "Proposal",
+          "batch_size": 8,
+          "dataset_args": {
+            "segmentation_num_classes": 3,
+            "segmentation_ignore_index": 255
+          },
+          "estimated_minutes_t4_per_seed": 80,
+          "experiment_id": "pet_segmentation_lraspp_mobilenetv3_large__trso",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 240
+        }
+      ],
+      "expanded_seed_runs": 12
+    },
+    {
+      "protocol": "reviewer_main_controlled_fair_v3_kaggle_sessions",
+      "session": 6,
+      "session_count": 18,
+      "reference_gpu": "NVIDIA T4",
+      "epochs": 30,
+      "warmup_epochs": 3,
+      "input_size": 224,
+      "split_seed": 0,
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "head_init_policy": "random",
+      "peft_head_lr_scale": 1.0,
+      "method_internal_defaults": "baseline_recipes.py",
+      "outer_training_protocol": {
+        "optimizer": "adamw",
+        "peft_lr": 0.001,
+        "full_lr": 0.0001,
+        "linear_lr": 0.001,
+        "weight_decay": 0.0001,
+        "min_lr": 1e-06,
+        "augmentation": "strong"
+      },
+      "hard_limit_minutes": 710,
+      "zip_reserve_minutes": 12,
+      "estimated_session_minutes_t4": 477,
+      "estimated_session_hours_t4": 7.95,
+      "experiment_groups": [
+        {
+          "order_fast_to_slow": 1,
+          "setting_key": "voc2007_mobilenetv3_small",
+          "setting_label": "VOC2007 / MobileNetV3-S",
+          "dataset": "voc2007",
+          "task": "multilabel",
+          "backbone": "mobilenet_v3_small@torchvision",
+          "method": "linear",
+          "method_label": "Linear",
+          "batch_size": 32,
+          "dataset_args": {},
+          "estimated_minutes_t4_per_seed": 12,
+          "experiment_id": "voc2007_mobilenetv3_small__linear",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 36
+        },
+        {
+          "order_fast_to_slow": 2,
+          "setting_key": "flowers_vit_b16",
+          "setting_label": "Flowers / ViT-B16",
+          "dataset": "flowers102",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "method": "vpt_shallow",
+          "method_label": "VPT-Shallow",
+          "batch_size": 16,
+          "dataset_args": {},
+          "estimated_minutes_t4_per_seed": 30,
+          "experiment_id": "flowers_vit_b16__vpt_shallow",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 90
+        },
+        {
+          "order_fast_to_slow": 3,
+          "setting_key": "flowers_vit_b16",
+          "setting_label": "Flowers / ViT-B16",
+          "dataset": "flowers102",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "method": "convpass",
+          "method_label": "ConvPass",
+          "batch_size": 16,
+          "dataset_args": {},
+          "estimated_minutes_t4_per_seed": 42,
+          "experiment_id": "flowers_vit_b16__convpass",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 126
+        },
+        {
+          "order_fast_to_slow": 4,
+          "setting_key": "flowers_vit_b16",
+          "setting_label": "Flowers / ViT-B16",
+          "dataset": "flowers102",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "method": "full",
+          "method_label": "Full",
+          "batch_size": 16,
+          "dataset_args": {},
+          "estimated_minutes_t4_per_seed": 75,
+          "experiment_id": "flowers_vit_b16__full",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 225
+        }
+      ],
+      "expanded_seed_runs": 12
+    },
+    {
+      "protocol": "reviewer_main_controlled_fair_v3_kaggle_sessions",
+      "session": 7,
+      "session_count": 18,
+      "reference_gpu": "NVIDIA T4",
+      "epochs": 30,
+      "warmup_epochs": 3,
+      "input_size": 224,
+      "split_seed": 0,
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "head_init_policy": "random",
+      "peft_head_lr_scale": 1.0,
+      "method_internal_defaults": "baseline_recipes.py",
+      "outer_training_protocol": {
+        "optimizer": "adamw",
+        "peft_lr": 0.001,
+        "full_lr": 0.0001,
+        "linear_lr": 0.001,
+        "weight_decay": 0.0001,
+        "min_lr": 1e-06,
+        "augmentation": "strong"
+      },
+      "hard_limit_minutes": 710,
+      "zip_reserve_minutes": 12,
+      "estimated_session_minutes_t4": 468,
+      "estimated_session_hours_t4": 7.8,
+      "experiment_groups": [
+        {
+          "order_fast_to_slow": 1,
+          "setting_key": "pet_resnet18",
+          "setting_label": "Pet / ResNet-18",
+          "dataset": "oxfordiiitpet",
+          "task": "single_label",
+          "backbone": "resnet18@torchvision",
+          "method": "linear",
+          "method_label": "Linear",
+          "batch_size": 32,
+          "dataset_args": {},
+          "estimated_minutes_t4_per_seed": 9,
+          "experiment_id": "pet_resnet18__linear",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 27
+        },
+        {
+          "order_fast_to_slow": 2,
+          "setting_key": "pet_resnet18",
+          "setting_label": "Pet / ResNet-18",
+          "dataset": "oxfordiiitpet",
+          "task": "single_label",
+          "backbone": "resnet18@torchvision",
+          "method": "full",
+          "method_label": "Full",
+          "batch_size": 32,
+          "dataset_args": {},
+          "estimated_minutes_t4_per_seed": 30,
+          "experiment_id": "pet_resnet18__full",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 90
+        },
+        {
+          "order_fast_to_slow": 3,
+          "setting_key": "flowers_vit_b16",
+          "setting_label": "Flowers / ViT-B16",
+          "dataset": "flowers102",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "method": "trso",
+          "method_label": "Proposal",
+          "batch_size": 16,
+          "dataset_args": {},
+          "estimated_minutes_t4_per_seed": 42,
+          "experiment_id": "flowers_vit_b16__trso",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 126
+        },
+        {
+          "order_fast_to_slow": 4,
+          "setting_key": "pet_segmentation_lraspp_mobilenetv3_large",
+          "setting_label": "Pet segmentation / LR-ASPP MobileNetV3-L",
+          "dataset": "oxford_pet_segmentation",
+          "task": "semantic_segmentation",
+          "backbone": "lraspp_mobilenet_v3_large@torchvision",
+          "method": "segadapter",
+          "method_label": "SegAdapter",
+          "batch_size": 8,
+          "dataset_args": {
+            "segmentation_num_classes": 3,
+            "segmentation_ignore_index": 255
+          },
+          "estimated_minutes_t4_per_seed": 75,
+          "experiment_id": "pet_segmentation_lraspp_mobilenetv3_large__segadapter",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 225
+        }
+      ],
+      "expanded_seed_runs": 12
+    },
+    {
+      "protocol": "reviewer_main_controlled_fair_v3_kaggle_sessions",
+      "session": 8,
+      "session_count": 18,
+      "reference_gpu": "NVIDIA T4",
+      "epochs": 30,
+      "warmup_epochs": 3,
+      "input_size": 224,
+      "split_seed": 0,
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "head_init_policy": "random",
+      "peft_head_lr_scale": 1.0,
+      "method_internal_defaults": "baseline_recipes.py",
+      "outer_training_protocol": {
+        "optimizer": "adamw",
+        "peft_lr": 0.001,
+        "full_lr": 0.0001,
+        "linear_lr": 0.001,
+        "weight_decay": 0.0001,
+        "min_lr": 1e-06,
+        "augmentation": "strong"
+      },
+      "hard_limit_minutes": 710,
+      "zip_reserve_minutes": 12,
+      "estimated_session_minutes_t4": 477,
+      "estimated_session_hours_t4": 7.95,
+      "experiment_groups": [
+        {
+          "order_fast_to_slow": 1,
+          "setting_key": "flowers_swin_t",
+          "setting_label": "Flowers / Swin-T",
+          "dataset": "flowers102",
+          "task": "single_label",
+          "backbone": "swin_t@torchvision",
+          "method": "linear",
+          "method_label": "Linear",
+          "batch_size": 32,
+          "dataset_args": {},
+          "estimated_minutes_t4_per_seed": 14,
+          "experiment_id": "flowers_swin_t__linear",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 42
+        },
+        {
+          "order_fast_to_slow": 2,
+          "setting_key": "dtd_resnet50",
+          "setting_label": "DTD / ResNet-50",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "resnet50@torchvision",
+          "method": "trso",
+          "method_label": "Proposal",
+          "batch_size": 16,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "estimated_minutes_t4_per_seed": 33,
+          "experiment_id": "dtd_resnet50__trso",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 99
+        },
+        {
+          "order_fast_to_slow": 3,
+          "setting_key": "dtd_vit_b16",
+          "setting_label": "DTD / ViT-B16",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "method": "ssf",
+          "method_label": "SSF",
+          "batch_size": 8,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "estimated_minutes_t4_per_seed": 42,
+          "experiment_id": "dtd_vit_b16__ssf",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 126
+        },
+        {
+          "order_fast_to_slow": 4,
+          "setting_key": "dtd_vit_b16",
+          "setting_label": "DTD / ViT-B16",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "method": "spt_adapter",
+          "method_label": "SPT-Adapter",
+          "batch_size": 8,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "estimated_minutes_t4_per_seed": 70,
+          "experiment_id": "dtd_vit_b16__spt_adapter",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 210
+        }
+      ],
+      "expanded_seed_runs": 12
+    },
+    {
+      "protocol": "reviewer_main_controlled_fair_v3_kaggle_sessions",
+      "session": 9,
+      "session_count": 18,
+      "reference_gpu": "NVIDIA T4",
+      "epochs": 30,
+      "warmup_epochs": 3,
+      "input_size": 224,
+      "split_seed": 0,
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "head_init_policy": "random",
+      "peft_head_lr_scale": 1.0,
+      "method_internal_defaults": "baseline_recipes.py",
+      "outer_training_protocol": {
+        "optimizer": "adamw",
+        "peft_lr": 0.001,
+        "full_lr": 0.0001,
+        "linear_lr": 0.001,
+        "weight_decay": 0.0001,
+        "min_lr": 1e-06,
+        "augmentation": "strong"
+      },
+      "hard_limit_minutes": 710,
+      "zip_reserve_minutes": 12,
+      "estimated_session_minutes_t4": 471,
+      "estimated_session_hours_t4": 7.85,
+      "experiment_groups": [
+        {
+          "order_fast_to_slow": 1,
+          "setting_key": "dtd_resnet50",
+          "setting_label": "DTD / ResNet-50",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "resnet50@torchvision",
+          "method": "linear",
+          "method_label": "Linear",
+          "batch_size": 16,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "estimated_minutes_t4_per_seed": 12,
+          "experiment_id": "dtd_resnet50__linear",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 36
+        },
+        {
+          "order_fast_to_slow": 2,
+          "setting_key": "flowers_vit_b16",
+          "setting_label": "Flowers / ViT-B16",
+          "dataset": "flowers102",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "method": "ssf",
+          "method_label": "SSF",
+          "batch_size": 16,
+          "dataset_args": {},
+          "estimated_minutes_t4_per_seed": 34,
+          "experiment_id": "flowers_vit_b16__ssf",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 102
+        },
+        {
+          "order_fast_to_slow": 3,
+          "setting_key": "dtd_vit_b16",
+          "setting_label": "DTD / ViT-B16",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "method": "vqt",
+          "method_label": "VQT",
+          "batch_size": 8,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "estimated_minutes_t4_per_seed": 43,
+          "experiment_id": "dtd_vit_b16__vqt",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 129
+        },
+        {
+          "order_fast_to_slow": 4,
+          "setting_key": "dtd_vit_b16",
+          "setting_label": "DTD / ViT-B16",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "method": "spt_lora",
+          "method_label": "SPT-LoRA",
+          "batch_size": 8,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "estimated_minutes_t4_per_seed": 68,
+          "experiment_id": "dtd_vit_b16__spt_lora",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 204
+        }
+      ],
+      "expanded_seed_runs": 12
+    },
+    {
+      "protocol": "reviewer_main_controlled_fair_v3_kaggle_sessions",
+      "session": 10,
+      "session_count": 18,
+      "reference_gpu": "NVIDIA T4",
+      "epochs": 30,
+      "warmup_epochs": 3,
+      "input_size": 224,
+      "split_seed": 0,
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "head_init_policy": "random",
+      "peft_head_lr_scale": 1.0,
+      "method_internal_defaults": "baseline_recipes.py",
+      "outer_training_protocol": {
+        "optimizer": "adamw",
+        "peft_lr": 0.001,
+        "full_lr": 0.0001,
+        "linear_lr": 0.001,
+        "weight_decay": 0.0001,
+        "min_lr": 1e-06,
+        "augmentation": "strong"
+      },
+      "hard_limit_minutes": 710,
+      "zip_reserve_minutes": 12,
+      "estimated_session_minutes_t4": 471,
+      "estimated_session_hours_t4": 7.85,
+      "experiment_groups": [
+        {
+          "order_fast_to_slow": 1,
+          "setting_key": "flowers_resnet18",
+          "setting_label": "Flowers / ResNet-18",
+          "dataset": "flowers102",
+          "task": "single_label",
+          "backbone": "resnet18@torchvision",
+          "method": "prompt",
+          "method_label": "Visual Prompting",
+          "batch_size": 32,
+          "dataset_args": {},
+          "estimated_minutes_t4_per_seed": 14,
+          "experiment_id": "flowers_resnet18__prompt",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 42
+        },
+        {
+          "order_fast_to_slow": 2,
+          "setting_key": "dtd_resnet50",
+          "setting_label": "DTD / ResNet-50",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "resnet50@torchvision",
+          "method": "conv",
+          "method_label": "Conv-Adapter",
+          "batch_size": 16,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "estimated_minutes_t4_per_seed": 34,
+          "experiment_id": "dtd_resnet50__conv",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 102
+        },
+        {
+          "order_fast_to_slow": 3,
+          "setting_key": "dtd_vit_b16",
+          "setting_label": "DTD / ViT-B16",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "method": "fact_tt",
+          "method_label": "FacT-TT",
+          "batch_size": 8,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "estimated_minutes_t4_per_seed": 44,
+          "experiment_id": "dtd_vit_b16__fact_tt",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 132
+        },
+        {
+          "order_fast_to_slow": 4,
+          "setting_key": "flowers_swin_t",
+          "setting_label": "Flowers / Swin-T",
+          "dataset": "flowers102",
+          "task": "single_label",
+          "backbone": "swin_t@torchvision",
+          "method": "full",
+          "method_label": "Full",
+          "batch_size": 32,
+          "dataset_args": {},
+          "estimated_minutes_t4_per_seed": 65,
+          "experiment_id": "flowers_swin_t__full",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 195
+        }
+      ],
+      "expanded_seed_runs": 12
+    },
+    {
+      "protocol": "reviewer_main_controlled_fair_v3_kaggle_sessions",
+      "session": 11,
+      "session_count": 18,
+      "reference_gpu": "NVIDIA T4",
+      "epochs": 30,
+      "warmup_epochs": 3,
+      "input_size": 224,
+      "split_seed": 0,
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "head_init_policy": "random",
+      "peft_head_lr_scale": 1.0,
+      "method_internal_defaults": "baseline_recipes.py",
+      "outer_training_protocol": {
+        "optimizer": "adamw",
+        "peft_lr": 0.001,
+        "full_lr": 0.0001,
+        "linear_lr": 0.001,
+        "weight_decay": 0.0001,
+        "min_lr": 1e-06,
+        "augmentation": "strong"
+      },
+      "hard_limit_minutes": 710,
+      "zip_reserve_minutes": 12,
+      "estimated_session_minutes_t4": 456,
+      "estimated_session_hours_t4": 7.6,
+      "experiment_groups": [
+        {
+          "order_fast_to_slow": 1,
+          "setting_key": "flowers_vit_b16",
+          "setting_label": "Flowers / ViT-B16",
+          "dataset": "flowers102",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "method": "linear",
+          "method_label": "Linear",
+          "batch_size": 16,
+          "dataset_args": {},
+          "estimated_minutes_t4_per_seed": 15,
+          "experiment_id": "flowers_vit_b16__linear",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 45
+        },
+        {
+          "order_fast_to_slow": 2,
+          "setting_key": "flowers_vit_b16",
+          "setting_label": "Flowers / ViT-B16",
+          "dataset": "flowers102",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "method": "vqt",
+          "method_label": "VQT",
+          "batch_size": 16,
+          "dataset_args": {},
+          "estimated_minutes_t4_per_seed": 35,
+          "experiment_id": "flowers_vit_b16__vqt",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 105
+        },
+        {
+          "order_fast_to_slow": 3,
+          "setting_key": "pet_swin_t",
+          "setting_label": "Pet / Swin-T",
+          "dataset": "oxfordiiitpet",
+          "task": "single_label",
+          "backbone": "swin_t@torchvision",
+          "method": "ssf",
+          "method_label": "SSF",
+          "batch_size": 32,
+          "dataset_args": {},
+          "estimated_minutes_t4_per_seed": 45,
+          "experiment_id": "pet_swin_t__ssf",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 135
+        },
+        {
+          "order_fast_to_slow": 4,
+          "setting_key": "flowers_vit_b16",
+          "setting_label": "Flowers / ViT-B16",
+          "dataset": "flowers102",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "method": "spt_adapter",
+          "method_label": "SPT-Adapter",
+          "batch_size": 16,
+          "dataset_args": {},
+          "estimated_minutes_t4_per_seed": 57,
+          "experiment_id": "flowers_vit_b16__spt_adapter",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 171
+        }
+      ],
+      "expanded_seed_runs": 12
+    },
+    {
+      "protocol": "reviewer_main_controlled_fair_v3_kaggle_sessions",
+      "session": 12,
+      "session_count": 18,
+      "reference_gpu": "NVIDIA T4",
+      "epochs": 30,
+      "warmup_epochs": 3,
+      "input_size": 224,
+      "split_seed": 0,
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "head_init_policy": "random",
+      "peft_head_lr_scale": 1.0,
+      "method_internal_defaults": "baseline_recipes.py",
+      "outer_training_protocol": {
+        "optimizer": "adamw",
+        "peft_lr": 0.001,
+        "full_lr": 0.0001,
+        "linear_lr": 0.001,
+        "weight_decay": 0.0001,
+        "min_lr": 1e-06,
+        "augmentation": "strong"
+      },
+      "hard_limit_minutes": 710,
+      "zip_reserve_minutes": 12,
+      "estimated_session_minutes_t4": 462,
+      "estimated_session_hours_t4": 7.7,
+      "experiment_groups": [
+        {
+          "order_fast_to_slow": 1,
+          "setting_key": "dtd_vit_b16",
+          "setting_label": "DTD / ViT-B16",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "method": "linear",
+          "method_label": "Linear",
+          "batch_size": 8,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "estimated_minutes_t4_per_seed": 18,
+          "experiment_id": "dtd_vit_b16__linear",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 54
+        },
+        {
+          "order_fast_to_slow": 2,
+          "setting_key": "flowers_swin_t",
+          "setting_label": "Flowers / Swin-T",
+          "dataset": "flowers102",
+          "task": "single_label",
+          "backbone": "swin_t@torchvision",
+          "method": "ssf",
+          "method_label": "SSF",
+          "batch_size": 32,
+          "dataset_args": {},
+          "estimated_minutes_t4_per_seed": 36,
+          "experiment_id": "flowers_swin_t__ssf",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 108
+        },
+        {
+          "order_fast_to_slow": 3,
+          "setting_key": "dtd_vit_b16",
+          "setting_label": "DTD / ViT-B16",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "method": "adaptformer",
+          "method_label": "AdaptFormer",
+          "batch_size": 8,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "estimated_minutes_t4_per_seed": 45,
+          "experiment_id": "dtd_vit_b16__adaptformer",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 135
+        },
+        {
+          "order_fast_to_slow": 4,
+          "setting_key": "flowers_vit_b16",
+          "setting_label": "Flowers / ViT-B16",
+          "dataset": "flowers102",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "method": "spt_lora",
+          "method_label": "SPT-LoRA",
+          "batch_size": 16,
+          "dataset_args": {},
+          "estimated_minutes_t4_per_seed": 55,
+          "experiment_id": "flowers_vit_b16__spt_lora",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 165
+        }
+      ],
+      "expanded_seed_runs": 12
+    },
+    {
+      "protocol": "reviewer_main_controlled_fair_v3_kaggle_sessions",
+      "session": 13,
+      "session_count": 18,
+      "reference_gpu": "NVIDIA T4",
+      "epochs": 30,
+      "warmup_epochs": 3,
+      "input_size": 224,
+      "split_seed": 0,
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "head_init_policy": "random",
+      "peft_head_lr_scale": 1.0,
+      "method_internal_defaults": "baseline_recipes.py",
+      "outer_training_protocol": {
+        "optimizer": "adamw",
+        "peft_lr": 0.001,
+        "full_lr": 0.0001,
+        "linear_lr": 0.001,
+        "weight_decay": 0.0001,
+        "min_lr": 1e-06,
+        "augmentation": "strong"
+      },
+      "hard_limit_minutes": 710,
+      "zip_reserve_minutes": 12,
+      "estimated_session_minutes_t4": 462,
+      "estimated_session_hours_t4": 7.7,
+      "experiment_groups": [
+        {
+          "order_fast_to_slow": 1,
+          "setting_key": "flowers_resnet18",
+          "setting_label": "Flowers / ResNet-18",
+          "dataset": "flowers102",
+          "task": "single_label",
+          "backbone": "resnet18@torchvision",
+          "method": "trso",
+          "method_label": "Proposal",
+          "batch_size": 32,
+          "dataset_args": {},
+          "estimated_minutes_t4_per_seed": 18,
+          "experiment_id": "flowers_resnet18__trso",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 54
+        },
+        {
+          "order_fast_to_slow": 2,
+          "setting_key": "flowers_vit_b16",
+          "setting_label": "Flowers / ViT-B16",
+          "dataset": "flowers102",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "method": "adaptformer",
+          "method_label": "AdaptFormer",
+          "batch_size": 16,
+          "dataset_args": {},
+          "estimated_minutes_t4_per_seed": 36,
+          "experiment_id": "flowers_vit_b16__adaptformer",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 108
+        },
+        {
+          "order_fast_to_slow": 3,
+          "setting_key": "dtd_vit_b16",
+          "setting_label": "DTD / ViT-B16",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "method": "fact_tk",
+          "method_label": "FacT-TK",
+          "batch_size": 8,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "estimated_minutes_t4_per_seed": 45,
+          "experiment_id": "dtd_vit_b16__fact_tk",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 135
+        },
+        {
+          "order_fast_to_slow": 4,
+          "setting_key": "voc2007_mobilenetv3_small",
+          "setting_label": "VOC2007 / MobileNetV3-S",
+          "dataset": "voc2007",
+          "task": "multilabel",
+          "backbone": "mobilenet_v3_small@torchvision",
+          "method": "full",
+          "method_label": "Full",
+          "batch_size": 32,
+          "dataset_args": {},
+          "estimated_minutes_t4_per_seed": 55,
+          "experiment_id": "voc2007_mobilenetv3_small__full",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 165
+        }
+      ],
+      "expanded_seed_runs": 12
+    },
+    {
+      "protocol": "reviewer_main_controlled_fair_v3_kaggle_sessions",
+      "session": 14,
+      "session_count": 18,
+      "reference_gpu": "NVIDIA T4",
+      "epochs": 30,
+      "warmup_epochs": 3,
+      "input_size": 224,
+      "split_seed": 0,
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "head_init_policy": "random",
+      "peft_head_lr_scale": 1.0,
+      "method_internal_defaults": "baseline_recipes.py",
+      "outer_training_protocol": {
+        "optimizer": "adamw",
+        "peft_lr": 0.001,
+        "full_lr": 0.0001,
+        "linear_lr": 0.001,
+        "weight_decay": 0.0001,
+        "min_lr": 1e-06,
+        "augmentation": "strong"
+      },
+      "hard_limit_minutes": 710,
+      "zip_reserve_minutes": 12,
+      "estimated_session_minutes_t4": 465,
+      "estimated_session_hours_t4": 7.75,
+      "experiment_groups": [
+        {
+          "order_fast_to_slow": 1,
+          "setting_key": "pet_resnet18",
+          "setting_label": "Pet / ResNet-18",
+          "dataset": "oxfordiiitpet",
+          "task": "single_label",
+          "backbone": "resnet18@torchvision",
+          "method": "prompt",
+          "method_label": "Visual Prompting",
+          "batch_size": 32,
+          "dataset_args": {},
+          "estimated_minutes_t4_per_seed": 20,
+          "experiment_id": "pet_resnet18__prompt",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 60
+        },
+        {
+          "order_fast_to_slow": 2,
+          "setting_key": "flowers_vit_b16",
+          "setting_label": "Flowers / ViT-B16",
+          "dataset": "flowers102",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "method": "fact_tk",
+          "method_label": "FacT-TK",
+          "batch_size": 16,
+          "dataset_args": {},
+          "estimated_minutes_t4_per_seed": 37,
+          "experiment_id": "flowers_vit_b16__fact_tk",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 111
+        },
+        {
+          "order_fast_to_slow": 3,
+          "setting_key": "dtd_vit_b16",
+          "setting_label": "DTD / ViT-B16",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "method": "repadapter",
+          "method_label": "RepAdapter",
+          "batch_size": 8,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "estimated_minutes_t4_per_seed": 46,
+          "experiment_id": "dtd_vit_b16__repadapter",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 138
+        },
+        {
+          "order_fast_to_slow": 4,
+          "setting_key": "dtd_resnet50",
+          "setting_label": "DTD / ResNet-50",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "resnet50@torchvision",
+          "method": "full",
+          "method_label": "Full",
+          "batch_size": 16,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "estimated_minutes_t4_per_seed": 52,
+          "experiment_id": "dtd_resnet50__full",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 156
+        }
+      ],
+      "expanded_seed_runs": 12
+    },
+    {
+      "protocol": "reviewer_main_controlled_fair_v3_kaggle_sessions",
+      "session": 15,
+      "session_count": 18,
+      "reference_gpu": "NVIDIA T4",
+      "epochs": 30,
+      "warmup_epochs": 3,
+      "input_size": 224,
+      "split_seed": 0,
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "head_init_policy": "random",
+      "peft_head_lr_scale": 1.0,
+      "method_internal_defaults": "baseline_recipes.py",
+      "outer_training_protocol": {
+        "optimizer": "adamw",
+        "peft_lr": 0.001,
+        "full_lr": 0.0001,
+        "linear_lr": 0.001,
+        "weight_decay": 0.0001,
+        "min_lr": 1e-06,
+        "augmentation": "strong"
+      },
+      "hard_limit_minutes": 710,
+      "zip_reserve_minutes": 12,
+      "estimated_session_minutes_t4": 468,
+      "estimated_session_hours_t4": 7.8,
+      "experiment_groups": [
+        {
+          "order_fast_to_slow": 1,
+          "setting_key": "flowers_resnet18",
+          "setting_label": "Flowers / ResNet-18",
+          "dataset": "flowers102",
+          "task": "single_label",
+          "backbone": "resnet18@torchvision",
+          "method": "full",
+          "method_label": "Full",
+          "batch_size": 32,
+          "dataset_args": {},
+          "estimated_minutes_t4_per_seed": 22,
+          "experiment_id": "flowers_resnet18__full",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 66
+        },
+        {
+          "order_fast_to_slow": 2,
+          "setting_key": "dtd_vit_b16",
+          "setting_label": "DTD / ViT-B16",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "method": "vpt_shallow",
+          "method_label": "VPT-Shallow",
+          "batch_size": 8,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "estimated_minutes_t4_per_seed": 37,
+          "experiment_id": "dtd_vit_b16__vpt_shallow",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 111
+        },
+        {
+          "order_fast_to_slow": 3,
+          "setting_key": "dtd_swin_t",
+          "setting_label": "DTD / Swin-T",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "swin_t@torchvision",
+          "method": "ssf",
+          "method_label": "SSF",
+          "batch_size": 32,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "estimated_minutes_t4_per_seed": 45,
+          "experiment_id": "dtd_swin_t__ssf",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 135
+        },
+        {
+          "order_fast_to_slow": 4,
+          "setting_key": "dtd_vit_b16",
+          "setting_label": "DTD / ViT-B16",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "method": "trso",
+          "method_label": "Proposal",
+          "batch_size": 8,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "estimated_minutes_t4_per_seed": 52,
+          "experiment_id": "dtd_vit_b16__trso",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 156
+        }
+      ],
+      "expanded_seed_runs": 12
+    },
+    {
+      "protocol": "reviewer_main_controlled_fair_v3_kaggle_sessions",
+      "session": 16,
+      "session_count": 18,
+      "reference_gpu": "NVIDIA T4",
+      "epochs": 30,
+      "warmup_epochs": 3,
+      "input_size": 224,
+      "split_seed": 0,
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "head_init_policy": "random",
+      "peft_head_lr_scale": 1.0,
+      "method_internal_defaults": "baseline_recipes.py",
+      "outer_training_protocol": {
+        "optimizer": "adamw",
+        "peft_lr": 0.001,
+        "full_lr": 0.0001,
+        "linear_lr": 0.001,
+        "weight_decay": 0.0001,
+        "min_lr": 1e-06,
+        "augmentation": "strong"
+      },
+      "hard_limit_minutes": 710,
+      "zip_reserve_minutes": 12,
+      "estimated_session_minutes_t4": 459,
+      "estimated_session_hours_t4": 7.65,
+      "experiment_groups": [
+        {
+          "order_fast_to_slow": 1,
+          "setting_key": "dtd_swin_t",
+          "setting_label": "DTD / Swin-T",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "swin_t@torchvision",
+          "method": "linear",
+          "method_label": "Linear",
+          "batch_size": 32,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "estimated_minutes_t4_per_seed": 17,
+          "experiment_id": "dtd_swin_t__linear",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 51
+        },
+        {
+          "order_fast_to_slow": 2,
+          "setting_key": "flowers_vit_b16",
+          "setting_label": "Flowers / ViT-B16",
+          "dataset": "flowers102",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "method": "repadapter",
+          "method_label": "RepAdapter",
+          "batch_size": 16,
+          "dataset_args": {},
+          "estimated_minutes_t4_per_seed": 37,
+          "experiment_id": "flowers_vit_b16__repadapter",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 111
+        },
+        {
+          "order_fast_to_slow": 3,
+          "setting_key": "dtd_vit_b16",
+          "setting_label": "DTD / ViT-B16",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "method": "arc",
+          "method_label": "ARC",
+          "batch_size": 8,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "estimated_minutes_t4_per_seed": 48,
+          "experiment_id": "dtd_vit_b16__arc",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 144
+        },
+        {
+          "order_fast_to_slow": 4,
+          "setting_key": "dtd_vit_b16",
+          "setting_label": "DTD / ViT-B16",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "method": "convpass",
+          "method_label": "ConvPass",
+          "batch_size": 8,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "estimated_minutes_t4_per_seed": 51,
+          "experiment_id": "dtd_vit_b16__convpass",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 153
+        }
+      ],
+      "expanded_seed_runs": 12
+    },
+    {
+      "protocol": "reviewer_main_controlled_fair_v3_kaggle_sessions",
+      "session": 17,
+      "session_count": 18,
+      "reference_gpu": "NVIDIA T4",
+      "epochs": 30,
+      "warmup_epochs": 3,
+      "input_size": 224,
+      "split_seed": 0,
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "head_init_policy": "random",
+      "peft_head_lr_scale": 1.0,
+      "method_internal_defaults": "baseline_recipes.py",
+      "outer_training_protocol": {
+        "optimizer": "adamw",
+        "peft_lr": 0.001,
+        "full_lr": 0.0001,
+        "linear_lr": 0.001,
+        "weight_decay": 0.0001,
+        "min_lr": 1e-06,
+        "augmentation": "strong"
+      },
+      "hard_limit_minutes": 710,
+      "zip_reserve_minutes": 12,
+      "estimated_session_minutes_t4": 459,
+      "estimated_session_hours_t4": 7.65,
+      "experiment_groups": [
+        {
+          "order_fast_to_slow": 1,
+          "setting_key": "pet_swin_t",
+          "setting_label": "Pet / Swin-T",
+          "dataset": "oxfordiiitpet",
+          "task": "single_label",
+          "backbone": "swin_t@torchvision",
+          "method": "linear",
+          "method_label": "Linear",
+          "batch_size": 32,
+          "dataset_args": {},
+          "estimated_minutes_t4_per_seed": 17,
+          "experiment_id": "pet_swin_t__linear",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 51
+        },
+        {
+          "order_fast_to_slow": 2,
+          "setting_key": "flowers_vit_b16",
+          "setting_label": "Flowers / ViT-B16",
+          "dataset": "flowers102",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "method": "fact_tt",
+          "method_label": "FacT-TT",
+          "batch_size": 16,
+          "dataset_args": {},
+          "estimated_minutes_t4_per_seed": 36,
+          "experiment_id": "flowers_vit_b16__fact_tt",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 108
+        },
+        {
+          "order_fast_to_slow": 3,
+          "setting_key": "dtd_swin_t",
+          "setting_label": "DTD / Swin-T",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "swin_t@torchvision",
+          "method": "trso",
+          "method_label": "Proposal",
+          "batch_size": 32,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "estimated_minutes_t4_per_seed": 50,
+          "experiment_id": "dtd_swin_t__trso",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 150
+        },
+        {
+          "order_fast_to_slow": 4,
+          "setting_key": "voc2007_mobilenetv3_small",
+          "setting_label": "VOC2007 / MobileNetV3-S",
+          "dataset": "voc2007",
+          "task": "multilabel",
+          "backbone": "mobilenet_v3_small@torchvision",
+          "method": "ml_decoder",
+          "method_label": "ML-Decoder",
+          "batch_size": 32,
+          "dataset_args": {},
+          "estimated_minutes_t4_per_seed": 50,
+          "experiment_id": "voc2007_mobilenetv3_small__ml_decoder",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 150
+        }
+      ],
+      "expanded_seed_runs": 12
+    },
+    {
+      "protocol": "reviewer_main_controlled_fair_v3_kaggle_sessions",
+      "session": 18,
+      "session_count": 18,
+      "reference_gpu": "NVIDIA T4",
+      "epochs": 30,
+      "warmup_epochs": 3,
+      "input_size": 224,
+      "split_seed": 0,
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "head_init_policy": "random",
+      "peft_head_lr_scale": 1.0,
+      "method_internal_defaults": "baseline_recipes.py",
+      "outer_training_protocol": {
+        "optimizer": "adamw",
+        "peft_lr": 0.001,
+        "full_lr": 0.0001,
+        "linear_lr": 0.001,
+        "weight_decay": 0.0001,
+        "min_lr": 1e-06,
+        "augmentation": "strong"
+      },
+      "hard_limit_minutes": 710,
+      "zip_reserve_minutes": 12,
+      "estimated_session_minutes_t4": 459,
+      "estimated_session_hours_t4": 7.65,
+      "experiment_groups": [
+        {
+          "order_fast_to_slow": 1,
+          "setting_key": "dtd_resnet18",
+          "setting_label": "DTD / ResNet-18",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "resnet18@torchvision",
+          "method": "prompt",
+          "method_label": "Visual Prompting",
+          "batch_size": 32,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "estimated_minutes_t4_per_seed": 18,
+          "experiment_id": "dtd_resnet18__prompt",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 54
+        },
+        {
+          "order_fast_to_slow": 2,
+          "setting_key": "dtd_resnet50",
+          "setting_label": "DTD / ResNet-50",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "resnet50@torchvision",
+          "method": "piggyback",
+          "method_label": "Piggyback",
+          "batch_size": 16,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "estimated_minutes_t4_per_seed": 36,
+          "experiment_id": "dtd_resnet50__piggyback",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 108
+        },
+        {
+          "order_fast_to_slow": 3,
+          "setting_key": "dtd_vit_b16",
+          "setting_label": "DTD / ViT-B16",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "method": "vpt_deep",
+          "method_label": "VPT-Deep",
+          "batch_size": 8,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "estimated_minutes_t4_per_seed": 49,
+          "experiment_id": "dtd_vit_b16__vpt_deep",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 147
+        },
+        {
+          "order_fast_to_slow": 4,
+          "setting_key": "pet_swin_t",
+          "setting_label": "Pet / Swin-T",
+          "dataset": "oxfordiiitpet",
+          "task": "single_label",
+          "backbone": "swin_t@torchvision",
+          "method": "trso",
+          "method_label": "Proposal",
+          "batch_size": 32,
+          "dataset_args": {},
+          "estimated_minutes_t4_per_seed": 50,
+          "experiment_id": "pet_swin_t__trso",
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "estimated_minutes_t4_all_seeds": 150
+        }
+      ],
+      "expanded_seed_runs": 12
+    }
+  ]
+}

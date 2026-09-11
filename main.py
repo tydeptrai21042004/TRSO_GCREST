@@ -91,6 +91,14 @@ def get_args_parser():
     parser.add_argument("--experiment_suite", type=str, default="", help="Manifest suite metadata.")
     parser.add_argument("--experiment_name", type=str, default="", help="Ablation or sweep variant metadata.")
     parser.add_argument("--experiment_run_id", type=str, default="", help="Deterministic manifest run identifier.")
+    parser.add_argument("--protocol_name", type=str, default="", help="Experiment-protocol provenance label.")
+    parser.add_argument("--paired_baseline", type=str, default="", help="Baseline whose outer recipe is paired with this run.")
+    parser.add_argument("--recipe_source", type=str, default="", help="Official repository/paper source used for the recipe.")
+    parser.add_argument("--recipe_fidelity", type=str, default="", help="Machine-readable recipe-fidelity label.")
+    parser.add_argument("--paper_trial_index", type=int, default=-1, help="Paper-source HPO trial index; -1 means not an HPO trial.")
+    parser.add_argument("--paper_search_mode", type=str, default="", help="Paper-source search mode metadata.")
+    parser.add_argument("--paper_base_lr", type=float, default=-1.0, help="Unscaled source LR before batch-size scaling, for provenance.")
+    parser.add_argument("--head_init_policy", type=str, default="random", choices=["random", "linear_probe"], help="Audit label for downstream-head initialization policy.")
     parser.add_argument("--legacy_auto_hparams", type=str2bool, default=False, help="Opt into the original repository hyperparameter override table.")
     parser.add_argument("--pretrained", type=str2bool, default=None)
     parser.add_argument("--keep_pretrained_head", type=str2bool, default=True)
@@ -109,7 +117,7 @@ def get_args_parser():
         help=(
             "full | linear | norm | bias | last_block | prompt | conv | adapter | trso | "
             "ssf | lora | bitfit | adaptformer | repadapter | arc | piggyback | sidetune | "
-            "vpt_shallow | vpt_deep | convpass | convpass_attn | fact_tt | fact_tk | vqt | spt_lora | spt_adapter"
+            "vpt_shallow | vpt_deep | convpass | convpass_attn | fact_tt | fact_tk | vqt | spt_lora | spt_adapter | ml_decoder | segadapter"
         ),
     )
 
@@ -174,6 +182,8 @@ def get_args_parser():
                         help="Fraction of calibration batches to use (reviewer sensitivity study).")
     parser.add_argument("--trso_calibration_max_batches", type=int, default=0,
                         help="Optional hard cap on calibration batches; 0 means no extra cap.")
+    parser.add_argument("--trso_calibration_batch_size", type=int, default=0,
+                        help="Reviewer sensitivity control: calibration-only batch size; 0 reuses the training loader.")
     parser.add_argument("--trso_partition_mode", default="alternating",
                         choices=["alternating", "seeded_random"],
                         help="Deterministic calibration partition construction.")
@@ -200,7 +210,7 @@ def get_args_parser():
     parser.add_argument("--bitfit_bias_scope", type=str, default="all", choices=["all", "transformer", "attention"])
 
     # AdaptFormer (NeurIPS 2022)
-    parser.add_argument("--adaptformer_dim", type=int, default=16)
+    parser.add_argument("--adaptformer_dim", type=int, default=64)
     parser.add_argument("--adaptformer_scale", type=float, default=0.1)
     parser.add_argument("--adaptformer_dropout", type=float, default=0.0)
     parser.add_argument("--adaptformer_layernorm", type=str, default="none", choices=["none", "in", "out"])
@@ -238,6 +248,16 @@ def get_args_parser():
     parser.add_argument("--spt_adapter_dim", type=int, default=8)
     parser.add_argument("--spt_alpha", type=float, default=8.0)
 
+    # ML-Decoder (WACV 2023)
+    parser.add_argument("--ml_decoder_embedding", type=int, default=768)
+    parser.add_argument("--ml_decoder_num_groups", type=int, default=-1)
+    parser.add_argument("--ml_decoder_dropout", type=float, default=0.1)
+
+    # SegAdapter (ACML 2023) published defaults
+    parser.add_argument("--segadapter_kernel_size", type=int, default=5)
+    parser.add_argument("--segadapter_ffn_ratio", type=float, default=3.0)
+    parser.add_argument("--segadapter_aux_weight", type=float, default=0.4)
+
     # Piggyback (ECCV 2018)
     parser.add_argument("--piggyback_threshold", type=float, default=5e-3)
     parser.add_argument("--piggyback_mask_init", type=str, default="ones", choices=["ones", "near_threshold"])
@@ -264,7 +284,7 @@ def get_args_parser():
     parser.add_argument("--model_ema_eval", type=str2bool, default=False)
 
     # Optimization
-    parser.add_argument("--optimizer", default="auto", choices=["auto", "adamw", "sgd"])
+    parser.add_argument("--optimizer", default="auto", choices=["auto", "adamw", "adam", "sgd"])
     parser.add_argument("--momentum", default=0.9, type=float)
     parser.add_argument("--paper_hparams", type=str2bool, default=False, help="Apply the original paper default optimizer schedule where a single canonical setting exists.")
     parser.add_argument("--opt_eps", default=1e-8, type=float)
@@ -273,6 +293,7 @@ def get_args_parser():
     parser.add_argument("--weight_decay_adapter", type=float, default=0.0)
     parser.add_argument("--lr", type=float, default=3e-4)
     parser.add_argument("--min_lr", type=float, default=1e-6)
+    parser.add_argument("--scheduler", type=str, default="cosine", choices=["cosine", "constant"], help="Learning-rate schedule; paper-paired manifests record this explicitly.")
     parser.add_argument("--warmup_epochs", type=int, default=0)
     parser.add_argument("--warmup_steps", type=int, default=-1)
     parser.add_argument("--weight_decay_end", type=float, default=None)
@@ -281,7 +302,7 @@ def get_args_parser():
     # scheduler, warm-up and decay; full tuning and linear probing may use
     # separate learning rates as explicitly allowed by the experiment design.
     parser.add_argument("--fair_protocol", type=str2bool, default=False)
-    parser.add_argument("--fair_optimizer", type=str, default="adamw", choices=["adamw", "sgd"])
+    parser.add_argument("--fair_optimizer", type=str, default="adamw", choices=["adamw", "adam", "sgd"])
     parser.add_argument("--fair_peft_lr", type=float, default=1e-3)
     parser.add_argument("--fair_full_lr", type=float, default=1e-4)
     parser.add_argument("--fair_linear_lr", type=float, default=1e-3)
@@ -316,7 +337,7 @@ def get_args_parser():
     parser.add_argument("--head_from", default="", type=str)
     parser.add_argument("--head_init_scale", default=1.0, type=float)
     parser.add_argument("--peft_freeze_head", type=str2bool, default=False, help="Freeze the shared task-aware head during PEFT adaptation; jointly adapting it is the recommended default.")
-    parser.add_argument("--peft_head_lr_scale", type=float, default=0.5, help="Head learning-rate multiplier for PEFT methods; linear/full tuning use 1.0.")
+    parser.add_argument("--peft_head_lr_scale", type=float, default=1.0, help="Head learning-rate multiplier for PEFT methods. Use 1.0 for random-head fair comparisons; lower values are explicit warm-start ablations.")
     parser.add_argument("--no_decay_bias_norm", type=str2bool, default=True, help="Exclude biases, normalization parameters, and scalar gates from weight decay.")
     parser.add_argument("--model_key", default="model|module", type=str)
     parser.add_argument("--model_prefix", default="", type=str)
@@ -411,7 +432,9 @@ def canonicalize_args(args):
         ),
     )
 
-    if args.tuning_method == "full":
+    if args.tuning_method in {"full", "ml_decoder", "segadapter"}:
+        # ML-Decoder and SegAdapter are task-specific paper baselines whose
+        # published training updates the full backbone/model.
         args.freeze_backbone = False
     else:
         args.freeze_backbone = True
@@ -422,7 +445,7 @@ def canonicalize_args(args):
         args.paper_hparams = False
         args.legacy_auto_hparams = False
         args.optimizer = args.fair_optimizer
-        if args.tuning_method == "full":
+        if args.tuning_method in {"full", "ml_decoder", "segadapter"}:
             args.lr = float(args.fair_full_lr)
         elif args.tuning_method == "linear":
             args.lr = float(args.fair_linear_lr)
@@ -956,7 +979,7 @@ def _add_adapters(model_backbone: nn.Module, args):
     method = args.tuning_method
     adapter_param_ids = set()
 
-    if method in ("full", "linear", "norm", "bias", "last_block", "bitfit", "prompt", "sidetune", "vpt_shallow", "vpt_deep", "vqt", "spt_lora", "spt_adapter"):
+    if method in ("full", "linear", "norm", "bias", "last_block", "bitfit", "prompt", "sidetune", "vpt_shallow", "vpt_deep", "vqt", "spt_lora", "spt_adapter", "ml_decoder", "segadapter"):
         return model_backbone, adapter_param_ids
 
     if method in ("conv", "adapter"):
@@ -1145,6 +1168,16 @@ def set_trainability_policy(model: nn.Module, args, extra_adapter_param_ids: Opt
         for name, parameter in model.named_parameters():
             parameter.requires_grad_(_is_head_param(name) or any(name == prefix or name.startswith(prefix + ".") for prefix in prefixes))
         print(f"[Last-Block] trainable backbone prefixes: {prefixes}")
+        return model
+
+    if method == "ml_decoder":
+        from models.tuning_modules.ml_decoder import set_ml_decoder_trainability
+        set_ml_decoder_trainability(model)
+        return model
+
+    if method == "segadapter":
+        from models.tuning_modules.segadapter import set_segadapter_trainability
+        set_segadapter_trainability(model)
         return model
 
     if method == "prompt":
@@ -1616,10 +1649,26 @@ def build_model_for_experiment(args, clip_visual=None, clip_feat_dim=None):
             model_backbone = build_torchvision_segmentation(args.backbone, args.nb_classes, args.weights, depth=depth)
             args.resolved_model_source = "torchvision_segmentation"
         family = getattr(model_backbone, "backbone_family", detect_backbone_family(model_backbone, args.backbone, args.resolved_model_source))
+        ok, reason, _ = static_method_compatibility(
+            args.tuning_method, args.backbone, task_type, source=args.resolved_model_source,
+            allow_nonpaper_controls=bool(getattr(args, "allow_nonpaper_controls", False)),
+            allow_paper_ablations=bool(getattr(args, "allow_paper_ablations", False)),
+            allow_unverified_paper_reimplementations=bool(getattr(args, "allow_unverified_paper_reimplementations", False)),
+        )
+        if not ok:
+            raise ValueError(reason)
         validate_method_backbone(args.tuning_method, family)
         args.backbone_family = family
         model_backbone.backbone_family = family
         print(f"[Compatibility] method={args.tuning_method} | task={task_type} | family={family} | source={args.resolved_model_source}")
+        if args.tuning_method == "segadapter":
+            from models.tuning_modules.segadapter import apply_segadapter_lraspp
+            report = apply_segadapter_lraspp(
+                model_backbone, num_classes=args.nb_classes, input_size=args.input_size,
+                kernel_size=args.segadapter_kernel_size, ffn_ratio=args.segadapter_ffn_ratio,
+                aux_weight=args.segadapter_aux_weight,
+            )
+            print(f"[SegAdapter] stages={report.stage_names} channels={report.stage_channels} aux_weight={report.aux_weight}")
         model_backbone, adapter_param_ids = _add_adapters(model_backbone, args)
         return model_backbone, adapter_param_ids
 
@@ -1711,6 +1760,16 @@ def build_model_for_experiment(args, clip_visual=None, clip_feat_dim=None):
         )
         model.backbone_family = family
         return model, set()
+
+    if args.tuning_method == "ml_decoder":
+        from models.tuning_modules.ml_decoder import MLDecoderClassifier
+        wrapped = MLDecoderClassifier(
+            model_backbone, num_classes=args.nb_classes,
+            decoder_embedding=args.ml_decoder_embedding,
+            num_groups=args.ml_decoder_num_groups, dropout=args.ml_decoder_dropout,
+        )
+        wrapped.backbone_family = family
+        return wrapped, set()
 
     if not _replace_classifier_head(model_backbone, args.nb_classes, keep_pretrained_head=args.keep_pretrained_head):
         raise RuntimeError(
@@ -1916,6 +1975,21 @@ def main(args):
         generator=loader_generator,
         collate_fn=collate_fn,
     )
+    data_loader_calibration = data_loader_train
+    if args.tuning_method == "trso" and int(getattr(args, "trso_calibration_batch_size", 0)) > 0:
+        calibration_batch_size = int(args.trso_calibration_batch_size)
+        calibration_sampler = torch.utils.data.SequentialSampler(dataset_train)
+        data_loader_calibration = torch.utils.data.DataLoader(
+            dataset_train, sampler=calibration_sampler, batch_size=calibration_batch_size,
+            num_workers=args.num_workers, pin_memory=args.pin_mem, drop_last=False,
+            worker_init_fn=_seed_data_worker,
+            generator=torch.Generator().manual_seed(seed + 3000), collate_fn=collate_fn,
+        )
+        print(
+            f"[G-CREST-TRSO] calibration-only batch size={calibration_batch_size}; "
+            f"training batch size remains {args.batch_size}."
+        )
+
     data_loader_val = None
     if dataset_val is not None:
         data_loader_val = torch.utils.data.DataLoader(
@@ -1992,7 +2066,14 @@ def main(args):
         protocol = {
             "fair_protocol": bool(args.fair_protocol),
             "optimizer": args.optimizer,
-            "scheduler": "cosine",
+            "scheduler": args.scheduler,
+            "protocol_name": str(getattr(args, "protocol_name", "")),
+            "paired_baseline": str(getattr(args, "paired_baseline", "")),
+            "recipe_source": str(getattr(args, "recipe_source", "")),
+            "recipe_fidelity": str(getattr(args, "recipe_fidelity", "")),
+            "head_init_policy": str(getattr(args, "head_init_policy", "random")),
+            "paper_trial_index": int(getattr(args, "paper_trial_index", -1)),
+            "paper_search_mode": str(getattr(args, "paper_search_mode", "")),
             "learning_rate": float(args.lr),
             "weight_decay": float(args.weight_decay),
             "adapter_weight_decay": float(args.weight_decay_adapter),
@@ -2001,6 +2082,7 @@ def main(args):
             "minimum_learning_rate": float(args.min_lr),
             "epochs": int(args.epochs),
             "batch_size": int(args.batch_size),
+            "trso_calibration_batch_size": int(getattr(args, "trso_calibration_batch_size", 0)),
             "update_frequency": int(args.update_freq),
             "augmentation": {
                 "train_aug": args.train_aug, "mixup": args.mixup, "cutmix": args.cutmix,
@@ -2068,7 +2150,7 @@ def main(args):
                 "Start from --head_from or rerun the deterministic calibration pass."
             )
         calibration_started = time.perf_counter()
-        calibrate_trso_model(model, data_loader_train, device, args)
+        calibrate_trso_model(model, data_loader_calibration, device, args)
         proposal_calibration_time_sec = time.perf_counter() - calibration_started
         print(f"[Timing] G-CREST-TRSO calibration: {proposal_calibration_time_sec:.3f} s")
 
@@ -2252,6 +2334,8 @@ def main(args):
         raise RuntimeError("No trainable parameters were supplied to the optimizer")
     if args.optimizer == "sgd":
         optimizer = torch.optim.SGD(parameter_groups, lr=args.lr, momentum=args.momentum)
+    elif args.optimizer == "adam":
+        optimizer = torch.optim.Adam(parameter_groups, lr=args.lr, betas=(0.9, 0.999), eps=args.opt_eps)
     elif args.optimizer == "adamw":
         optimizer = torch.optim.AdamW(parameter_groups, lr=args.lr, betas=(0.9, 0.999), eps=args.opt_eps)
     else:
@@ -2259,14 +2343,27 @@ def main(args):
     print(f"Optimizer = {optimizer.__class__.__name__}")
     loss_scaler = NativeScaler()
 
-    lr_schedule_values = utils.cosine_scheduler(
-        args.lr,
-        args.min_lr,
-        args.epochs,
-        num_training_steps_per_epoch,
-        warmup_epochs=args.warmup_epochs,
-        warmup_steps=args.warmup_steps,
-    )
+    if args.scheduler == "cosine":
+        lr_schedule_values = utils.cosine_scheduler(
+            args.lr,
+            args.min_lr,
+            args.epochs,
+            num_training_steps_per_epoch,
+            warmup_epochs=args.warmup_epochs,
+            warmup_steps=args.warmup_steps,
+        )
+    elif args.scheduler == "constant":
+        total_steps = max(1, int(args.epochs) * int(num_training_steps_per_epoch))
+        warmup_steps = int(args.warmup_steps) if int(args.warmup_steps) >= 0 else int(args.warmup_epochs) * int(num_training_steps_per_epoch)
+        warmup_steps = max(0, min(warmup_steps, total_steps))
+        if warmup_steps:
+            warm = np.linspace(0.0, float(args.lr), warmup_steps, dtype=float)
+            steady = np.full(total_steps - warmup_steps, float(args.lr), dtype=float)
+            lr_schedule_values = np.concatenate((warm, steady))
+        else:
+            lr_schedule_values = np.full(total_steps, float(args.lr), dtype=float)
+    else:
+        raise ValueError(f"Unsupported scheduler: {args.scheduler}")
     if args.weight_decay_end is None:
         args.weight_decay_end = args.weight_decay
     wd_schedule_values = utils.cosine_scheduler(args.weight_decay, args.weight_decay_end, args.epochs, num_training_steps_per_epoch)

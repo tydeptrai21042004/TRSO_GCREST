@@ -6,7 +6,7 @@ Official research implementation accompanying the manuscript:
 Ba Ty Dang, Kim Huong Tran, Thi Uyen Nguyen  
 **Manuscript submitted to _Pattern Analysis and Applications_.**
 
-The internal implementation/CLI name remains **G-CREST-TRSO / `trso`** for backward compatibility with existing checkpoints, scripts, and the canonical 46-run protocol. Public documentation follows the manuscript terminology: the method uses **two deterministic calibration partitions for partition-consistency weighting**; their agreement is not statistical cross-fitting or repeated-run reproducibility.
+The internal implementation/CLI name remains **G-CREST-TRSO / `trso`** for backward compatibility with existing checkpoints, scripts, and the historical submitted 46-run protocol. Public documentation follows the manuscript terminology: the method uses **two deterministic calibration partitions for partition-consistency weighting**; their agreement is not statistical cross-fitting or repeated-run reproducibility.
 
 ## Active proposal
 
@@ -34,7 +34,7 @@ The repository now exposes **54 canonical dataset routes** through a registry-ba
 
 Preprocessing is centralized and can resolve normalization/interpolation metadata from the pretrained checkpoint (`--preprocess auto`) while keeping all methods on the same backbone preprocessing contract. Optional MedMNIST routes include `pathmnist`, `dermamnist`, `bloodmnist`, `pneumoniamnist`, `organamnist`, and `tissuemnist`.
 
-Canonical Kaggle Sessions **01-06 remain unchanged**. Sessions **07-14** are additional revision experiments for multi-seed robustness, reliability/allocation ablations, calibration sensitivity, and cross-domain generalization.
+The active reviewer-ready Kaggle matrix is now in `kaggle/reviewer_matrix/`: **68 experiment groups × 3 seeds = 204 training runs**, split into **18 time-balanced sessions** with fastest-to-slowest ordering, per-run ETA/actual timing, resumable progress, and an 11h50m archive watchdog. Historical Sessions 01-06 and earlier revision cells are retained only for reproducibility.
 
 ## Controlled evidence
 
@@ -64,9 +64,9 @@ python -m tools.run_trso_ablation \
 
 The analysis-only variants are `diagonal_only`, `no_sampling_variance`, `no_crossfit`, and `head_only`. They are not capacity knobs of the full proposal.
 
-## Six Kaggle sessions
+## Historical six Kaggle sessions
 
-The paper protocol contains 46 training runs split into sessions of 6, 10, 12, 6, 6 and 6 runs. Every session:
+The frozen submitted-manuscript protocol contains 46 training runs split into sessions of 6, 10, 12, 6, 6 and 6 runs. It is retained for reproduction, but it is **not** the active reviewer-ready fairness protocol. Every historical session:
 
 - clones `https://github.com/tydeptrai21042004/trso_adapter.git` from `main`;
 - verifies the G-CREST release contract;
@@ -75,6 +75,27 @@ The paper protocol contains 46 training runs split into sessions of 6, 10, 12, 6
 - records the resolved Git commit in `run_summary.json`.
 
 See `kaggle/README.md` and `MINIMAL_PAPER_46_RUN_PROTOCOL.md`.
+
+## Active Kaggle execution
+
+For the complete requested reviewer matrix, use `kaggle/reviewer_matrix/README.md` and `TRSO_Reviewer_Matrix_Session_01_OneCell.py` through `TRSO_Reviewer_Matrix_Session_18_OneCell.py`. The planner covers exactly 204 seed-runs, uses seeds 0/1/2, and keeps the main-table fresh-head fairness policy. Each session is planned for roughly 7.45–7.95 T4 GPU-hours and will stop launching work early enough to create a ZIP before the 11h50m hard budget. Partial session ZIPs are resumable.
+
+## Active reviewer-ready baseline comparison
+
+The active code uses two complementary protocols:
+
+1. **Controlled main table** — `tools.run_fair_suite` uses the same outer optimizer/data recipe across PEFT baselines and TRSO while retaining source-audited method structure from `baseline_recipes.py`. The default is now `--head_init_policy random --peft_head_lr_scale 1.0`; no hidden linear-probe checkpoint is loaded.
+2. **Paper-recipe paired sensitivity** — `tools.run_paper_fair_pairs` gives a baseline its recoverable official paper/repository recipe (or source HPO grid) and reruns TRSO with the identical outer recipe and HPO budget. Missing source settings are labelled fallback rather than paper-exact.
+
+Useful audit commands:
+
+```bash
+python -m tools.verify_fairness --manifest experiments/fair_manifest.json
+python -m tools.verify_paper_pairs --manifest experiments/paper_fair_pairs.json
+python -m tools.select_paper_pair_trials --manifest experiments/paper_fair_pairs.json
+```
+
+See `PAPER_BASELINE_REPRODUCTION.md`, `BASELINE_FIDELITY.md`, and `BASELINE_AND_ABLATION_SEPARATION.md`.
 
 ## Validation
 

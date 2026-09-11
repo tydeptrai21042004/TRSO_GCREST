@@ -1,3 +1,5 @@
+> **Historical protocol notice (September 2026):** this file documents the frozen submitted-manuscript/46-run reproduction. It is preserved for reproducibility, but the active reviewer-ready baseline comparison uses `tools.run_fair_suite` with fresh heads and `tools.run_paper_fair_pairs` for paper-recipe paired checks.
+
 # Corrected original-paper baseline audit
 
 ## Final strict baseline set

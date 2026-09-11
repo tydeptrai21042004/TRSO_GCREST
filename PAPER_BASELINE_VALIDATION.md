@@ -1,3 +1,5 @@
+> **Historical validation notice:** the counts below describe the frozen submitted 46-run protocol. The active reviewer-ready baseline validation is documented in `FINAL_REVIEWER_REVISION_CODE_REPORT.md`, `BASELINE_FIDELITY.md`, and the 177-test suite.
+
 # Paper baseline and reference-control validation
 
 - Strict method IDs: 10

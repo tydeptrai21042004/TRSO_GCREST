@@ -1,0 +1,12 @@
+key,dataset,task,backbone,methods,batch_size,expected_runs,dataset_args
+dtd_resnet50,dtd,single_label,resnet50@torchvision,"full,linear,prompt,conv,piggyback,trso",16,18,"{""dtd_partition"": 1}"
+dtd_vit_b16,dtd,single_label,vit_b_16@torchvision,"full,linear,ssf,adaptformer,repadapter,arc,vpt_shallow,vpt_deep,convpass,fact_tt,fact_tk,vqt,spt_lora,spt_adapter,trso",8,45,"{""dtd_partition"": 1}"
+dtd_resnet18,dtd,single_label,resnet18@torchvision,"full,linear,prompt,trso",32,12,"{""dtd_partition"": 1}"
+dtd_swin_t,dtd,single_label,swin_t@torchvision,"full,linear,ssf,trso",32,12,"{""dtd_partition"": 1}"
+flowers_resnet18,flowers102,single_label,resnet18@torchvision,"full,linear,prompt,trso",32,12,{}
+flowers_vit_b16,flowers102,single_label,vit_b_16@torchvision,"full,linear,ssf,adaptformer,repadapter,arc,vpt_shallow,vpt_deep,convpass,fact_tt,fact_tk,vqt,spt_lora,spt_adapter,trso",16,45,{}
+flowers_swin_t,flowers102,single_label,swin_t@torchvision,"full,linear,ssf,trso",32,12,{}
+pet_resnet18,oxfordiiitpet,single_label,resnet18@torchvision,"full,linear,prompt,trso",32,12,{}
+pet_swin_t,oxfordiiitpet,single_label,swin_t@torchvision,"full,linear,ssf,trso",32,12,{}
+voc2007_mobilenetv3_small,voc2007,multilabel,mobilenet_v3_small@torchvision,"full,linear,ml_decoder,trso",32,12,{}
+pet_segmentation_lraspp_mobilenetv3_large,oxford_pet_segmentation,semantic_segmentation,lraspp_mobilenet_v3_large@torchvision,"full,linear,segadapter,trso",8,12,"{""segmentation_ignore_index"": 255, ""segmentation_num_classes"": 3}"

@@ -109,7 +109,7 @@ def test_arc_is_wired_through_main_and_fair_runner():
     assert args.arc_dim == 50
     assert args.arc_dropout == 0.1
     assert args.arc_merge is True
-    row = method_variant("arc", "vit", 0, "/tmp/head.pth", SimpleNamespace())
+    row = method_variant("arc", "vit", 0, "/tmp/head.pth", SimpleNamespace(head_init_policy="linear_probe"))
     assert row["arc_dim"] == 50
     assert row["arc_dropout"] == 0.1
     assert row["arc_merge"] is True

@@ -1,12 +1,17 @@
 """Dataset/task/backbone-aware controlled comparison runner.
 
 The runner is intentionally capability driven:
-- all task-compatible methods use one AdamW/cosine recipe;
+- all task-compatible methods use one controlled outer recipe;
+- each literature baseline keeps source-audited method-internal defaults;
+- the default comparison starts every downstream task head from the same fresh
+  initialization policy (no hidden linear-probe warm start);
+- optional linear-probe warm start is an explicit ablation only;
 - full fine-tuning and linear probing may use separate learning rates;
-- a task-aware linear head is trained once per backbone/seed and reused by
-  compatible PEFT methods before TRSO calibration;
 - unsupported method/backbone/task combinations are written to an explicit
   compatibility report instead of disappearing from the result table.
+
+For paper/official-recipe paired comparisons, use
+``python -m tools.run_paper_fair_pairs``.
 
 Examples
 --------
@@ -42,6 +47,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from baseline_recipes import paper_method_defaults, recipe_for
 from datasets.build import available_datasets
 from datasets.download import parse_download_mode
 from datasets.registry import get_dataset_spec
@@ -133,8 +139,13 @@ def parser() -> argparse.ArgumentParser:
     )
     p.add_argument(
         "--external_head_manifests", default="",
-        help=("Comma-separated fair-manifest JSON files containing completed linear-probe rows. "
-              "Baseline/proposal stages reuse matching backbone/seed heads without reporting hidden linear runs."),
+        help=("Comma-separated manifests containing completed linear-probe rows. "
+              "Used only when --head_init_policy=linear_probe."),
+    )
+    p.add_argument(
+        "--head_init_policy", default="random", choices=["random", "linear_probe"],
+        help=("Main-table default is random: every method starts with its normal fresh task head. "
+              "linear_probe is an explicit warm-start ablation and may reuse --external_head_manifests."),
     )
     p.add_argument("--trso_ablation", default="full", choices=["full", "diagonal_only", "no_sampling_variance", "no_crossfit", "head_only"], help="TRSO structural ablation; full is used for benchmark comparisons.")
     p.add_argument(
@@ -157,7 +168,7 @@ def parser() -> argparse.ArgumentParser:
     p.add_argument("--min_lr", type=float, default=1e-6)
     p.add_argument("--optimizer", default="adamw", choices=["adamw", "sgd"])
     p.add_argument("--augmentation", default="strong", choices=["basic", "strong"])
-    p.add_argument("--peft_head_lr_scale", type=float, default=0.5)
+    p.add_argument("--peft_head_lr_scale", type=float, default=1.0)
     p.add_argument("--device", default="cuda")
     p.add_argument("--gpu_ids", default="0")
     p.add_argument("--parallel_runs", type=int, default=1)
@@ -283,7 +294,11 @@ def base_common(args: argparse.Namespace, task: str, dataset_args: dict[str, Any
         "allow_unverified_paper_reimplementations": bool(
             getattr(args, "allow_unverified_paper_reimplementations", False)
         ),
-        "peft_head_lr_scale": float(getattr(args, "peft_head_lr_scale", 0.5)),
+        "peft_head_lr_scale": float(getattr(args, "peft_head_lr_scale", 1.0)),
+        "protocol_name": "controlled_paper_structure_v2",
+        "recipe_source": "baseline_recipes.py",
+        "recipe_fidelity": "controlled_outer_paper_structure",
+        "head_init_policy": str(getattr(args, "head_init_policy", "random")),
         "clip_grad": 1.0,
         "no_decay_bias_norm": True,
         "split_seed": args.split_seed,
@@ -305,51 +320,45 @@ def method_variant(
     head_path: str | None,
     args: argparse.Namespace,
 ) -> dict[str, Any]:
+    """Build one method row from the canonical source-audited defaults.
+
+    Method-internal parameters come from :mod:`baseline_recipes`; the outer
+    optimization recipe remains controlled by :func:`base_common`.  A shared
+    linear-probe head is attached only when the user explicitly requests the
+    ``linear_probe`` head-initialization ablation.
+    """
     row: dict[str, Any] = {
         "tuning_method": method,
         "seed": seed,
         "keep_pretrained_head": method == "prompt",
     }
-    if method == "prompt":
-        row.update({"prompt_type": "padding", "prompt_mapping": "frequency", "prompt_mapping_batches": 0})
-    elif method not in {"full", "linear", "vqt"} and head_path:
+    row.update(paper_method_defaults(method))
+
+    head_policy = str(getattr(args, "head_init_policy", "random"))
+    if (
+        head_policy == "linear_probe"
+        and method not in {"full", "linear", "prompt", "vqt", "ml_decoder", "segadapter"}
+        and head_path
+    ):
         row["head_from"] = head_path
 
     if method == "trso":
         row.update({"trso_fast_inference": True, "trso_ablation": getattr(args, "trso_ablation", "full")})
-    elif method == "conv":
-        row.update({"adapt_size": 8, "kernel_size": 3, "conv_adapter_mode": "conv_parallel"})
     elif method == "sidetune":
         row.update({"sidetune_arch": "lightweight", "sidetune_width": 64, "sidetune_depth": 4})
-    elif method == "piggyback":
-        row.update({"piggyback_threshold": 5e-3, "piggyback_mask_init": "ones", "piggyback_mask_linear": "vgg16" in str(getattr(args, "backbones", "")).lower()})
-    elif method == "ssf":
-        row.update({"ssf_init_std": 0.02})
     elif method == "lora":
         row.update({"lora_r": 8, "lora_alpha": 16.0, "lora_dropout": 0.0})
     elif method == "bitfit":
         row.update({"bitfit_bias_scope": "all", "bitfit_train_head": True})
-    elif method in {"vpt_shallow", "vpt_deep"}:
-        row.update({"vpt_num_tokens": 10, "vpt_dropout": 0.0})
-    elif method in {"convpass", "convpass_attn"}:
-        row.update({"convpass_dim": 8, "convpass_scale": 1.0, "convpass_dropout": 0.1})
-    elif method == "fact_tt":
-        row.update({"fact_rank": 4, "fact_scale": 1.0})
-    elif method == "fact_tk":
-        row.update({"fact_rank": 8, "fact_scale": 1.0})
-    elif method == "vqt":
-        row.update({"vqt_query_length": 1})
-    elif method in {"spt_lora", "spt_adapter"}:
+    elif method == "piggyback":
+        row["piggyback_mask_linear"] = "vgg16" in str(getattr(args, "backbones", "")).lower()
+
+    recipe = recipe_for(method)
+    if recipe is not None:
         row.update({
-            "spt_budget": 400000, "spt_sensitivity_samples": 800,
-            "spt_rank": 8, "spt_adapter_dim": 8, "spt_alpha": 8.0,
+            "recipe_fidelity": recipe.training_fidelity,
+            "recipe_source": recipe.official_source,
         })
-    elif method == "adaptformer":
-        row.update({"adaptformer_dim": 16, "adaptformer_scale": 0.1, "adaptformer_dropout": 0.0, "adaptformer_layernorm": "none"})
-    elif method == "repadapter":
-        row.update({"repadapter_dim": 8, "repadapter_groups": 2, "repadapter_scale": 1.0, "repadapter_dropout": 0.1, "repadapter_merge": True})
-    elif method == "arc":
-        row.update({"arc_dim": 50, "arc_dropout": 0.1, "arc_merge": True})
     return row
 
 
@@ -391,7 +400,11 @@ def build_suite(args: argparse.Namespace):
     backbones = parse_backbones(args.backbones, task)
     methods = parse_methods(args.methods)
     common_base = base_common(args, task, dataset_args)
-    external_heads = load_external_linear_heads(getattr(args, "external_head_manifests", ""))
+    head_policy = str(getattr(args, "head_init_policy", "random"))
+    external_heads = (
+        load_external_linear_heads(getattr(args, "external_head_manifests", ""))
+        if head_policy == "linear_probe" else {}
+    )
 
     head_specs: list[RunSpec] = []
     comparison_specs: list[RunSpec] = []
@@ -426,8 +439,9 @@ def build_suite(args: argparse.Namespace):
             if ok:
                 supported_methods.append(method)
 
-        # Linear probing is both a reported baseline and the common task-aware
-        # head source. It is prepared first for each backbone/seed.
+        # Linear probing is always an independently reported reference when
+        # requested.  It becomes a warm-start source only in the explicit
+        # --head_init_policy=linear_probe ablation.
         linear_supported = "linear" in supported_methods
         head_path_by_seed: dict[int, str] = {}
         for seed in seeds:
@@ -452,8 +466,9 @@ def build_suite(args: argparse.Namespace):
                 output_root=args.output_root,
             )
             head_specs.extend(built)
-            for spec in built:
-                head_path_by_seed[int(spec.parameters["seed"])] = str(Path(spec.output_dir) / "checkpoint-best.pth")
+            if head_policy == "linear_probe":
+                for spec in built:
+                    head_path_by_seed[int(spec.parameters["seed"])] = str(Path(spec.output_dir) / "checkpoint-best.pth")
 
         compare_common = {
             **common_base,
@@ -518,8 +533,14 @@ def main() -> None:
         "input_size_note": "0 means native pretrained size resolved before dataset transforms.",
         "scheduled_method_backbone_pairs": scheduled,
         "skipped_method_backbone_pairs": skipped,
-        "shared_head_policy": "Reference-control stages train linear heads. Separate literature-baseline and TRSO stages reuse them through --external_head_manifests, so result categories remain separate without hidden runs. Visual Prompting retains the source classifier by definition.",
-        "external_head_manifests": [x for x in str(args.external_head_manifests).split(",") if x],
+        "head_init_policy": args.head_init_policy,
+        "shared_head_policy": (
+            "No linear-probe warm start. Every compatible baseline and TRSO starts from its normal fresh task head; Visual Prompting retains the frozen source classifier by method definition."
+            if args.head_init_policy == "random"
+            else "Explicit LP-warm-start ablation: compatible PEFT methods/TRSO reuse the matching best linear-probe head. This mode must not be mixed with the main random-head table."
+        ),
+        "external_head_manifests": ([x for x in str(args.external_head_manifests).split(",") if x] if args.head_init_policy == "linear_probe" else []),
+        "method_internal_defaults": "Source-audited paper defaults from baseline_recipes.py; outer optimizer recipe is controlled.",
         "unsupported_policy": "Explicit skip report; no silent architectural approximation.",
     }
     protocol_path = Path(args.manifest).with_name(Path(args.manifest).stem + "_protocol.json")
