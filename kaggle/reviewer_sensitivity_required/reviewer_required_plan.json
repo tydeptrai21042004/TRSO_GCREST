@@ -1,0 +1,1750 @@
+{
+  "protocol": "reviewer_sensitivity_required_v2_kaggle_sessions",
+  "reference_gpu": "NVIDIA T4",
+  "session_count": 9,
+  "logical_groups": 39,
+  "total_training_runs": 105,
+  "estimated_total_minutes_t4": 3777,
+  "estimated_total_hours_t4": 62.95,
+  "reviewer_coverage": {
+    "R1-C3": {
+      "logical_groups": 13,
+      "training_runs": 27,
+      "studies": [
+        "batch_sensitivity",
+        "calibration"
+      ],
+      "settings": [
+        "DTD / ResNet-18",
+        "Flowers-102 / ViT-B16"
+      ]
+    },
+    "R1-C5": {
+      "logical_groups": 12,
+      "training_runs": 36,
+      "studies": [
+        "lora_rank_sweep"
+      ],
+      "settings": [
+        "DTD / ViT-B16",
+        "Flowers-102 / ViT-B16"
+      ]
+    },
+    "R2-C1": {
+      "logical_groups": 10,
+      "training_runs": 18,
+      "studies": [
+        "calibration"
+      ],
+      "settings": [
+        "DTD / ResNet-18",
+        "Flowers-102 / ViT-B16"
+      ]
+    },
+    "R2-C2": {
+      "logical_groups": 9,
+      "training_runs": 27,
+      "studies": [
+        "reliability"
+      ],
+      "settings": [
+        "DTD / ResNet-18",
+        "DTD / ResNet-50",
+        "Flowers-102 / ViT-B16"
+      ]
+    },
+    "R2-C3": {
+      "logical_groups": 17,
+      "training_runs": 51,
+      "studies": [
+        "lora_rank_sweep",
+        "mode_rules",
+        "r_scale"
+      ],
+      "settings": [
+        "DTD / ResNet-18",
+        "DTD / ViT-B16",
+        "Flowers-102 / ViT-B16"
+      ]
+    },
+    "R2-C5": {
+      "logical_groups": 13,
+      "training_runs": 27,
+      "studies": [
+        "batch_sensitivity",
+        "calibration"
+      ],
+      "settings": [
+        "DTD / ResNet-18",
+        "Flowers-102 / ViT-B16"
+      ]
+    },
+    "R3-C1": {
+      "logical_groups": 3,
+      "training_runs": 9,
+      "studies": [
+        "mode_rules"
+      ],
+      "settings": [
+        "DTD / ResNet-18"
+      ]
+    },
+    "R3-C2": {
+      "logical_groups": 3,
+      "training_runs": 9,
+      "studies": [
+        "mode_rules"
+      ],
+      "settings": [
+        "DTD / ResNet-18"
+      ]
+    },
+    "R3-C3": {
+      "logical_groups": 3,
+      "training_runs": 9,
+      "studies": [
+        "mode_rules"
+      ],
+      "settings": [
+        "DTD / ResNet-18"
+      ]
+    },
+    "R3-C4": {
+      "logical_groups": 12,
+      "training_runs": 36,
+      "studies": [
+        "lora_rank_sweep"
+      ],
+      "settings": [
+        "DTD / ViT-B16",
+        "Flowers-102 / ViT-B16"
+      ]
+    }
+  },
+  "reused_defaults": {
+    "source": "kaggle/reviewer_matrix (204-run, 3-seed main matrix)",
+    "default_proposal_seeds": [
+      0,
+      1,
+      2
+    ],
+    "reused_conditions": [
+      "full/default Proposal for all sensitivity settings",
+      "calibration_fraction=1.0 with alternating partition",
+      "DTD/ResNet-18 default calibration_batch_size=32",
+      "mode_rule=geometric",
+      "r_scale=1.0"
+    ],
+    "reason": "Avoid duplicate training while preserving reviewer-controlled comparisons."
+  },
+  "sessions": [
+    {
+      "protocol": "reviewer_sensitivity_required_v2_kaggle_sessions",
+      "session": 1,
+      "session_count": 9,
+      "reference_gpu": "NVIDIA T4",
+      "epochs": 30,
+      "warmup_epochs": 3,
+      "input_size": 224,
+      "split_seed": 0,
+      "hard_limit_minutes": 710,
+      "zip_reserve_minutes": 12,
+      "estimated_session_minutes_t4": 423,
+      "estimated_session_hours_t4": 7.05,
+      "logical_groups": [
+        {
+          "order_fast_to_slow": 1,
+          "group_id": "batch_sensitivity__dtd_resnet18__calib_batch_8",
+          "study": "batch_sensitivity",
+          "setting_key": "dtd_resnet18",
+          "setting_label": "DTD / ResNet-18",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "resnet18@torchvision",
+          "batch_size": 32,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "variant": "calib_batch_8",
+          "controls": {
+            "calibration_batch_size": 8
+          },
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "reviewer_requirements": [
+            "R1-C3",
+            "R2-C5"
+          ],
+          "estimated_minutes_t4_per_run": 22,
+          "estimated_group_minutes_t4": 66,
+          "job_ids": [
+            "batch_sensitivity__dtd_resnet18__calib_batch_8__seed0",
+            "batch_sensitivity__dtd_resnet18__calib_batch_8__seed1",
+            "batch_sensitivity__dtd_resnet18__calib_batch_8__seed2"
+          ]
+        },
+        {
+          "order_fast_to_slow": 2,
+          "group_id": "r_scale__dtd_resnet18__rscale_2",
+          "study": "r_scale",
+          "setting_key": "dtd_resnet18",
+          "setting_label": "DTD / ResNet-18",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "resnet18@torchvision",
+          "batch_size": 32,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "variant": "rscale_2",
+          "controls": {
+            "r_scale": 2.0
+          },
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "reviewer_requirements": [
+            "R2-C3"
+          ],
+          "estimated_minutes_t4_per_run": 22,
+          "estimated_group_minutes_t4": 66,
+          "job_ids": [
+            "r_scale__dtd_resnet18__rscale_2__seed0",
+            "r_scale__dtd_resnet18__rscale_2__seed1",
+            "r_scale__dtd_resnet18__rscale_2__seed2"
+          ]
+        },
+        {
+          "order_fast_to_slow": 3,
+          "group_id": "calibration__flowers_vit_b16__frac_0p25_alternating",
+          "study": "calibration",
+          "setting_key": "flowers_vit_b16",
+          "setting_label": "Flowers-102 / ViT-B16",
+          "dataset": "flowers102",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "batch_size": 16,
+          "dataset_args": {},
+          "variant": "frac_0.25_alternating",
+          "controls": {
+            "calibration_fraction": 0.25,
+            "partition_mode": "alternating",
+            "partition_seed": 0
+          },
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "reviewer_requirements": [
+            "R1-C3",
+            "R2-C1",
+            "R2-C5"
+          ],
+          "estimated_minutes_t4_per_run": 42,
+          "estimated_group_minutes_t4": 126,
+          "job_ids": [
+            "calibration__flowers_vit_b16__frac_0p25_alternating__seed0",
+            "calibration__flowers_vit_b16__frac_0p25_alternating__seed1",
+            "calibration__flowers_vit_b16__frac_0p25_alternating__seed2"
+          ]
+        },
+        {
+          "order_fast_to_slow": 4,
+          "group_id": "lora_rank_sweep__dtd_vit_b16__lora_r1",
+          "study": "lora_rank_sweep",
+          "setting_key": "dtd_vit_b16",
+          "setting_label": "DTD / ViT-B16",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "batch_size": 8,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "variant": "lora_r1",
+          "controls": {
+            "lora_rank": 1
+          },
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "reviewer_requirements": [
+            "R1-C5",
+            "R2-C3",
+            "R3-C4"
+          ],
+          "estimated_minutes_t4_per_run": 55,
+          "estimated_group_minutes_t4": 165,
+          "job_ids": [
+            "lora_rank_sweep__dtd_vit_b16__lora_r1__seed0",
+            "lora_rank_sweep__dtd_vit_b16__lora_r1__seed1",
+            "lora_rank_sweep__dtd_vit_b16__lora_r1__seed2"
+          ]
+        }
+      ],
+      "expanded_training_runs": 12,
+      "reused_defaults": {
+        "source": "kaggle/reviewer_matrix (204-run, 3-seed main matrix)",
+        "default_proposal_seeds": [
+          0,
+          1,
+          2
+        ],
+        "reused_conditions": [
+          "full/default Proposal for all sensitivity settings",
+          "calibration_fraction=1.0 with alternating partition",
+          "DTD/ResNet-18 default calibration_batch_size=32",
+          "mode_rule=geometric",
+          "r_scale=1.0"
+        ],
+        "reason": "Avoid duplicate training while preserving reviewer-controlled comparisons."
+      }
+    },
+    {
+      "protocol": "reviewer_sensitivity_required_v2_kaggle_sessions",
+      "session": 2,
+      "session_count": 9,
+      "reference_gpu": "NVIDIA T4",
+      "epochs": 30,
+      "warmup_epochs": 3,
+      "input_size": 224,
+      "split_seed": 0,
+      "hard_limit_minutes": 710,
+      "zip_reserve_minutes": 12,
+      "estimated_session_minutes_t4": 423,
+      "estimated_session_hours_t4": 7.05,
+      "logical_groups": [
+        {
+          "order_fast_to_slow": 1,
+          "group_id": "calibration__dtd_resnet18__frac_0p25_alternating",
+          "study": "calibration",
+          "setting_key": "dtd_resnet18",
+          "setting_label": "DTD / ResNet-18",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "resnet18@torchvision",
+          "batch_size": 32,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "variant": "frac_0.25_alternating",
+          "controls": {
+            "calibration_fraction": 0.25,
+            "partition_mode": "alternating",
+            "partition_seed": 0
+          },
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "reviewer_requirements": [
+            "R1-C3",
+            "R2-C1",
+            "R2-C5"
+          ],
+          "estimated_minutes_t4_per_run": 22,
+          "estimated_group_minutes_t4": 66,
+          "job_ids": [
+            "calibration__dtd_resnet18__frac_0p25_alternating__seed0",
+            "calibration__dtd_resnet18__frac_0p25_alternating__seed1",
+            "calibration__dtd_resnet18__frac_0p25_alternating__seed2"
+          ]
+        },
+        {
+          "order_fast_to_slow": 2,
+          "group_id": "reliability__dtd_resnet18__diagonal_only",
+          "study": "reliability",
+          "setting_key": "dtd_resnet18",
+          "setting_label": "DTD / ResNet-18",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "resnet18@torchvision",
+          "batch_size": 32,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "variant": "diagonal_only",
+          "controls": {
+            "trso_ablation": "diagonal_only"
+          },
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "reviewer_requirements": [
+            "R2-C2"
+          ],
+          "estimated_minutes_t4_per_run": 22,
+          "estimated_group_minutes_t4": 66,
+          "job_ids": [
+            "reliability__dtd_resnet18__diagonal_only__seed0",
+            "reliability__dtd_resnet18__diagonal_only__seed1",
+            "reliability__dtd_resnet18__diagonal_only__seed2"
+          ]
+        },
+        {
+          "order_fast_to_slow": 3,
+          "group_id": "calibration__flowers_vit_b16__frac_0p5_alternating",
+          "study": "calibration",
+          "setting_key": "flowers_vit_b16",
+          "setting_label": "Flowers-102 / ViT-B16",
+          "dataset": "flowers102",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "batch_size": 16,
+          "dataset_args": {},
+          "variant": "frac_0.5_alternating",
+          "controls": {
+            "calibration_fraction": 0.5,
+            "partition_mode": "alternating",
+            "partition_seed": 0
+          },
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "reviewer_requirements": [
+            "R1-C3",
+            "R2-C1",
+            "R2-C5"
+          ],
+          "estimated_minutes_t4_per_run": 42,
+          "estimated_group_minutes_t4": 126,
+          "job_ids": [
+            "calibration__flowers_vit_b16__frac_0p5_alternating__seed0",
+            "calibration__flowers_vit_b16__frac_0p5_alternating__seed1",
+            "calibration__flowers_vit_b16__frac_0p5_alternating__seed2"
+          ]
+        },
+        {
+          "order_fast_to_slow": 4,
+          "group_id": "lora_rank_sweep__dtd_vit_b16__lora_r16",
+          "study": "lora_rank_sweep",
+          "setting_key": "dtd_vit_b16",
+          "setting_label": "DTD / ViT-B16",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "batch_size": 8,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "variant": "lora_r16",
+          "controls": {
+            "lora_rank": 16
+          },
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "reviewer_requirements": [
+            "R1-C5",
+            "R2-C3",
+            "R3-C4"
+          ],
+          "estimated_minutes_t4_per_run": 55,
+          "estimated_group_minutes_t4": 165,
+          "job_ids": [
+            "lora_rank_sweep__dtd_vit_b16__lora_r16__seed0",
+            "lora_rank_sweep__dtd_vit_b16__lora_r16__seed1",
+            "lora_rank_sweep__dtd_vit_b16__lora_r16__seed2"
+          ]
+        }
+      ],
+      "expanded_training_runs": 12,
+      "reused_defaults": {
+        "source": "kaggle/reviewer_matrix (204-run, 3-seed main matrix)",
+        "default_proposal_seeds": [
+          0,
+          1,
+          2
+        ],
+        "reused_conditions": [
+          "full/default Proposal for all sensitivity settings",
+          "calibration_fraction=1.0 with alternating partition",
+          "DTD/ResNet-18 default calibration_batch_size=32",
+          "mode_rule=geometric",
+          "r_scale=1.0"
+        ],
+        "reason": "Avoid duplicate training while preserving reviewer-controlled comparisons."
+      }
+    },
+    {
+      "protocol": "reviewer_sensitivity_required_v2_kaggle_sessions",
+      "session": 3,
+      "session_count": 9,
+      "reference_gpu": "NVIDIA T4",
+      "epochs": 30,
+      "warmup_epochs": 3,
+      "input_size": 224,
+      "split_seed": 0,
+      "hard_limit_minutes": 710,
+      "zip_reserve_minutes": 12,
+      "estimated_session_minutes_t4": 423,
+      "estimated_session_hours_t4": 7.05,
+      "logical_groups": [
+        {
+          "order_fast_to_slow": 1,
+          "group_id": "calibration__dtd_resnet18__frac_0p5_alternating",
+          "study": "calibration",
+          "setting_key": "dtd_resnet18",
+          "setting_label": "DTD / ResNet-18",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "resnet18@torchvision",
+          "batch_size": 32,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "variant": "frac_0.5_alternating",
+          "controls": {
+            "calibration_fraction": 0.5,
+            "partition_mode": "alternating",
+            "partition_seed": 0
+          },
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "reviewer_requirements": [
+            "R1-C3",
+            "R2-C1",
+            "R2-C5"
+          ],
+          "estimated_minutes_t4_per_run": 22,
+          "estimated_group_minutes_t4": 66,
+          "job_ids": [
+            "calibration__dtd_resnet18__frac_0p5_alternating__seed0",
+            "calibration__dtd_resnet18__frac_0p5_alternating__seed1",
+            "calibration__dtd_resnet18__frac_0p5_alternating__seed2"
+          ]
+        },
+        {
+          "order_fast_to_slow": 2,
+          "group_id": "reliability__dtd_resnet18__no_crossfit",
+          "study": "reliability",
+          "setting_key": "dtd_resnet18",
+          "setting_label": "DTD / ResNet-18",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "resnet18@torchvision",
+          "batch_size": 32,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "variant": "no_crossfit",
+          "controls": {
+            "trso_ablation": "no_crossfit"
+          },
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "reviewer_requirements": [
+            "R2-C2"
+          ],
+          "estimated_minutes_t4_per_run": 22,
+          "estimated_group_minutes_t4": 66,
+          "job_ids": [
+            "reliability__dtd_resnet18__no_crossfit__seed0",
+            "reliability__dtd_resnet18__no_crossfit__seed1",
+            "reliability__dtd_resnet18__no_crossfit__seed2"
+          ]
+        },
+        {
+          "order_fast_to_slow": 3,
+          "group_id": "reliability__flowers_vit_b16__diagonal_only",
+          "study": "reliability",
+          "setting_key": "flowers_vit_b16",
+          "setting_label": "Flowers-102 / ViT-B16",
+          "dataset": "flowers102",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "batch_size": 16,
+          "dataset_args": {},
+          "variant": "diagonal_only",
+          "controls": {
+            "trso_ablation": "diagonal_only"
+          },
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "reviewer_requirements": [
+            "R2-C2"
+          ],
+          "estimated_minutes_t4_per_run": 42,
+          "estimated_group_minutes_t4": 126,
+          "job_ids": [
+            "reliability__flowers_vit_b16__diagonal_only__seed0",
+            "reliability__flowers_vit_b16__diagonal_only__seed1",
+            "reliability__flowers_vit_b16__diagonal_only__seed2"
+          ]
+        },
+        {
+          "order_fast_to_slow": 4,
+          "group_id": "lora_rank_sweep__dtd_vit_b16__lora_r2",
+          "study": "lora_rank_sweep",
+          "setting_key": "dtd_vit_b16",
+          "setting_label": "DTD / ViT-B16",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "batch_size": 8,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "variant": "lora_r2",
+          "controls": {
+            "lora_rank": 2
+          },
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "reviewer_requirements": [
+            "R1-C5",
+            "R2-C3",
+            "R3-C4"
+          ],
+          "estimated_minutes_t4_per_run": 55,
+          "estimated_group_minutes_t4": 165,
+          "job_ids": [
+            "lora_rank_sweep__dtd_vit_b16__lora_r2__seed0",
+            "lora_rank_sweep__dtd_vit_b16__lora_r2__seed1",
+            "lora_rank_sweep__dtd_vit_b16__lora_r2__seed2"
+          ]
+        }
+      ],
+      "expanded_training_runs": 12,
+      "reused_defaults": {
+        "source": "kaggle/reviewer_matrix (204-run, 3-seed main matrix)",
+        "default_proposal_seeds": [
+          0,
+          1,
+          2
+        ],
+        "reused_conditions": [
+          "full/default Proposal for all sensitivity settings",
+          "calibration_fraction=1.0 with alternating partition",
+          "DTD/ResNet-18 default calibration_batch_size=32",
+          "mode_rule=geometric",
+          "r_scale=1.0"
+        ],
+        "reason": "Avoid duplicate training while preserving reviewer-controlled comparisons."
+      }
+    },
+    {
+      "protocol": "reviewer_sensitivity_required_v2_kaggle_sessions",
+      "session": 4,
+      "session_count": 9,
+      "reference_gpu": "NVIDIA T4",
+      "epochs": 30,
+      "warmup_epochs": 3,
+      "input_size": 224,
+      "split_seed": 0,
+      "hard_limit_minutes": 710,
+      "zip_reserve_minutes": 12,
+      "estimated_session_minutes_t4": 423,
+      "estimated_session_hours_t4": 7.05,
+      "logical_groups": [
+        {
+          "order_fast_to_slow": 1,
+          "group_id": "mode_rules__dtd_resnet18__arithmetic",
+          "study": "mode_rules",
+          "setting_key": "dtd_resnet18",
+          "setting_label": "DTD / ResNet-18",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "resnet18@torchvision",
+          "batch_size": 32,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "variant": "arithmetic",
+          "controls": {
+            "mode_rule": "arithmetic"
+          },
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "reviewer_requirements": [
+            "R2-C3",
+            "R3-C1",
+            "R3-C2",
+            "R3-C3"
+          ],
+          "estimated_minutes_t4_per_run": 22,
+          "estimated_group_minutes_t4": 66,
+          "job_ids": [
+            "mode_rules__dtd_resnet18__arithmetic__seed0",
+            "mode_rules__dtd_resnet18__arithmetic__seed1",
+            "mode_rules__dtd_resnet18__arithmetic__seed2"
+          ]
+        },
+        {
+          "order_fast_to_slow": 2,
+          "group_id": "reliability__dtd_resnet18__no_sampling_variance",
+          "study": "reliability",
+          "setting_key": "dtd_resnet18",
+          "setting_label": "DTD / ResNet-18",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "resnet18@torchvision",
+          "batch_size": 32,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "variant": "no_sampling_variance",
+          "controls": {
+            "trso_ablation": "no_sampling_variance"
+          },
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "reviewer_requirements": [
+            "R2-C2"
+          ],
+          "estimated_minutes_t4_per_run": 22,
+          "estimated_group_minutes_t4": 66,
+          "job_ids": [
+            "reliability__dtd_resnet18__no_sampling_variance__seed0",
+            "reliability__dtd_resnet18__no_sampling_variance__seed1",
+            "reliability__dtd_resnet18__no_sampling_variance__seed2"
+          ]
+        },
+        {
+          "order_fast_to_slow": 3,
+          "group_id": "reliability__flowers_vit_b16__no_crossfit",
+          "study": "reliability",
+          "setting_key": "flowers_vit_b16",
+          "setting_label": "Flowers-102 / ViT-B16",
+          "dataset": "flowers102",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "batch_size": 16,
+          "dataset_args": {},
+          "variant": "no_crossfit",
+          "controls": {
+            "trso_ablation": "no_crossfit"
+          },
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "reviewer_requirements": [
+            "R2-C2"
+          ],
+          "estimated_minutes_t4_per_run": 42,
+          "estimated_group_minutes_t4": 126,
+          "job_ids": [
+            "reliability__flowers_vit_b16__no_crossfit__seed0",
+            "reliability__flowers_vit_b16__no_crossfit__seed1",
+            "reliability__flowers_vit_b16__no_crossfit__seed2"
+          ]
+        },
+        {
+          "order_fast_to_slow": 4,
+          "group_id": "lora_rank_sweep__dtd_vit_b16__lora_r32",
+          "study": "lora_rank_sweep",
+          "setting_key": "dtd_vit_b16",
+          "setting_label": "DTD / ViT-B16",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "batch_size": 8,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "variant": "lora_r32",
+          "controls": {
+            "lora_rank": 32
+          },
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "reviewer_requirements": [
+            "R1-C5",
+            "R2-C3",
+            "R3-C4"
+          ],
+          "estimated_minutes_t4_per_run": 55,
+          "estimated_group_minutes_t4": 165,
+          "job_ids": [
+            "lora_rank_sweep__dtd_vit_b16__lora_r32__seed0",
+            "lora_rank_sweep__dtd_vit_b16__lora_r32__seed1",
+            "lora_rank_sweep__dtd_vit_b16__lora_r32__seed2"
+          ]
+        }
+      ],
+      "expanded_training_runs": 12,
+      "reused_defaults": {
+        "source": "kaggle/reviewer_matrix (204-run, 3-seed main matrix)",
+        "default_proposal_seeds": [
+          0,
+          1,
+          2
+        ],
+        "reused_conditions": [
+          "full/default Proposal for all sensitivity settings",
+          "calibration_fraction=1.0 with alternating partition",
+          "DTD/ResNet-18 default calibration_batch_size=32",
+          "mode_rule=geometric",
+          "r_scale=1.0"
+        ],
+        "reason": "Avoid duplicate training while preserving reviewer-controlled comparisons."
+      }
+    },
+    {
+      "protocol": "reviewer_sensitivity_required_v2_kaggle_sessions",
+      "session": 5,
+      "session_count": 9,
+      "reference_gpu": "NVIDIA T4",
+      "epochs": 30,
+      "warmup_epochs": 3,
+      "input_size": 224,
+      "split_seed": 0,
+      "hard_limit_minutes": 710,
+      "zip_reserve_minutes": 12,
+      "estimated_session_minutes_t4": 421,
+      "estimated_session_hours_t4": 7.02,
+      "logical_groups": [
+        {
+          "order_fast_to_slow": 1,
+          "group_id": "calibration__dtd_resnet18__frac_1_random_p0",
+          "study": "calibration",
+          "setting_key": "dtd_resnet18",
+          "setting_label": "DTD / ResNet-18",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "resnet18@torchvision",
+          "batch_size": 32,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "variant": "frac_1_random_p0",
+          "controls": {
+            "calibration_fraction": 1.0,
+            "partition_mode": "seeded_random",
+            "partition_seed": 0
+          },
+          "seeds": [
+            0
+          ],
+          "reviewer_requirements": [
+            "R1-C3",
+            "R2-C1",
+            "R2-C5"
+          ],
+          "estimated_minutes_t4_per_run": 22,
+          "estimated_group_minutes_t4": 22,
+          "job_ids": [
+            "calibration__dtd_resnet18__frac_1_random_p0__seed0"
+          ]
+        },
+        {
+          "order_fast_to_slow": 2,
+          "group_id": "calibration__flowers_vit_b16__frac_1_random_p0",
+          "study": "calibration",
+          "setting_key": "flowers_vit_b16",
+          "setting_label": "Flowers-102 / ViT-B16",
+          "dataset": "flowers102",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "batch_size": 16,
+          "dataset_args": {},
+          "variant": "frac_1_random_p0",
+          "controls": {
+            "calibration_fraction": 1.0,
+            "partition_mode": "seeded_random",
+            "partition_seed": 0
+          },
+          "seeds": [
+            0
+          ],
+          "reviewer_requirements": [
+            "R1-C3",
+            "R2-C1",
+            "R2-C5"
+          ],
+          "estimated_minutes_t4_per_run": 42,
+          "estimated_group_minutes_t4": 42,
+          "job_ids": [
+            "calibration__flowers_vit_b16__frac_1_random_p0__seed0"
+          ]
+        },
+        {
+          "order_fast_to_slow": 3,
+          "group_id": "mode_rules__dtd_resnet18__harmonic",
+          "study": "mode_rules",
+          "setting_key": "dtd_resnet18",
+          "setting_label": "DTD / ResNet-18",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "resnet18@torchvision",
+          "batch_size": 32,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "variant": "harmonic",
+          "controls": {
+            "mode_rule": "harmonic"
+          },
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "reviewer_requirements": [
+            "R2-C3",
+            "R3-C1",
+            "R3-C2",
+            "R3-C3"
+          ],
+          "estimated_minutes_t4_per_run": 22,
+          "estimated_group_minutes_t4": 66,
+          "job_ids": [
+            "mode_rules__dtd_resnet18__harmonic__seed0",
+            "mode_rules__dtd_resnet18__harmonic__seed1",
+            "mode_rules__dtd_resnet18__harmonic__seed2"
+          ]
+        },
+        {
+          "order_fast_to_slow": 4,
+          "group_id": "reliability__flowers_vit_b16__no_sampling_variance",
+          "study": "reliability",
+          "setting_key": "flowers_vit_b16",
+          "setting_label": "Flowers-102 / ViT-B16",
+          "dataset": "flowers102",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "batch_size": 16,
+          "dataset_args": {},
+          "variant": "no_sampling_variance",
+          "controls": {
+            "trso_ablation": "no_sampling_variance"
+          },
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "reviewer_requirements": [
+            "R2-C2"
+          ],
+          "estimated_minutes_t4_per_run": 42,
+          "estimated_group_minutes_t4": 126,
+          "job_ids": [
+            "reliability__flowers_vit_b16__no_sampling_variance__seed0",
+            "reliability__flowers_vit_b16__no_sampling_variance__seed1",
+            "reliability__flowers_vit_b16__no_sampling_variance__seed2"
+          ]
+        },
+        {
+          "order_fast_to_slow": 5,
+          "group_id": "lora_rank_sweep__dtd_vit_b16__lora_r4",
+          "study": "lora_rank_sweep",
+          "setting_key": "dtd_vit_b16",
+          "setting_label": "DTD / ViT-B16",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "batch_size": 8,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "variant": "lora_r4",
+          "controls": {
+            "lora_rank": 4
+          },
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "reviewer_requirements": [
+            "R1-C5",
+            "R2-C3",
+            "R3-C4"
+          ],
+          "estimated_minutes_t4_per_run": 55,
+          "estimated_group_minutes_t4": 165,
+          "job_ids": [
+            "lora_rank_sweep__dtd_vit_b16__lora_r4__seed0",
+            "lora_rank_sweep__dtd_vit_b16__lora_r4__seed1",
+            "lora_rank_sweep__dtd_vit_b16__lora_r4__seed2"
+          ]
+        }
+      ],
+      "expanded_training_runs": 11,
+      "reused_defaults": {
+        "source": "kaggle/reviewer_matrix (204-run, 3-seed main matrix)",
+        "default_proposal_seeds": [
+          0,
+          1,
+          2
+        ],
+        "reused_conditions": [
+          "full/default Proposal for all sensitivity settings",
+          "calibration_fraction=1.0 with alternating partition",
+          "DTD/ResNet-18 default calibration_batch_size=32",
+          "mode_rule=geometric",
+          "r_scale=1.0"
+        ],
+        "reason": "Avoid duplicate training while preserving reviewer-controlled comparisons."
+      }
+    },
+    {
+      "protocol": "reviewer_sensitivity_required_v2_kaggle_sessions",
+      "session": 6,
+      "session_count": 9,
+      "reference_gpu": "NVIDIA T4",
+      "epochs": 30,
+      "warmup_epochs": 3,
+      "input_size": 224,
+      "split_seed": 0,
+      "hard_limit_minutes": 710,
+      "zip_reserve_minutes": 12,
+      "estimated_session_minutes_t4": 405,
+      "estimated_session_hours_t4": 6.75,
+      "logical_groups": [
+        {
+          "order_fast_to_slow": 1,
+          "group_id": "calibration__flowers_vit_b16__frac_1_random_p1",
+          "study": "calibration",
+          "setting_key": "flowers_vit_b16",
+          "setting_label": "Flowers-102 / ViT-B16",
+          "dataset": "flowers102",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "batch_size": 16,
+          "dataset_args": {},
+          "variant": "frac_1_random_p1",
+          "controls": {
+            "calibration_fraction": 1.0,
+            "partition_mode": "seeded_random",
+            "partition_seed": 1
+          },
+          "seeds": [
+            0
+          ],
+          "reviewer_requirements": [
+            "R1-C3",
+            "R2-C1",
+            "R2-C5"
+          ],
+          "estimated_minutes_t4_per_run": 42,
+          "estimated_group_minutes_t4": 42,
+          "job_ids": [
+            "calibration__flowers_vit_b16__frac_1_random_p1__seed0"
+          ]
+        },
+        {
+          "order_fast_to_slow": 2,
+          "group_id": "reliability__dtd_resnet50__diagonal_only",
+          "study": "reliability",
+          "setting_key": "dtd_resnet50",
+          "setting_label": "DTD / ResNet-50",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "resnet50@torchvision",
+          "batch_size": 16,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "variant": "diagonal_only",
+          "controls": {
+            "trso_ablation": "diagonal_only"
+          },
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "reviewer_requirements": [
+            "R2-C2"
+          ],
+          "estimated_minutes_t4_per_run": 33,
+          "estimated_group_minutes_t4": 99,
+          "job_ids": [
+            "reliability__dtd_resnet50__diagonal_only__seed0",
+            "reliability__dtd_resnet50__diagonal_only__seed1",
+            "reliability__dtd_resnet50__diagonal_only__seed2"
+          ]
+        },
+        {
+          "order_fast_to_slow": 3,
+          "group_id": "reliability__dtd_resnet50__no_crossfit",
+          "study": "reliability",
+          "setting_key": "dtd_resnet50",
+          "setting_label": "DTD / ResNet-50",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "resnet50@torchvision",
+          "batch_size": 16,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "variant": "no_crossfit",
+          "controls": {
+            "trso_ablation": "no_crossfit"
+          },
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "reviewer_requirements": [
+            "R2-C2"
+          ],
+          "estimated_minutes_t4_per_run": 33,
+          "estimated_group_minutes_t4": 99,
+          "job_ids": [
+            "reliability__dtd_resnet50__no_crossfit__seed0",
+            "reliability__dtd_resnet50__no_crossfit__seed1",
+            "reliability__dtd_resnet50__no_crossfit__seed2"
+          ]
+        },
+        {
+          "order_fast_to_slow": 4,
+          "group_id": "lora_rank_sweep__dtd_vit_b16__lora_r8",
+          "study": "lora_rank_sweep",
+          "setting_key": "dtd_vit_b16",
+          "setting_label": "DTD / ViT-B16",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "batch_size": 8,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "variant": "lora_r8",
+          "controls": {
+            "lora_rank": 8
+          },
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "reviewer_requirements": [
+            "R1-C5",
+            "R2-C3",
+            "R3-C4"
+          ],
+          "estimated_minutes_t4_per_run": 55,
+          "estimated_group_minutes_t4": 165,
+          "job_ids": [
+            "lora_rank_sweep__dtd_vit_b16__lora_r8__seed0",
+            "lora_rank_sweep__dtd_vit_b16__lora_r8__seed1",
+            "lora_rank_sweep__dtd_vit_b16__lora_r8__seed2"
+          ]
+        }
+      ],
+      "expanded_training_runs": 10,
+      "reused_defaults": {
+        "source": "kaggle/reviewer_matrix (204-run, 3-seed main matrix)",
+        "default_proposal_seeds": [
+          0,
+          1,
+          2
+        ],
+        "reused_conditions": [
+          "full/default Proposal for all sensitivity settings",
+          "calibration_fraction=1.0 with alternating partition",
+          "DTD/ResNet-18 default calibration_batch_size=32",
+          "mode_rule=geometric",
+          "r_scale=1.0"
+        ],
+        "reason": "Avoid duplicate training while preserving reviewer-controlled comparisons."
+      }
+    },
+    {
+      "protocol": "reviewer_sensitivity_required_v2_kaggle_sessions",
+      "session": 7,
+      "session_count": 9,
+      "reference_gpu": "NVIDIA T4",
+      "epochs": 30,
+      "warmup_epochs": 3,
+      "input_size": 224,
+      "split_seed": 0,
+      "hard_limit_minutes": 710,
+      "zip_reserve_minutes": 12,
+      "estimated_session_minutes_t4": 411,
+      "estimated_session_hours_t4": 6.85,
+      "logical_groups": [
+        {
+          "order_fast_to_slow": 1,
+          "group_id": "calibration__flowers_vit_b16__frac_1_random_p2",
+          "study": "calibration",
+          "setting_key": "flowers_vit_b16",
+          "setting_label": "Flowers-102 / ViT-B16",
+          "dataset": "flowers102",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "batch_size": 16,
+          "dataset_args": {},
+          "variant": "frac_1_random_p2",
+          "controls": {
+            "calibration_fraction": 1.0,
+            "partition_mode": "seeded_random",
+            "partition_seed": 2
+          },
+          "seeds": [
+            0
+          ],
+          "reviewer_requirements": [
+            "R1-C3",
+            "R2-C1",
+            "R2-C5"
+          ],
+          "estimated_minutes_t4_per_run": 42,
+          "estimated_group_minutes_t4": 42,
+          "job_ids": [
+            "calibration__flowers_vit_b16__frac_1_random_p2__seed0"
+          ]
+        },
+        {
+          "order_fast_to_slow": 2,
+          "group_id": "reliability__dtd_resnet50__no_sampling_variance",
+          "study": "reliability",
+          "setting_key": "dtd_resnet50",
+          "setting_label": "DTD / ResNet-50",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "resnet50@torchvision",
+          "batch_size": 16,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "variant": "no_sampling_variance",
+          "controls": {
+            "trso_ablation": "no_sampling_variance"
+          },
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "reviewer_requirements": [
+            "R2-C2"
+          ],
+          "estimated_minutes_t4_per_run": 33,
+          "estimated_group_minutes_t4": 99,
+          "job_ids": [
+            "reliability__dtd_resnet50__no_sampling_variance__seed0",
+            "reliability__dtd_resnet50__no_sampling_variance__seed1",
+            "reliability__dtd_resnet50__no_sampling_variance__seed2"
+          ]
+        },
+        {
+          "order_fast_to_slow": 3,
+          "group_id": "lora_rank_sweep__flowers_vit_b16__lora_r1",
+          "study": "lora_rank_sweep",
+          "setting_key": "flowers_vit_b16",
+          "setting_label": "Flowers-102 / ViT-B16",
+          "dataset": "flowers102",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "batch_size": 16,
+          "dataset_args": {},
+          "variant": "lora_r1",
+          "controls": {
+            "lora_rank": 1
+          },
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "reviewer_requirements": [
+            "R1-C5",
+            "R2-C3",
+            "R3-C4"
+          ],
+          "estimated_minutes_t4_per_run": 45,
+          "estimated_group_minutes_t4": 135,
+          "job_ids": [
+            "lora_rank_sweep__flowers_vit_b16__lora_r1__seed0",
+            "lora_rank_sweep__flowers_vit_b16__lora_r1__seed1",
+            "lora_rank_sweep__flowers_vit_b16__lora_r1__seed2"
+          ]
+        },
+        {
+          "order_fast_to_slow": 4,
+          "group_id": "lora_rank_sweep__flowers_vit_b16__lora_r32",
+          "study": "lora_rank_sweep",
+          "setting_key": "flowers_vit_b16",
+          "setting_label": "Flowers-102 / ViT-B16",
+          "dataset": "flowers102",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "batch_size": 16,
+          "dataset_args": {},
+          "variant": "lora_r32",
+          "controls": {
+            "lora_rank": 32
+          },
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "reviewer_requirements": [
+            "R1-C5",
+            "R2-C3",
+            "R3-C4"
+          ],
+          "estimated_minutes_t4_per_run": 45,
+          "estimated_group_minutes_t4": 135,
+          "job_ids": [
+            "lora_rank_sweep__flowers_vit_b16__lora_r32__seed0",
+            "lora_rank_sweep__flowers_vit_b16__lora_r32__seed1",
+            "lora_rank_sweep__flowers_vit_b16__lora_r32__seed2"
+          ]
+        }
+      ],
+      "expanded_training_runs": 10,
+      "reused_defaults": {
+        "source": "kaggle/reviewer_matrix (204-run, 3-seed main matrix)",
+        "default_proposal_seeds": [
+          0,
+          1,
+          2
+        ],
+        "reused_conditions": [
+          "full/default Proposal for all sensitivity settings",
+          "calibration_fraction=1.0 with alternating partition",
+          "DTD/ResNet-18 default calibration_batch_size=32",
+          "mode_rule=geometric",
+          "r_scale=1.0"
+        ],
+        "reason": "Avoid duplicate training while preserving reviewer-controlled comparisons."
+      }
+    },
+    {
+      "protocol": "reviewer_sensitivity_required_v2_kaggle_sessions",
+      "session": 8,
+      "session_count": 9,
+      "reference_gpu": "NVIDIA T4",
+      "epochs": 30,
+      "warmup_epochs": 3,
+      "input_size": 224,
+      "split_seed": 0,
+      "hard_limit_minutes": 710,
+      "zip_reserve_minutes": 12,
+      "estimated_session_minutes_t4": 424,
+      "estimated_session_hours_t4": 7.07,
+      "logical_groups": [
+        {
+          "order_fast_to_slow": 1,
+          "group_id": "calibration__dtd_resnet18__frac_1_random_p1",
+          "study": "calibration",
+          "setting_key": "dtd_resnet18",
+          "setting_label": "DTD / ResNet-18",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "resnet18@torchvision",
+          "batch_size": 32,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "variant": "frac_1_random_p1",
+          "controls": {
+            "calibration_fraction": 1.0,
+            "partition_mode": "seeded_random",
+            "partition_seed": 1
+          },
+          "seeds": [
+            0
+          ],
+          "reviewer_requirements": [
+            "R1-C3",
+            "R2-C1",
+            "R2-C5"
+          ],
+          "estimated_minutes_t4_per_run": 22,
+          "estimated_group_minutes_t4": 22,
+          "job_ids": [
+            "calibration__dtd_resnet18__frac_1_random_p1__seed0"
+          ]
+        },
+        {
+          "order_fast_to_slow": 2,
+          "group_id": "batch_sensitivity__dtd_resnet18__calib_batch_16",
+          "study": "batch_sensitivity",
+          "setting_key": "dtd_resnet18",
+          "setting_label": "DTD / ResNet-18",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "resnet18@torchvision",
+          "batch_size": 32,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "variant": "calib_batch_16",
+          "controls": {
+            "calibration_batch_size": 16
+          },
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "reviewer_requirements": [
+            "R1-C3",
+            "R2-C5"
+          ],
+          "estimated_minutes_t4_per_run": 22,
+          "estimated_group_minutes_t4": 66,
+          "job_ids": [
+            "batch_sensitivity__dtd_resnet18__calib_batch_16__seed0",
+            "batch_sensitivity__dtd_resnet18__calib_batch_16__seed1",
+            "batch_sensitivity__dtd_resnet18__calib_batch_16__seed2"
+          ]
+        },
+        {
+          "order_fast_to_slow": 3,
+          "group_id": "mode_rules__dtd_resnet18__shannon",
+          "study": "mode_rules",
+          "setting_key": "dtd_resnet18",
+          "setting_label": "DTD / ResNet-18",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "resnet18@torchvision",
+          "batch_size": 32,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "variant": "shannon",
+          "controls": {
+            "mode_rule": "shannon"
+          },
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "reviewer_requirements": [
+            "R2-C3",
+            "R3-C1",
+            "R3-C2",
+            "R3-C3"
+          ],
+          "estimated_minutes_t4_per_run": 22,
+          "estimated_group_minutes_t4": 66,
+          "job_ids": [
+            "mode_rules__dtd_resnet18__shannon__seed0",
+            "mode_rules__dtd_resnet18__shannon__seed1",
+            "mode_rules__dtd_resnet18__shannon__seed2"
+          ]
+        },
+        {
+          "order_fast_to_slow": 4,
+          "group_id": "lora_rank_sweep__flowers_vit_b16__lora_r16",
+          "study": "lora_rank_sweep",
+          "setting_key": "flowers_vit_b16",
+          "setting_label": "Flowers-102 / ViT-B16",
+          "dataset": "flowers102",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "batch_size": 16,
+          "dataset_args": {},
+          "variant": "lora_r16",
+          "controls": {
+            "lora_rank": 16
+          },
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "reviewer_requirements": [
+            "R1-C5",
+            "R2-C3",
+            "R3-C4"
+          ],
+          "estimated_minutes_t4_per_run": 45,
+          "estimated_group_minutes_t4": 135,
+          "job_ids": [
+            "lora_rank_sweep__flowers_vit_b16__lora_r16__seed0",
+            "lora_rank_sweep__flowers_vit_b16__lora_r16__seed1",
+            "lora_rank_sweep__flowers_vit_b16__lora_r16__seed2"
+          ]
+        },
+        {
+          "order_fast_to_slow": 5,
+          "group_id": "lora_rank_sweep__flowers_vit_b16__lora_r4",
+          "study": "lora_rank_sweep",
+          "setting_key": "flowers_vit_b16",
+          "setting_label": "Flowers-102 / ViT-B16",
+          "dataset": "flowers102",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "batch_size": 16,
+          "dataset_args": {},
+          "variant": "lora_r4",
+          "controls": {
+            "lora_rank": 4
+          },
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "reviewer_requirements": [
+            "R1-C5",
+            "R2-C3",
+            "R3-C4"
+          ],
+          "estimated_minutes_t4_per_run": 45,
+          "estimated_group_minutes_t4": 135,
+          "job_ids": [
+            "lora_rank_sweep__flowers_vit_b16__lora_r4__seed0",
+            "lora_rank_sweep__flowers_vit_b16__lora_r4__seed1",
+            "lora_rank_sweep__flowers_vit_b16__lora_r4__seed2"
+          ]
+        }
+      ],
+      "expanded_training_runs": 13,
+      "reused_defaults": {
+        "source": "kaggle/reviewer_matrix (204-run, 3-seed main matrix)",
+        "default_proposal_seeds": [
+          0,
+          1,
+          2
+        ],
+        "reused_conditions": [
+          "full/default Proposal for all sensitivity settings",
+          "calibration_fraction=1.0 with alternating partition",
+          "DTD/ResNet-18 default calibration_batch_size=32",
+          "mode_rule=geometric",
+          "r_scale=1.0"
+        ],
+        "reason": "Avoid duplicate training while preserving reviewer-controlled comparisons."
+      }
+    },
+    {
+      "protocol": "reviewer_sensitivity_required_v2_kaggle_sessions",
+      "session": 9,
+      "session_count": 9,
+      "reference_gpu": "NVIDIA T4",
+      "epochs": 30,
+      "warmup_epochs": 3,
+      "input_size": 224,
+      "split_seed": 0,
+      "hard_limit_minutes": 710,
+      "zip_reserve_minutes": 12,
+      "estimated_session_minutes_t4": 424,
+      "estimated_session_hours_t4": 7.07,
+      "logical_groups": [
+        {
+          "order_fast_to_slow": 1,
+          "group_id": "calibration__dtd_resnet18__frac_1_random_p2",
+          "study": "calibration",
+          "setting_key": "dtd_resnet18",
+          "setting_label": "DTD / ResNet-18",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "resnet18@torchvision",
+          "batch_size": 32,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "variant": "frac_1_random_p2",
+          "controls": {
+            "calibration_fraction": 1.0,
+            "partition_mode": "seeded_random",
+            "partition_seed": 2
+          },
+          "seeds": [
+            0
+          ],
+          "reviewer_requirements": [
+            "R1-C3",
+            "R2-C1",
+            "R2-C5"
+          ],
+          "estimated_minutes_t4_per_run": 22,
+          "estimated_group_minutes_t4": 22,
+          "job_ids": [
+            "calibration__dtd_resnet18__frac_1_random_p2__seed0"
+          ]
+        },
+        {
+          "order_fast_to_slow": 2,
+          "group_id": "batch_sensitivity__dtd_resnet18__calib_batch_64",
+          "study": "batch_sensitivity",
+          "setting_key": "dtd_resnet18",
+          "setting_label": "DTD / ResNet-18",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "resnet18@torchvision",
+          "batch_size": 32,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "variant": "calib_batch_64",
+          "controls": {
+            "calibration_batch_size": 64
+          },
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "reviewer_requirements": [
+            "R1-C3",
+            "R2-C5"
+          ],
+          "estimated_minutes_t4_per_run": 22,
+          "estimated_group_minutes_t4": 66,
+          "job_ids": [
+            "batch_sensitivity__dtd_resnet18__calib_batch_64__seed0",
+            "batch_sensitivity__dtd_resnet18__calib_batch_64__seed1",
+            "batch_sensitivity__dtd_resnet18__calib_batch_64__seed2"
+          ]
+        },
+        {
+          "order_fast_to_slow": 3,
+          "group_id": "r_scale__dtd_resnet18__rscale_0p5",
+          "study": "r_scale",
+          "setting_key": "dtd_resnet18",
+          "setting_label": "DTD / ResNet-18",
+          "dataset": "dtd",
+          "task": "single_label",
+          "backbone": "resnet18@torchvision",
+          "batch_size": 32,
+          "dataset_args": {
+            "dtd_partition": 1
+          },
+          "variant": "rscale_0.5",
+          "controls": {
+            "r_scale": 0.5
+          },
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "reviewer_requirements": [
+            "R2-C3"
+          ],
+          "estimated_minutes_t4_per_run": 22,
+          "estimated_group_minutes_t4": 66,
+          "job_ids": [
+            "r_scale__dtd_resnet18__rscale_0p5__seed0",
+            "r_scale__dtd_resnet18__rscale_0p5__seed1",
+            "r_scale__dtd_resnet18__rscale_0p5__seed2"
+          ]
+        },
+        {
+          "order_fast_to_slow": 4,
+          "group_id": "lora_rank_sweep__flowers_vit_b16__lora_r2",
+          "study": "lora_rank_sweep",
+          "setting_key": "flowers_vit_b16",
+          "setting_label": "Flowers-102 / ViT-B16",
+          "dataset": "flowers102",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "batch_size": 16,
+          "dataset_args": {},
+          "variant": "lora_r2",
+          "controls": {
+            "lora_rank": 2
+          },
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "reviewer_requirements": [
+            "R1-C5",
+            "R2-C3",
+            "R3-C4"
+          ],
+          "estimated_minutes_t4_per_run": 45,
+          "estimated_group_minutes_t4": 135,
+          "job_ids": [
+            "lora_rank_sweep__flowers_vit_b16__lora_r2__seed0",
+            "lora_rank_sweep__flowers_vit_b16__lora_r2__seed1",
+            "lora_rank_sweep__flowers_vit_b16__lora_r2__seed2"
+          ]
+        },
+        {
+          "order_fast_to_slow": 5,
+          "group_id": "lora_rank_sweep__flowers_vit_b16__lora_r8",
+          "study": "lora_rank_sweep",
+          "setting_key": "flowers_vit_b16",
+          "setting_label": "Flowers-102 / ViT-B16",
+          "dataset": "flowers102",
+          "task": "single_label",
+          "backbone": "vit_b_16@torchvision",
+          "batch_size": 16,
+          "dataset_args": {},
+          "variant": "lora_r8",
+          "controls": {
+            "lora_rank": 8
+          },
+          "seeds": [
+            0,
+            1,
+            2
+          ],
+          "reviewer_requirements": [
+            "R1-C5",
+            "R2-C3",
+            "R3-C4"
+          ],
+          "estimated_minutes_t4_per_run": 45,
+          "estimated_group_minutes_t4": 135,
+          "job_ids": [
+            "lora_rank_sweep__flowers_vit_b16__lora_r8__seed0",
+            "lora_rank_sweep__flowers_vit_b16__lora_r8__seed1",
+            "lora_rank_sweep__flowers_vit_b16__lora_r8__seed2"
+          ]
+        }
+      ],
+      "expanded_training_runs": 13,
+      "reused_defaults": {
+        "source": "kaggle/reviewer_matrix (204-run, 3-seed main matrix)",
+        "default_proposal_seeds": [
+          0,
+          1,
+          2
+        ],
+        "reused_conditions": [
+          "full/default Proposal for all sensitivity settings",
+          "calibration_fraction=1.0 with alternating partition",
+          "DTD/ResNet-18 default calibration_batch_size=32",
+          "mode_rule=geometric",
+          "r_scale=1.0"
+        ],
+        "reason": "Avoid duplicate training while preserving reviewer-controlled comparisons."
+      }
+    }
+  ]
+}

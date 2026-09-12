@@ -1,0 +1,115 @@
+{
+  "R1-C3": {
+    "logical_groups": 13,
+    "training_runs": 27,
+    "studies": [
+      "batch_sensitivity",
+      "calibration"
+    ],
+    "settings": [
+      "DTD / ResNet-18",
+      "Flowers-102 / ViT-B16"
+    ]
+  },
+  "R1-C5": {
+    "logical_groups": 12,
+    "training_runs": 36,
+    "studies": [
+      "lora_rank_sweep"
+    ],
+    "settings": [
+      "DTD / ViT-B16",
+      "Flowers-102 / ViT-B16"
+    ]
+  },
+  "R2-C1": {
+    "logical_groups": 10,
+    "training_runs": 18,
+    "studies": [
+      "calibration"
+    ],
+    "settings": [
+      "DTD / ResNet-18",
+      "Flowers-102 / ViT-B16"
+    ]
+  },
+  "R2-C2": {
+    "logical_groups": 9,
+    "training_runs": 27,
+    "studies": [
+      "reliability"
+    ],
+    "settings": [
+      "DTD / ResNet-18",
+      "DTD / ResNet-50",
+      "Flowers-102 / ViT-B16"
+    ]
+  },
+  "R2-C3": {
+    "logical_groups": 17,
+    "training_runs": 51,
+    "studies": [
+      "lora_rank_sweep",
+      "mode_rules",
+      "r_scale"
+    ],
+    "settings": [
+      "DTD / ResNet-18",
+      "DTD / ViT-B16",
+      "Flowers-102 / ViT-B16"
+    ]
+  },
+  "R2-C5": {
+    "logical_groups": 13,
+    "training_runs": 27,
+    "studies": [
+      "batch_sensitivity",
+      "calibration"
+    ],
+    "settings": [
+      "DTD / ResNet-18",
+      "Flowers-102 / ViT-B16"
+    ]
+  },
+  "R3-C1": {
+    "logical_groups": 3,
+    "training_runs": 9,
+    "studies": [
+      "mode_rules"
+    ],
+    "settings": [
+      "DTD / ResNet-18"
+    ]
+  },
+  "R3-C2": {
+    "logical_groups": 3,
+    "training_runs": 9,
+    "studies": [
+      "mode_rules"
+    ],
+    "settings": [
+      "DTD / ResNet-18"
+    ]
+  },
+  "R3-C3": {
+    "logical_groups": 3,
+    "training_runs": 9,
+    "studies": [
+      "mode_rules"
+    ],
+    "settings": [
+      "DTD / ResNet-18"
+    ]
+  },
+  "R3-C4": {
+    "logical_groups": 12,
+    "training_runs": 36,
+    "studies": [
+      "lora_rank_sweep"
+    ],
+    "settings": [
+      "DTD / ViT-B16",
+      "Flowers-102 / ViT-B16"
+    ]
+  }
+}
