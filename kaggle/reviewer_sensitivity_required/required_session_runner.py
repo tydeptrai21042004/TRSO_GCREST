@@ -196,7 +196,28 @@ def exact_run_spec(group, seed: int, *, data_dir: Path, run_root: Path, manifest
     if len(matches) != 1:
         names = [(spec.name, spec.parameters.get("seed")) for spec in specs]
         raise RuntimeError(f"Expected exactly one {group.variant}/seed{seed} run, found {matches!r}; generated={names!r}")
-    return matches[0]
+
+    spec = matches[0]
+    # Protocol tables intentionally use provenance-qualified names such as
+    # ``resnet18@torchvision``.  The audited planner must split those into the
+    # two CLI fields consumed by main.py.  Fail here, before any dataset/model
+    # download, if a future change accidentally reintroduces the qualified
+    # token into --backbone.
+    resolved_backbone = str(spec.parameters.get("backbone", ""))
+    resolved_source = str(spec.parameters.get("model_source", "auto"))
+    if "@" in resolved_backbone:
+        raise RuntimeError(
+            "Reviewer scheduler produced an unresolved qualified backbone "
+            f"{resolved_backbone!r}; expected separate --backbone and --model_source fields."
+        )
+    if "@" in str(group.backbone):
+        expected_source = str(group.backbone).rsplit("@", 1)[1].strip().lower()
+        if resolved_source.lower() != expected_source:
+            raise RuntimeError(
+                f"Reviewer scheduler resolved {group.backbone!r} to model_source={resolved_source!r}; "
+                f"expected {expected_source!r}."
+            )
+    return spec
 
 
 def result_complete(path: Path) -> bool:

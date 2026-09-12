@@ -21,6 +21,9 @@ def main():
             spec = rr.exact_run_spec(group, seed, data_dir=tmp/"data", run_root=tmp/"runs", manifest=tmp/"m.json")
             assert spec.name == group.variant
             assert int(spec.parameters.get("seed", -1)) == int(seed)
+            assert "@" not in str(spec.parameters.get("backbone", ""))
+            if "@" in group.backbone:
+                assert spec.parameters.get("model_source") == group.backbone.rsplit("@", 1)[1]
     print("OK: 39 groups / 105 runs / 9 sessions")
     for sid in range(1, rp.SESSION_COUNT+1):
         print(f"Session {sid:02d}: {rp.session_run_count(sid):2d} runs, {rp.session_estimated_minutes_t4(sid):3d} T4 min")

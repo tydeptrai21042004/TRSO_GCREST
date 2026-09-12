@@ -85,18 +85,48 @@ def get_parser() -> argparse.ArgumentParser:
     return p
 
 
+def _resolve_backbone_source(backbone: str, model_source: str) -> tuple[str, str]:
+    """Normalize ``backbone@source`` tokens used by the protocol tables.
+
+    The reviewer protocol stores explicit provenance such as
+    ``resnet18@torchvision``.  ``main.py`` expects the architecture name and
+    model source as separate CLI arguments, so passing the qualified token
+    through unchanged makes the auto resolver fall through to timm and look
+    for a model literally named ``resnet18@torchvision``.
+
+    An explicit non-auto ``model_source`` must agree with the suffix.
+    """
+    raw_backbone = str(backbone).strip()
+    source = str(model_source or "auto").strip().lower() or "auto"
+    if "@" not in raw_backbone:
+        return raw_backbone, source
+
+    name, qualified_source = raw_backbone.rsplit("@", 1)
+    name = name.strip()
+    qualified_source = qualified_source.strip().lower()
+    if not name or not qualified_source:
+        raise ValueError(f"Invalid qualified backbone token: {backbone!r}")
+    if source != "auto" and source != qualified_source:
+        raise ValueError(
+            f"Backbone {backbone!r} requests source {qualified_source!r}, "
+            f"but --model_source={source!r} was supplied."
+        )
+    return name, qualified_source
+
+
 def _common(args: argparse.Namespace) -> dict[str, Any]:
     dataset_args = json.loads(args.dataset_args_json)
     if not isinstance(dataset_args, dict):
         raise ValueError("--dataset_args_json must decode to an object")
+    backbone, model_source = _resolve_backbone_source(args.backbone, args.model_source)
     strong = args.augmentation == "strong" and args.task in {"auto", "single_label"}
     common: dict[str, Any] = {
         "dataset": args.dataset,
         "data_path": args.data_path,
         "download": args.download,
         "task": args.task,
-        "backbone": args.backbone,
-        "model_source": args.model_source,
+        "backbone": backbone,
+        "model_source": model_source,
         "weights": args.weights,
         "pretrained": args.pretrained,
         "epochs": args.epochs,
