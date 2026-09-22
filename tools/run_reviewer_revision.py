@@ -3,11 +3,11 @@
 This utility adds *evaluation-only* controls requested by the reviewers while
 keeping the proposed default method unchanged:
 
-- 3+ seed reproducibility runs;
+- 3+ seed repeated-run analyses;
 - calibration-fraction / partition sensitivity;
 - alternative D0/D1 mode-count rules;
 - 0.5x/1x/2x R sensitivity;
-- broader reliability-component ablations;
+- broader partition-consistency / reliability-component ablations;
 - LoRA rank sweeps for matched-budget and oracle comparisons.
 
 Every planned run is written to a JSON/CSV manifest before execution.

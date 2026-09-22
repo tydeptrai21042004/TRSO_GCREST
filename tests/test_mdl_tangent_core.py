@@ -66,7 +66,10 @@ def test_calibration_is_batchnorm_safe_and_identity_preserving():
     torch.testing.assert_close(model.norm.running_mean, running_mean)
     torch.testing.assert_close(model.norm.running_var, running_var)
     assert report.calibration_batches == len(loader())
-    assert report.method == "global_cross_fitted_reproducibility_entropy_spectral_tangent_core"
+    assert report.method == "reliability_weighted_spectral_allocation_full_core"
+    payload = getattr(model, "_mdl_tangent_report")
+    assert payload["legacy_method_id"] == "global_cross_fitted_reproducibility_entropy_spectral_tangent_core"
+    assert "partition consistency" in payload["terminology_note"].lower()
     assert mdl_tangent_parameter_count(model) == report.adapter_parameters
     assert mdl_tangent_basis_value_count(model) == report.frozen_basis_values
     assert report.head_policy == "full"
@@ -166,7 +169,8 @@ def test_full_rule_uses_global_geometric_allocation_without_rescue():
     )
     assert report.dense_rescue_activated is False
     payload = getattr(model, "_mdl_tangent_report")
-    assert payload["selection_rule"] == "global_geometric_information_dimension_allocation_full_core"
+    assert payload["selection_rule"] == "global_geometric_partition_consistency_allocation_full_core"
+    assert payload["legacy_selection_rule"] == "global_geometric_information_dimension_allocation_full_core"
     assert all(record.core_mode in {"global_geometric_evidence_full_core", "global_geometric_unallocated"} for record in report.records)
 
 
@@ -178,7 +182,9 @@ def test_sampling_variance_ablation_is_explicit_and_not_a_capacity_control():
         ablation="no_sampling_variance",
     )
     assert report.ablation == "no_sampling_variance"
-    assert getattr(model, "_mdl_tangent_report")["selection_rule"] == "crossfit_without_sampling_variance_ablation"
+    payload = getattr(model, "_mdl_tangent_report")
+    assert payload["selection_rule"] == "partition_consistency_without_sampling_variance_ablation"
+    assert payload["legacy_selection_rule"] == "crossfit_without_sampling_variance_ablation"
 
 
 def test_reviewer_mode_count_rules_and_diagnostics_are_exposed():

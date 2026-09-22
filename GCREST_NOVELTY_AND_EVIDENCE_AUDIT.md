@@ -5,7 +5,7 @@
 The earlier V6 and CVEST candidates should not be used as the final proposal.
 
 - V6 contained a dense-rescue path and could silently return the Linear checkpoint.
-- The first universal/CVEST version removed those branches, but completed ablations showed that its cross-fitting and finite-sample variance terms did not change rank or accuracy in the controlled cases. Its gain was therefore mainly attributable to a per-layer full-core geometry, which is not a sufficiently sharp novelty claim.
+- The first universal/CVEST version removed those branches, but completed ablations showed that its partition-consistency weighting and finite-sample variance terms had only modest effects in the controlled cases. Its gain was therefore mainly attributable to a per-layer full-core geometry, which is not a sufficiently sharp novelty claim.
 - G-CREST replaces independent per-layer capacity decisions with one global, budget-free allocation rule. This is the component that is active in the completed experiments: it changes the number of allocated modes, removes low-evidence tensors when appropriate, reduces parameters relative to the prior universal core, and preserves or improves controlled accuracy.
 
 ## Final contribution
@@ -42,7 +42,7 @@ G-CREST must **not** claim that SVD, gradient subspaces, adaptive rank, variance
 
 The defensible claim is narrower:
 
-> A model-wide, budget-free PEFT allocation rule that derives the total adapter dimension and its layer/mode distribution jointly from one cross-fitted evidence distribution, followed by full tangent-core learning in the allocated subspaces.
+> A model-wide, budget-free PEFT allocation rule that derives the retained mode count and its tensor/mode distribution jointly from one partition-consistency-weighted calibration-gradient evidence distribution, followed by full spectral-core learning in the allocated subspaces.
 
 The paper should use “to the best of our knowledge” and explicitly discuss the nearest methods above.
 
@@ -106,7 +106,7 @@ No CPU synthetic experiment can establish publication-level performance on DTD, 
 - a genuinely trained best epoch \(\ge 0\);
 - no exact equality caused by Linear fallback;
 - multi-seed uncertainty for the main comparison;
-- ablations for global allocation, cross-fitting, full-core interactions and the task-head policy;
+- ablations for global allocation, partition-consistency weighting, full-core interactions and the task-head policy;
 - comparison against faithful architecture-compatible baselines.
 
 The repository is ready for that test, but real-dataset superiority is not claimed in advance.

@@ -76,7 +76,7 @@ METHOD_SUPPORT: Dict[str, MethodSupport] = {
     ),
     "trso": MethodSupport(
         ALL_FAMILIES,
-        "The proposal adapts generic matrix-shaped weights with cross-fitted evidence-selected two-sided tangent cores and a full task head.",
+        "The proposal adapts generic matrix-shaped weights with partition-consistency-weighted spectral allocation, two-sided full cores, and a full task head.",
         "Architecture-agnostic Conv/Linear weights; normalization and embedding tensors are conservatively excluded.",
         tasks=NON_DETECTION_TASKS,
         task_scope="Classification, regression, semantic segmentation, and depth use tensor-output losses without changing the proposal core. Detection is excluded because torchvision detectors require target-aware model forwards during calibration."

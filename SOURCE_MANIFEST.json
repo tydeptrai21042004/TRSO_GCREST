@@ -91,8 +91,8 @@
   },
   {
     "path": "GCREST_NOVELTY_AND_EVIDENCE_AUDIT.md",
-    "bytes": 6133,
-    "sha256": "636d7f5479674f579bb01fb90ccad09b1d38e876ece06c57e0b975e7605241f9"
+    "bytes": 6198,
+    "sha256": "4743dbf86ca11382fe3a2ef8b6ad3d00367f344b380ccacc09dff0ff400fed39"
   },
   {
     "path": "GENERALIZATION_SCOPE.md",
@@ -111,8 +111,8 @@
   },
   {
     "path": "METHOD_GCREST_TRSO.md",
-    "bytes": 3169,
-    "sha256": "59caac99af0a990b3acb71190bef7f3478a8b7c44812359e8f3e2795033ac9cb"
+    "bytes": 4725,
+    "sha256": "d995c6bc1712028f9111a15db6f6457afe03c06eff5049dd23f353edb473ac5a"
   },
   {
     "path": "MINIMAL_PAPER_46_RUN_PROTOCOL.md",
@@ -166,8 +166,8 @@
   },
   {
     "path": "PAPER_REPRODUCTION.md",
-    "bytes": 2845,
-    "sha256": "340d5694c63289774d14de0737f767b47fc3ae306ef5134d46ac66ba3a4672be"
+    "bytes": 2980,
+    "sha256": "cafcaa4331bceb0c6a6faf4d7a79bb7bf5049137a5187a26dba7bed061883107"
   },
   {
     "path": "PATCH_MANIFEST.json",
@@ -176,8 +176,8 @@
   },
   {
     "path": "README.md",
-    "bytes": 7349,
-    "sha256": "7c0f1759328c2f4b91bf9b85a44225534e92194e6b16c55bf931bedadbbed4d0"
+    "bytes": 8647,
+    "sha256": "3d0402eb140b4207b444dfd3b9f97f31d6c6fddac47b55ac021cc7185d032167"
   },
   {
     "path": "RELEASE_CONTENTS.md",
@@ -206,8 +206,8 @@
   },
   {
     "path": "REVIEWER_REVISION_GUIDE.md",
-    "bytes": 9400,
-    "sha256": "6898ebe812afe835af67e34366b97016b81b136082fbc38d31f66709bafb55be"
+    "bytes": 10376,
+    "sha256": "fb1d4cf6b57d398d020f39e372b1ee73ef6f841baa6e0e19c1715cf75ca5ee94"
   },
   {
     "path": "SUPPORT_MATRIX.md",
@@ -216,8 +216,8 @@
   },
   {
     "path": "TRSO_ABLATION_AND_PIPELINE_AUDIT.md",
-    "bytes": 1361,
-    "sha256": "131babc9bdd1d82500b3bfd0d247eb48cc9b173a9620a8606b1aa760c83cd715"
+    "bytes": 2468,
+    "sha256": "4d92372f918cb10004286e303b1a2a039c3af74ae43582a8f6bd05fd9f994267"
   },
   {
     "path": "TRSO_Baselines_Reference_Controls_and_Ablations.docx",
@@ -696,8 +696,8 @@
   },
   {
     "path": "main.py",
-    "bytes": 135067,
-    "sha256": "d983b38212a9c3c70791b481b6ef2162ab1c77c093eebd17a60b77de354da506"
+    "bytes": 135242,
+    "sha256": "ec55d49343043c9b7d60ecddf851b493d5db3cade5673919c1654eb44180ae64"
   },
   {
     "path": "memory_utils.py",
@@ -791,8 +791,8 @@
   },
   {
     "path": "models/model_support.py",
-    "bytes": 28618,
-    "sha256": "42e0442cc5a1b906edec0a4a74e7cdab7fc73124455c567fa51c8ecd8733eb38"
+    "bytes": 28637,
+    "sha256": "9832af3363ffc876ec0cd1fb8523e5f55b439d87f641fd4b72299b9036a9a8db"
   },
   {
     "path": "models/structured_models.py",
@@ -846,8 +846,8 @@
   },
   {
     "path": "models/tuning_modules/mdl_tangent_core.py",
-    "bytes": 41892,
-    "sha256": "feed37a30d54afe85ea545a60cf0656c4be21084b279108a971dabd5c38796ee"
+    "bytes": 43472,
+    "sha256": "c7df47778912986683edbff0a93ed3da039ead5cb050cc5944f6aab24eb387fe"
   },
   {
     "path": "models/tuning_modules/ml_decoder.py",
@@ -1061,8 +1061,8 @@
   },
   {
     "path": "tests/test_mdl_tangent_core.py",
-    "bytes": 8253,
-    "sha256": "4afd831bd5651ff9d7fd11b48bd74e523bfc68164d7c18c8c06d43251da357ea"
+    "bytes": 8711,
+    "sha256": "388e2aa7a0f8bdde51dcb03815c5f4e558e2208ecf29e831154c8e1285c5f912"
   },
   {
     "path": "tests/test_minimal_paper_protocol.py",
@@ -1101,8 +1101,8 @@
   },
   {
     "path": "tests/test_reviewer_revision_protocol_fixes.py",
-    "bytes": 1878,
-    "sha256": "7e5cc86a06923de26686d942b14a2c6e0c5c73cb6e4d85ee80ad7c960de56d7a"
+    "bytes": 3093,
+    "sha256": "e685881ae65c7ebed90d6a7cccf5567cd88278ffe827f0cd22479237485b8fcc"
   },
   {
     "path": "tests/test_reviewer_revision_tools.py",
@@ -1156,8 +1156,8 @@
   },
   {
     "path": "tools/aggregate_revision_results.py",
-    "bytes": 17389,
-    "sha256": "5530e4788d31b838bd34d8a6243acd6a193843d92719875c4a611f943556330f"
+    "bytes": 22534,
+    "sha256": "a81643ce6f05b140bee26302749f0ad4d42b3d13f0525fd4fa9ef75dd3181652"
   },
   {
     "path": "tools/clean_release.py",
@@ -1216,8 +1216,8 @@
   },
   {
     "path": "tools/run_reviewer_revision.py",
-    "bytes": 11355,
-    "sha256": "2a896316bd27815875a72956191b7fefd3a7a4d2154f50c0ba94ad475d052f3c"
+    "bytes": 12735,
+    "sha256": "ab2a890fe93dfa7a3e7026f0ae37fa81f6d6973cbff418b11b668d30f60065bf"
   },
   {
     "path": "tools/run_trso_ablation.py",

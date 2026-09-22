@@ -130,6 +130,27 @@ It plans:
 For the revised paper, describe `no_crossfit` as **without partition-consistency
 weighting**. The source keeps the old token only for checkpoint/CLI compatibility.
 
+### Optional tensor-level allocation stability
+
+The core calibration report already exports `layer_ranks`,
+`participating_tensor_names`, `partition_mode`, and `partition_seed`. Therefore no
+method/training-code change is required to compute tensor-level diagnostics from
+completed runs. Use:
+
+```bash
+python tools/aggregate_revision_results.py \
+  --root <completed_output_root> \
+  --out_csv revision_summary.csv
+```
+
+The aggregator writes the ordinary `*_allocation_stability.csv` across repeated
+run seeds and, when multiple `seeded_random` partition seeds are present, a
+separate `*_partition_stability.csv`. Tensor-level diagnostics include selected-
+tensor Jaccard overlap, tensor-rank Spearman correlation, and pairwise mean
+absolute rank difference. These diagnostics are optional and should only be
+reported when the completed per-run JSON outputs are actually available. Their
+presence in the code does not imply that the manuscript performed them.
+
 ## Reviewer 1 / 2 / 3: matched-budget low-rank comparison
 
 A validation rank sweep is provided for LoRA. This is preferable to inventing an
@@ -162,7 +183,7 @@ If the revision requires an exact published AdaLoRA/GoRA/LoRA-GA baseline,
 use the authors' official implementation or a separately fidelity-audited
 implementation rather than relabeling the LoRA sweep as one of those methods.
 
-## Reproducibility information now exported automatically
+## Run-environment reproducibility information now exported automatically
 
 Each run writes `environment.json` containing:
 

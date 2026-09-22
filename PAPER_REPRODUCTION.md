@@ -124,4 +124,4 @@ Use the active generic runner:
 python -m tools.run_fair_suite --help
 ```
 
-G-CREST-TRSO has no manual rank, budget, threshold, layer, core-mode, head-policy, or calibration-length sweep because one model-wide mode budget and the layer/mode allocation are derived from global cross-fitted evidence.
+G-CREST-TRSO has no manually supplied global rank budget, evidence threshold, or layer list: the default retained-mode count and tensor/mode allocation are derived from one model-wide partition-consistency-weighted calibration-gradient evidence distribution. Realized capacity can still depend on calibration construction through the candidate spectral cap.

@@ -5,7 +5,7 @@ import math
 import pandas as pd
 
 from tools.run_reviewer_revision import build_revision_specs
-from tools.aggregate_revision_results import _mean_std_ci95
+from tools.aggregate_revision_results import _allocation_stability, _mean_std_ci95, _spearman_rank_correlation
 
 
 def _args(tmp_path):
@@ -41,3 +41,33 @@ def test_three_seed_ci_uses_student_t_not_large_sample_196():
     normal_ci = 1.96 / math.sqrt(3)
     assert ci > normal_ci * 2.0
     assert math.isclose(ci, 4.302652729911275 / math.sqrt(3), rel_tol=1e-3)
+
+
+def test_tensor_rank_spearman_handles_order_and_constant_cases():
+    assert math.isclose(_spearman_rank_correlation([1, 2, 3], [3, 2, 1]), -1.0, rel_tol=1e-12)
+    assert _spearman_rank_correlation([2, 2, 2], [2, 2, 2]) == 1.0
+    assert _spearman_rank_correlation([2, 2, 2], [1, 2, 3]) is None
+
+
+def test_allocation_stability_reports_tensor_level_diagnostics():
+    group = pd.DataFrame({
+        "mdl_R": [6, 6],
+        "mdl_D0": [12, 12],
+        "mdl_D1": [3.0, 3.0],
+        "mdl_selected_tensors": [3, 3],
+        "mdl_adapter_parameters": [20, 20],
+        "mdl_rank_min": [1, 1],
+        "mdl_rank_median": [2, 2],
+        "mdl_rank_max": [3, 3],
+        "mdl_participating_tensor_names_json": [
+            '["a", "b", "c"]', '["a", "b", "c"]'
+        ],
+        "mdl_layer_ranks_json": [
+            '{"a": 1, "b": 2, "c": 3}',
+            '{"a": 3, "b": 2, "c": 1}',
+        ],
+    })
+    stats = _allocation_stability(group)
+    assert stats["selected_tensor_jaccard_mean"] == 1.0
+    assert math.isclose(stats["tensor_rank_spearman_mean"], -1.0, rel_tol=1e-12)
+    assert math.isclose(stats["tensor_rank_pair_mae_mean"], 4.0 / 3.0, rel_tol=1e-12)

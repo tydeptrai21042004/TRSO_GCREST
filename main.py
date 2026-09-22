@@ -157,9 +157,10 @@ def get_args_parser():
     parser.add_argument("--adapt_scale", default=1.0, type=float)
     parser.add_argument("--conv_adapter_mode", default="conv_parallel", choices=["conv_parallel", "conv_sequential", "residual_parallel", "residual_sequential"])
 
-    # Cross-Fitted Variance-Calibrated Evidence-Spectral Tangent Core: no method-specific rank,
-    # budget, layer list, threshold, head policy, core mode, calibration-batch
-    # count, gain, or adapter-capacity argument.
+    # Reliability-weighted spectral allocation with full spectral cores: no
+    # manually supplied global rank budget, evidence threshold, or layer list.
+    # Realized capacity can still depend on calibration construction through the
+    # candidate spectral dimension, as documented in the manuscript.
     parser.add_argument(
         "--trso_fast_inference", type=str2bool, default=True,
         help="Exactly merge the learned G-CREST tangent-core updates before evaluation.",
@@ -167,7 +168,8 @@ def get_args_parser():
     parser.add_argument(
         "--trso_ablation", type=str, default="full",
         choices=["full", "diagonal_only", "no_sampling_variance", "no_crossfit", "head_only"],
-        help="Fixed structural ablation for analysis only; full is the proposal used in benchmark comparisons.",
+        help=("Fixed structural ablation for analysis only; full is the proposal. "
+              "The legacy no_crossfit token means without partition-consistency weighting."),
     )
     # Reviewer-requested sensitivity controls. Defaults exactly reproduce the
     # proposed method; non-default values are ablations and must be reported as such.
@@ -1279,7 +1281,8 @@ def set_trainability_policy(model: nn.Module, args, extra_adapter_param_ids: Opt
 
     if method == "trso":
         # The shared task head is the only warm-start coordinate before the
-        # calibration data select the final cross-fitted tangent coordinates; the full task head remains trainable.
+        # calibration data select the final partition-consistency-weighted spectral coordinates;
+        # the full task head remains trainable.
         for name, parameter in model.named_parameters():
             parameter.requires_grad_(_is_head_param(name))
         _freeze_batchnorm(model)

@@ -1,12 +1,21 @@
-"""Global Cross-Fitted Reproducibility-Entropy Spectral Tangent Core (G-CREST-TRSO).
+"""Reliability-weighted spectral allocation with full spectral cores.
 
-The full proposal uses one rule for every eligible pretrained matrix tensor.
-The complete calibration loader is split into deterministic odd/even folds.
-The pooled gradient supplies singular directions; odd/even agreement and the
-finite-sample variance of the mean continuously discount each singular mode.
-All layer-mode evidence values form one global distribution. Its parameter-free geometric information dimension determines one model-wide mode budget, which is allocated to the globally strongest modes. Each allocated layer receives one full trainable tangent core, exactly merged for deployment.
+The public manuscript terminology is *partition-consistency weighting*.  The
+calibration loader is divided into two deterministic partitions; the pooled
+gradient supplies singular directions, while agreement between the partition
+responses and a tensor-level sampling-variance estimate modulate each mode's
+evidence.  This agreement is a within-calibration consistency diagnostic: it is
+not statistical cross-fitting and it is not an estimate of repeated-run
+reproducibility.
 
-There is no task-loss gate, rescue path, positive-gain threshold, manual rank, manual budget, layer list, core switch, or zero-update validation fallback in the full method.  The task head follows one fixed policy: it is fully trained.
+All tensor-mode evidence values form one model-wide distribution.  The default
+geometric D0--D1 rule gives a parameter-free intermediate retained-mode count;
+it is a default allocation rule, not an accuracy-optimality claim.  Each
+participating tensor receives a full trainable spectral core, which can be
+merged exactly into the backbone for deployment.
+
+The historical CLI token ``no_crossfit`` is retained only for compatibility and
+means *without partition-consistency weighting*.
 """
 from __future__ import annotations
 
@@ -17,6 +26,13 @@ from typing import Callable, Iterable, Iterator, Optional
 import torch
 from torch import Tensor, nn
 from torch.nn.utils import parametrize
+
+
+PUBLIC_METHOD_ID = "reliability_weighted_spectral_allocation_full_core"
+LEGACY_METHOD_ID = "global_cross_fitted_reproducibility_entropy_spectral_tangent_core"
+PUBLIC_METHOD_NAME = (
+    "Reliability-Weighted Spectral Allocation with Full Spectral Cores"
+)
 
 
 @dataclass(frozen=True)
@@ -91,6 +107,8 @@ class MDLTangentReport:
         return payload
 
 
+# ``no_crossfit`` is a legacy machine/CLI token.  It is intentionally retained
+# for old manifests/checkpoints and means "without partition-consistency weighting".
 TRSO_ABLATIONS = (
     "full",
     "diagonal_only",
@@ -504,7 +522,7 @@ def _prepare_weight(
     candidate: _Candidate, statistic: _Statistic, *, ablation: str = "full",
     svd_oversampling: int = 0, svd_power_iterations: int = 2, svd_seed: int = 0,
 ) -> _PreparedWeight:
-    """Compute fold-reproducible mode evidence without selecting a local rank."""
+    """Compute partition-consistency-weighted evidence without selecting a local rank."""
     pooled = statistic.mean().float()
     matrix = pooled.reshape(pooled.shape[0], -1)
     first = statistic.fold_mean(0)
@@ -650,7 +668,7 @@ def _finalize_weight(item: _PreparedWeight, selected_modes: Tensor, *, ablation:
         rows = torch.arange(rank, device=item.left.device).repeat_interleave(rank)
         columns = torch.arange(rank, device=item.left.device).repeat(rank)
         core_mode = (
-            "global_geometric_no_crossfit_ablation" if ablation == "no_crossfit"
+            "global_geometric_no_partition_consistency_ablation" if ablation == "no_crossfit"
             else "global_geometric_no_sampling_variance_ablation" if ablation == "no_sampling_variance"
             else "global_geometric_evidence_full_core"
         )
@@ -799,7 +817,7 @@ def calibrate_mdl_tangent_core(
         if isinstance(module, MDLTangentCoreParametrization)
     )
     report = MDLTangentReport(
-        method="global_cross_fitted_reproducibility_entropy_spectral_tangent_core",
+        method=PUBLIC_METHOD_ID,
         ablation=ablation,
         calibration_batches=batches,
         calibration_examples=examples,
@@ -839,10 +857,27 @@ def calibrate_mdl_tangent_core(
     payload = report.to_dict()
     payload["selection_rule"] = (
         "head_only_ablation" if ablation == "head_only"
+        else "pooled_evidence_without_partition_consistency_ablation" if ablation == "no_crossfit"
+        else "diagonal_partition_consistency_ablation" if ablation == "diagonal_only"
+        else "partition_consistency_without_sampling_variance_ablation" if ablation == "no_sampling_variance"
+        else "global_geometric_partition_consistency_allocation_full_core"
+    )
+    # Preserve historical identifiers as explicit metadata so old run manifests can
+    # still be reconciled without exposing the old statistical terminology as the
+    # public method description.
+    payload["legacy_method_id"] = LEGACY_METHOD_ID
+    payload["method_display_name"] = PUBLIC_METHOD_NAME
+    payload["legacy_selection_rule"] = (
+        "head_only_ablation" if ablation == "head_only"
         else "pooled_evidence_entropy_ablation" if ablation == "no_crossfit"
         else "diagonal_variance_calibrated_ablation" if ablation == "diagonal_only"
         else "crossfit_without_sampling_variance_ablation" if ablation == "no_sampling_variance"
         else "global_geometric_information_dimension_allocation_full_core"
+    )
+    payload["terminology_note"] = (
+        "The two calibration partitions measure within-calibration partition consistency; "
+        "they are not statistical cross-fitting or repeated-run reproducibility. "
+        "The legacy no_crossfit token means without partition-consistency weighting."
     )
     payload["head_policy_scores"] = {}
     payload["global_selected_modes"] = int(global_modes)

@@ -55,6 +55,9 @@ def summarize_mdl_tangent_calibration(payload: Dict[str, Any]) -> Dict[str, Any]
         return sum(values) / len(values) if values else None
 
     return {
+        "method_id": payload.get("method"),
+        "legacy_method_id": payload.get("legacy_method_id"),
+        "method_display_name": payload.get("method_display_name"),
         "calibration_batches": payload.get("calibration_batches"),
         "calibration_examples": payload.get("calibration_examples"),
         "selected_tensors": payload.get("selected_tensors", len(selected)),
@@ -142,7 +145,34 @@ def _mean_std_ci95(values: pd.Series) -> tuple[float | None, float | None, float
     return mean, std, ci95, n
 
 
+def _spearman_rank_correlation(first: list[float], second: list[float]) -> float | None:
+    """Return Spearman rank correlation without requiring SciPy.
+
+    Constant but identical vectors are treated as perfectly stable (1.0). If one
+    vector is constant and the other is not, the correlation is undefined and
+    ``None`` is returned rather than inventing a numerical value.
+    """
+    if len(first) != len(second) or len(first) < 2:
+        return None
+    a = pd.Series(first, dtype=float)
+    b = pd.Series(second, dtype=float)
+    if a.nunique(dropna=True) <= 1 or b.nunique(dropna=True) <= 1:
+        return 1.0 if a.equals(b) else None
+    ranked_a = a.rank(method="average")
+    ranked_b = b.rank(method="average")
+    value = ranked_a.corr(ranked_b, method="pearson")
+    return None if pd.isna(value) else float(value)
+
+
 def _allocation_stability(group: pd.DataFrame) -> dict[str, Any]:
+    """Summarize aggregate and tensor-level allocation variation within a group.
+
+    Existing aggregate statistics are retained.  When per-run ``layer_ranks``
+    and participating tensor names are available, this function additionally
+    reports tensor-set Jaccard overlap, tensor-rank Spearman correlation, and
+    pairwise mean absolute rank differences.  These diagnostics are analysis
+    outputs only and do not change the proposal or any training result.
+    """
     result: dict[str, Any] = {}
     for column in ("mdl_R", "mdl_D0", "mdl_D1", "mdl_selected_tensors", "mdl_adapter_parameters",
                    "mdl_rank_min", "mdl_rank_median", "mdl_rank_max"):
@@ -173,7 +203,9 @@ def _allocation_stability(group: pd.DataFrame) -> dict[str, Any]:
     if "mdl_layer_ranks_json" in group.columns:
         for raw in group["mdl_layer_ranks_json"].dropna():
             try:
-                rank_maps.append({str(k): int(v) for k, v in json.loads(raw).items()})
+                decoded = json.loads(raw)
+                if isinstance(decoded, dict):
+                    rank_maps.append({str(k): int(v) for k, v in decoded.items()})
             except Exception:
                 pass
     if rank_maps:
@@ -187,7 +219,45 @@ def _allocation_stability(group: pd.DataFrame) -> dict[str, Any]:
         if per_tensor_std:
             result["layer_rank_std_mean"] = float(sum(per_tensor_std) / len(per_tensor_std))
             result["layer_rank_std_max"] = float(max(per_tensor_std))
+
+        correlations: list[float] = []
+        rank_maes: list[float] = []
+        undefined_correlations = 0
+        for first, second in combinations(rank_maps, 2):
+            pair_names = sorted(set(first) | set(second))
+            if not pair_names:
+                continue
+            first_values = [float(first.get(name, 0)) for name in pair_names]
+            second_values = [float(second.get(name, 0)) for name in pair_names]
+            correlation = _spearman_rank_correlation(first_values, second_values)
+            if correlation is None:
+                undefined_correlations += 1
+            else:
+                correlations.append(correlation)
+            rank_maes.append(
+                float(sum(abs(a - b) for a, b in zip(first_values, second_values)) / len(pair_names))
+            )
+        if correlations:
+            result["tensor_rank_spearman_mean"] = float(sum(correlations) / len(correlations))
+            result["tensor_rank_spearman_min"] = float(min(correlations))
+            result["tensor_rank_spearman_pairs"] = len(correlations)
+        if undefined_correlations:
+            result["tensor_rank_spearman_undefined_pairs"] = int(undefined_correlations)
+        if rank_maes:
+            result["tensor_rank_pair_mae_mean"] = float(sum(rank_maes) / len(rank_maes))
+            result["tensor_rank_pair_mae_max"] = float(max(rank_maes))
+            result["tensor_rank_pair_mae_pairs"] = len(rank_maes)
     return result
+
+
+def _partition_stability_group_columns(df: pd.DataFrame) -> list[str]:
+    """Columns that isolate partition-seed variation from optimization randomness."""
+    candidates = (
+        "experiment_suite", "dataset", "task_type", "backbone", "method", "seed",
+        "mdl_ablation", "mdl_calibration_fraction", "mdl_calibration_max_batches",
+        "mdl_mode_count_rule", "mdl_r_scale", "mdl_fixed_r", "mdl_partition_mode",
+    )
+    return [column for column in candidates if column in df.columns]
 
 
 def main() -> None:
@@ -287,7 +357,7 @@ def main() -> None:
             if n:
                 ci_rows.append({**base, "metric": metric, "mean": mean, "std": std, "ci95_half_width": ci95, "n": n})
         if any(column.startswith("mdl_") for column in group.columns):
-            stability_rows.append({**base, **_allocation_stability(group)})
+            stability_rows.append({**base, "stability_scope": "across_run_seeds", **_allocation_stability(group)})
     ci_path = os.path.splitext(output_path)[0] + "_ci95.csv"
     pd.DataFrame(ci_rows).to_csv(ci_path, index=False)
     print(f"Saved 95% CI table: {ci_path}")
@@ -295,6 +365,32 @@ def main() -> None:
         stability_path = os.path.splitext(output_path)[0] + "_allocation_stability.csv"
         pd.DataFrame(stability_rows).to_csv(stability_path, index=False)
         print(f"Saved allocation stability: {stability_path}")
+
+    # Partition-seed stability is intentionally summarized separately from the
+    # ordinary across-seed table. Reviewer calibration studies fix the training
+    # seed and vary only ``partition_seed``; grouping by the exact experiment
+    # name would otherwise place random_p0/random_p1/random_p2 in separate rows.
+    if "mdl_partition_mode" in df.columns and "mdl_partition_seed" in df.columns:
+        random_partition = df[df["mdl_partition_mode"].astype(str) == "seeded_random"].copy()
+        partition_group_columns = _partition_stability_group_columns(random_partition)
+        partition_rows = []
+        if not random_partition.empty and partition_group_columns:
+            for keys, group in random_partition.groupby(partition_group_columns, dropna=False):
+                if group["mdl_partition_seed"].nunique(dropna=True) < 2:
+                    continue
+                if not isinstance(keys, tuple):
+                    keys = (keys,)
+                base = dict(zip(partition_group_columns, keys))
+                partition_rows.append({
+                    **base,
+                    "stability_scope": "across_partition_seeds",
+                    "partition_seed_count": int(group["mdl_partition_seed"].nunique(dropna=True)),
+                    **_allocation_stability(group),
+                })
+        if partition_rows:
+            partition_path = os.path.splitext(output_path)[0] + "_partition_stability.csv"
+            pd.DataFrame(partition_rows).to_csv(partition_path, index=False)
+            print(f"Saved partition-seed stability: {partition_path}")
 
     # Compact paper-facing table. Non-scalar diagnostics remain in the raw CSV
     # and per-run JSON, while this table emphasizes accuracy, robustness,

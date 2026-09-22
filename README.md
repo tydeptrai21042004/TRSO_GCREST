@@ -6,7 +6,7 @@ Official research implementation accompanying the manuscript:
 Ba Ty Dang, Kim Huong Tran, Thi Uyen Nguyen  
 **Manuscript submitted to _Pattern Analysis and Applications_.**
 
-The internal implementation/CLI name remains **G-CREST-TRSO / `trso`** for backward compatibility with existing checkpoints, scripts, and the historical submitted 46-run protocol. Public documentation follows the manuscript terminology: the method uses **two deterministic calibration partitions for partition-consistency weighting**; their agreement is not statistical cross-fitting or repeated-run reproducibility.
+The internal implementation/CLI name remains **G-CREST-TRSO / `trso`** for backward compatibility with existing checkpoints, scripts, and the historical submitted 46-run protocol. Public documentation follows the manuscript terminology: the method uses **two deterministic calibration partitions for partition-consistency weighting**; their agreement is not statistical cross-fitting or repeated-run reproducibility. New calibration reports use the public method identifier `reliability_weighted_spectral_allocation_full_core` and retain the historical identifier separately as `legacy_method_id` for traceability.
 
 ## Active proposal
 
@@ -27,6 +27,27 @@ The full proposal has:
 - a complete merged backbone checkpoint per downstream task.
 
 See `METHOD_GCREST_TRSO.md` and the manuscript for the formal definition.
+
+### Optional tensor-level allocation stability diagnostics
+
+The proposal itself is unchanged, but completed per-run calibration outputs can be
+post-processed with:
+
+```bash
+python tools/aggregate_revision_results.py \
+  --root <completed_output_root> \
+  --out_csv revision_summary.csv
+```
+
+When `mdl_tangent_calibration.json` contains `layer_ranks` and participating
+tensor names, the aggregator reports selected-tensor Jaccard overlap, tensor-rank
+Spearman correlation, pairwise rank MAE, and aggregate allocation variation. For
+`seeded_random` calibration-partition studies it also writes a separate
+`*_partition_stability.csv` that compares partition seeds while holding the
+optimization seed fixed. These are **analysis-only diagnostics**; they do not
+change training or the proposed allocation rule. If the original per-run outputs
+are unavailable, the relevant proposal runs must be rerun before these optional
+diagnostics can be computed.
 
 ## Dataset and revision extension
 
@@ -62,7 +83,7 @@ python -m tools.run_trso_ablation \
   --execute
 ```
 
-The analysis-only variants are `diagonal_only`, `no_sampling_variance`, `no_crossfit`, and `head_only`. They are not capacity knobs of the full proposal.
+The analysis-only variants are `diagonal_only`, `no_sampling_variance`, `no_crossfit`, and `head_only`. They are not capacity knobs of the full proposal. `no_crossfit` is a legacy machine/CLI token retained for compatibility; in manuscript terminology it means **without partition-consistency weighting**.
 
 ## Historical six Kaggle sessions
 
